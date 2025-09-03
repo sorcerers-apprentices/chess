@@ -2,7 +2,19 @@
   "name": "@chess/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "nx serve chess",
+    "build": "nx build chess",
+    "build:prod": "nx build chess --configuration=production",
+    "test": "nx test chess",
+    "test:watch": "nx test chess --watch",
+    "lint": "nx lint chess",
+    "e2e": "nx e2e chess-e2e",
+    "serve:static": "nx serve-static chess",
+    "affected:build": "nx affected --target=build",
+    "affected:test": "nx affected --target=test",
+    "graph": "nx graph"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^20.2.3",

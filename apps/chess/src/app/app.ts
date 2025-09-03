@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NxWelcome } from './nx-welcome';
-import {TuiRoot} from '@taiga-ui/core';
+import { TuiRoot } from '@taiga-ui/core';
 
 @Component({
   imports: [NxWelcome, RouterModule, TuiRoot],
