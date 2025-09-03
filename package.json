@@ -25,6 +25,7 @@
     "@angular/platform-browser": "20.2.3",
     "@angular/platform-browser-dynamic": "20.2.3",
     "@angular/router": "20.2.3",
+    "@supabase/supabase-js": "^2.57.0",
     "@taiga-ui/addon-charts": "^4.52.0",
     "@taiga-ui/addon-commerce": "^4.52.0",
     "@taiga-ui/addon-doc": "^4.52.0",
