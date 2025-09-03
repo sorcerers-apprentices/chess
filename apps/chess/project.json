@@ -21,7 +21,12 @@
             "input": "apps/chess/public"
           }
         ],
-        "styles": ["apps/chess/src/styles.scss"]
+        "styles": [
+          "apps/chess/src/styles.scss",
+          "@taiga-ui/core/styles/taiga-ui-theme.less",
+          "@taiga-ui/core/styles/taiga-ui-fonts.less",
+          "@taiga-ui/addon-mobile/styles/taiga-ui-mobile.less"
+        ]
       },
       "configurations": {
         "production": {
