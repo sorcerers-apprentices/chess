@@ -12,7 +12,6 @@
       "options": {
         "outputPath": "dist/apps/chess",
         "browser": "apps/chess/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/chess/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
