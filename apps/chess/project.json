@@ -10,6 +10,10 @@
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "define": {
+          "PUBLISHABLE_KEY": "\"sb_publishable_xcVsmJL_0q0lZYtOd55uhg_bMsN2p5h\"",
+          "API_URL": "\"https://jnwnlprjvevgdxnngxnr.supabase.co\""
+        },
         "outputPath": "dist/apps/chess",
         "browser": "apps/chess/src/main.ts",
         "tsConfig": "apps/chess/tsconfig.app.json",
