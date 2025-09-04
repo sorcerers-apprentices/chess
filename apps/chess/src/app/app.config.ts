@@ -1,8 +1,8 @@
 import {
   isDevMode,
   ApplicationConfig,
-  provideZoneChangeDetection,
-  provideBrowserGlobalErrorListeners
+  provideZonelessChangeDetection,
+  provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { appRoutes } from './app.routes';
 import { provideStore } from '@ngrx/store';
@@ -14,12 +14,13 @@ import { getInitialState } from './store/states/app.state';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { appReducers } from './store/reducers/app.reducers';
 import { provideEventPlugins } from '@taiga-ui/event-plugins';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withComponentInputBinding()),
     provideEventPlugins(),
     provideStore(appReducers, { initialState: getInitialState }),
     provideRouterStore(),

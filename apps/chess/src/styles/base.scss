@@ -1,0 +1,15 @@
+@use './mixins.scss' as mixins;
+@use './variables.scss' as vars;
+@use './fonts';
+
+html,
+body {
+  height: 100%;
+  background-color: vars.$color-black;
+}
+
+* {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  margin: 0;
+}

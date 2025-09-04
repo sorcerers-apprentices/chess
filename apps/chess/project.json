@@ -12,7 +12,6 @@
       "options": {
         "outputPath": "dist/apps/chess",
         "browser": "apps/chess/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/chess/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -26,7 +25,10 @@
           "@taiga-ui/core/styles/taiga-ui-theme.less",
           "@taiga-ui/core/styles/taiga-ui-fonts.less",
           "@taiga-ui/addon-mobile/styles/taiga-ui-mobile.less"
-        ]
+        ],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/chess/src/styles"]
+        }
       },
       "configurations": {
         "production": {

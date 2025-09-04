@@ -30,6 +30,7 @@
     "@ngrx/router-store": "^20.0.1",
     "@ngrx/store": "^20.0.1",
     "@ngrx/store-devtools": "^20.0.1",
+    "@supabase/supabase-js": "^2.57.0",
     "@taiga-ui/addon-charts": "^4.52.0",
     "@taiga-ui/addon-commerce": "^4.52.0",
     "@taiga-ui/addon-doc": "^4.52.0",
