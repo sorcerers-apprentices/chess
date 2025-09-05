@@ -3,6 +3,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -18,7 +20,11 @@
     "module": "preserve"
   },
   "angularCompilerOptions": {
+    "strictNullChecks": true,
     "enableI18nLegacyMessageIdFormat": false,
+    "strictContextGenerics": true,
+    "strictOutputEventTypes": true,
+    "strictAttributeTypes": true,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "typeCheckHostBindings": true,

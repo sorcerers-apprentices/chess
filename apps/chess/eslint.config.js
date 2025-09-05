@@ -49,6 +49,9 @@ export default [
       ],
       'prettier/prettier': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/strict-boolean-expressions': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
       'no-magic-strings': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
