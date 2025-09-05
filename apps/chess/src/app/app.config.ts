@@ -1,4 +1,3 @@
-import type { ApplicationConfig } from '@angular/core';
 import {
   isDevMode,
   provideZonelessChangeDetection,
@@ -7,6 +6,7 @@ import {
 import { appRoutes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
+import type { ApplicationConfig } from '@angular/core';
 import { provideRouterStore } from '@ngrx/router-store';
 import { appEffects } from './store/effects/app.effects';
 import { getInitialState } from './store/states/app.state';

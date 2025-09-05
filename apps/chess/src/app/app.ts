@@ -1,16 +1,16 @@
-import { Component, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { TuiRoot } from '@taiga-ui/core';
-import { SupabaseService } from './shared/services/supabase.service';
 import {
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
   Validators,
+  ReactiveFormsModule,
+  NonNullableFormBuilder,
 } from '@angular/forms';
 import type {
   AuthResponse,
   AuthTokenResponsePassword,
 } from '@supabase/supabase-js';
+import { TuiRoot } from '@taiga-ui/core';
+import { RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { SupabaseService } from './services/supabase.service';
 
 @Component({
   imports: [RouterModule, TuiRoot, ReactiveFormsModule],
