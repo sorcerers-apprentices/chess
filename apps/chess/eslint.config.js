@@ -112,6 +112,7 @@ export default [
     },
     rules: {
       ...angularTemplate.configs.recommended.rules,
+      '@angular-eslint/template/elements-content': 'off',
     },
   },
 ];
