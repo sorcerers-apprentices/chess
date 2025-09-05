@@ -2,9 +2,8 @@
   "name": "@chess/source",
   "version": "0.0.0",
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "start": "nx serve chess",
+    "start": "nx serve chess --open",
     "build": "nx build chess",
     "build:prod": "nx build chess --configuration=production",
     "test": "nx test chess",
