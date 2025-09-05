@@ -7,6 +7,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import type {
+  AuthResponse,
+  AuthTokenResponsePassword,
+} from '@supabase/supabase-js';
 
 @Component({
   imports: [RouterModule, TuiRoot, ReactiveFormsModule],
@@ -15,25 +19,25 @@ import {
   styleUrl: './app.scss',
 })
 export class App {
-  private fb = inject(NonNullableFormBuilder);
+  protected fb = inject(NonNullableFormBuilder);
   protected exampleService = inject(SupabaseService);
 
   protected signupForm = this.fb.group({
     email: ['', [Validators.required, Validators.email, Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required]],
   });
 
   protected signinForm = this.fb.group({
     email: ['', [Validators.required, Validators.email, Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required]],
   });
 
-  async signup() {
+  protected async signup(): Promise<AuthResponse> {
     const { email, password } = this.signupForm.getRawValue();
     return await this.exampleService.signup(email, password);
   }
 
-  async signin() {
+  protected async signin(): Promise<AuthTokenResponsePassword> {
     const { email, password } = this.signinForm.getRawValue();
     return await this.exampleService.signin(email, password);
   }

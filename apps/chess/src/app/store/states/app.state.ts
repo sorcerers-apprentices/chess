@@ -1,5 +1,6 @@
 import type { RouterReducerState } from '@ngrx/router-store';
-import { GameStateType, initialGameState } from './game.state';
+import type { GameStateType } from './game.state';
+import { initialGameState } from './game.state';
 
 export type AppStateType = {
   router?: RouterReducerState;

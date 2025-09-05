@@ -1,6 +1,6 @@
+import type { ApplicationConfig } from '@angular/core';
 import {
   isDevMode,
-  ApplicationConfig,
   provideZonelessChangeDetection,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';

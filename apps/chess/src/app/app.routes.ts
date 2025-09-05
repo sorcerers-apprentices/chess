@@ -1,4 +1,4 @@
-import { Route } from '@angular/router';
+import type { Route } from '@angular/router';
 
 export const AppRoutes = {
   MAIN: 'main',
@@ -25,6 +25,7 @@ export const appRoutes: Route[] = [
   {
     path: RoutePath.game,
     title: 'Chess Game',
-    loadComponent: () => import('../pages/game-page/game-page').then((m) => m.GamePage),
+    loadComponent: () =>
+      import('../pages/game-page/game-page').then((m) => m.GamePage),
   },
 ];

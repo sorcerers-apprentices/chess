@@ -1,22 +1,33 @@
 import { inject, Injectable } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type {
+  AuthResponse,
+  AuthTokenResponsePassword,
+  SupabaseClient,
+} from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { EnvironmentService } from './environment-service/environment.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SupabaseService {
-  protected enviromentService = inject(EnvironmentService);
-  protected apiUrl = this.enviromentService.apiUrl;
-  protected publishableKey = this.enviromentService.publishableKey;
+  public enviromentService = inject(EnvironmentService);
+  public apiUrl = this.enviromentService.apiUrl;
+  public publishableKey = this.enviromentService.publishableKey;
 
-  public supabase: SupabaseClient = createClient(this.apiUrl, this.publishableKey);
+  public supabase: SupabaseClient = createClient(
+    this.apiUrl,
+    this.publishableKey,
+  );
 
-  async signup(email: string, password: string) {
-    return await this.supabase.auth.signUp({ email, password })
+  public async signup(email: string, password: string): Promise<AuthResponse> {
+    return await this.supabase.auth.signUp({ email, password });
   }
 
-  async signin(email: string, password: string) {
-    return await this.supabase.auth.signInWithPassword({ email, password })
+  public async signin(
+    email: string,
+    password: string,
+  ): Promise<AuthTokenResponsePassword> {
+    return await this.supabase.auth.signInWithPassword({ email, password });
   }
 }

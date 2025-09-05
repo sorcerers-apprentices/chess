@@ -1,4 +1,4 @@
-export interface Environment {
-  readonly publishableKey: string
-  readonly apiUrl: string
-}
+export type Environment = {
+  readonly publishableKey: string;
+  readonly apiUrl: string;
+};
