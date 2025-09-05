@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { type Environment } from '../../types/environment';
+import type { EnvironmentType } from '../types/environment.type';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EnvironmentService implements Environment {
+export class EnvironmentService implements EnvironmentType {
   public readonly publishableKey = PUBLISHABLE_KEY;
   public readonly apiUrl = API_URL;
 }

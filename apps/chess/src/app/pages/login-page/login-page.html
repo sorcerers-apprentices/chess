@@ -1,0 +1,15 @@
+<form [formGroup]="signupForm" (submit)="signup()">
+  <input formControlName="email" type="email" />
+  <br />
+  <input formControlName="password" type="password" />
+  <br />
+  <button>Sign Up</button>
+</form>
+<br />
+<form [formGroup]="signinForm" (submit)="signin()">
+  <input formControlName="email" type="email" />
+  <br />
+  <input formControlName="password" type="password" />
+  <br />
+  <button>Sign In</button>
+</form>

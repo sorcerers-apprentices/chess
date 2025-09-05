@@ -1,11 +1,11 @@
-import { inject, Injectable } from '@angular/core';
 import type {
   AuthResponse,
-  AuthTokenResponsePassword,
   SupabaseClient,
+  AuthTokenResponsePassword,
 } from '@supabase/supabase-js';
+import { inject, Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import { EnvironmentService } from './environment-service/environment.service';
+import { EnvironmentService } from './environment.service';
 
 @Injectable({
   providedIn: 'root',

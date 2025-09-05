@@ -28,4 +28,10 @@ export const appRoutes: Route[] = [
     loadComponent: () =>
       import('./pages/game-page/game-page').then((m) => m.GamePage),
   },
+  {
+    path: RoutePath.login,
+    title: 'Login | Chess Game',
+    loadComponent: () =>
+      import('./pages/login-page/login-page').then((m) => m.LoginPage),
+  },
 ];
