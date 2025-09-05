@@ -34,4 +34,12 @@ export const appRoutes: Route[] = [
     loadComponent: () =>
       import('./pages/login-page/login-page').then((m) => m.LoginPage),
   },
+  {
+    path: RoutePath.not_found,
+    title: '404 | Chess Game',
+    loadComponent: () =>
+      import('./pages/not-found-page/not-found-page').then(
+        (m) => m.NotFoundPage,
+      ),
+  },
 ];
