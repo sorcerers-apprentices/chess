@@ -8,6 +8,7 @@ export const AppRoutes = {
 } as const;
 
 type AppRouteType = (typeof AppRoutes)[keyof typeof AppRoutes];
+export type RoutePathValue = (typeof RoutePath)[keyof typeof RoutePath];
 
 export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.MAIN]: '',
@@ -33,5 +34,13 @@ export const appRoutes: Route[] = [
     title: 'Login | Chess Game',
     loadComponent: () =>
       import('./pages/login-page/login-page').then((m) => m.LoginPage),
+  },
+  {
+    path: RoutePath.not_found,
+    title: '404 | Chess Game',
+    loadComponent: () =>
+      import('./pages/not-found-page/not-found-page').then(
+        (m) => m.NotFoundPage,
+      ),
   },
 ];
