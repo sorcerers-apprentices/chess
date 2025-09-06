@@ -2,11 +2,7 @@
   @for (group of sidebarGroups(); track group.key) {
   <tui-opt-group [label]="group.key">
     @for (item of group.value; track item.name) {
-    <button
-      tuiOption
-      type="button"
-      (click)="onClick(item)"
-    >
+    <button tuiOption type="button" (click)="onClick(item)">
       <img alt="icon" src="/assets/img/sidebar-item.svg" />
       {{ item.name }}
     </button>
@@ -15,12 +11,7 @@
   }
 
   <tui-opt-group>
-    <label
-      tuiOption
-      (click)="toggleTheme()"
-      role="button"
-      tabindex="0"
-    >
+    <label tuiOption (click)="toggleTheme()" role="button" tabindex="0">
       <input
         size="s"
         tuiSwitch
