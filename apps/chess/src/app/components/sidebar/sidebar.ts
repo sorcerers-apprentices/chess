@@ -11,10 +11,10 @@ import {
   TUI_DARK_MODE,
   TuiDataListComponent,
 } from '@taiga-ui/core';
+import { Router } from '@angular/router';
 import { TuiSwitch } from '@taiga-ui/kit';
 import { RoutePath } from '../../app.routes';
 import type { RoutePathValue } from '../../app.routes';
-import { Router } from '@angular/router';
 
 type SidebarItemType = {
   name: string;
@@ -35,7 +35,7 @@ export class Sidebar {
 
   protected readonly sidebarMenu = signal<SidebarMapType>({
     Game: [
-      { name: 'New game', route: RoutePath.login },
+      { name: 'New game', route: RoutePath.main },
       { name: 'Resume', route: RoutePath.main },
       { name: 'Play vs Engine', route: RoutePath.main },
     ],
