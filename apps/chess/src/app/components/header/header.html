@@ -1,4 +1,13 @@
 <header tuiNavigationHeader>
+  <button
+    title="Menu"
+    tuiIconButton
+    tuiNavigationDrawer
+    type="button"
+    [(open)]="open"
+  >
+    <app-sidebar />
+  </button>
   <span tuiNavigationLogo>
     <span tuiFade>Chess Game</span>
     <tui-badge>online</tui-badge>

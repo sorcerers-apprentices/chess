@@ -8,6 +8,7 @@ export const AppRoutes = {
 } as const;
 
 type AppRouteType = (typeof AppRoutes)[keyof typeof AppRoutes];
+export type RoutePathValue = (typeof RoutePath)[keyof typeof RoutePath];
 
 export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.MAIN]: '',
