@@ -10,4 +10,6 @@ import { Navigation } from '../../components/navigation/navigation';
   styleUrl: './game-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GamePage {}
+export class GamePage {
+  // test pr
+}
