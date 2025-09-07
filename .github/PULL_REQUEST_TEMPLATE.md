@@ -1,9 +1,9 @@
-# Title of changes:
-## Type of change
+1. Title of changes:
+2. Type of change
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
-# Title and number of issues:
-# Screenshots:
-# Description:
-# Important notices for future work:
+3. Title and number of issues:
+4. Screenshots:
+5. Description:
+6. Important notices for future work:
