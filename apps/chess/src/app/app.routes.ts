@@ -3,8 +3,8 @@ import type { Route } from '@angular/router';
 export const AppRoutes = {
   MAIN: 'main',
   GAME: 'game',
-  SIGN_UP: 'sign_up',
-  LOGIN: 'login',
+  SIGN_UP: 'signup',
+  SIGN_IN: 'signin',
   NOT_FOUND: 'not_found',
 } as const;
 
@@ -14,8 +14,8 @@ export type RoutePathValue = (typeof RoutePath)[keyof typeof RoutePath];
 export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.MAIN]: '',
   [AppRoutes.GAME]: 'game',
-  [AppRoutes.SIGN_UP]: 'sign-up',
-  [AppRoutes.LOGIN]: 'login',
+  [AppRoutes.SIGN_UP]: 'signup',
+  [AppRoutes.SIGN_IN]: 'signin',
   [AppRoutes.NOT_FOUND]: '**',
 };
 
@@ -32,16 +32,16 @@ export const appRoutes: Route[] = [
       import('./pages/game-page/game-page').then((m) => m.GamePage),
   },
   {
-    path: RoutePath.login,
+    path: RoutePath.signup,
     title: 'SignUp | Chess Game',
     loadComponent: () =>
       import('./pages/sign-up-page/sign-up-page').then((m) => m.SignUpPage),
   },
   {
-    path: RoutePath.login,
+    path: RoutePath.signin,
     title: 'Login | Chess Game',
     loadComponent: () =>
-      import('./pages/login-page/login-page').then((m) => m.LoginPage),
+      import('./pages/login-page/sign-in-page').then((m) => m.SignInPage),
   },
   {
     path: RoutePath.not_found,

@@ -1,0 +1,66 @@
+.sign-up {
+  padding: 3.5rem 3rem;
+
+  &_title {
+    margin-bottom: 0.9rem;
+    font-size: 2.2rem;
+
+    @media (width <= 800px) and (width >= 530px) {
+      font-size: 1.8rem;
+    }
+
+    @media (width <= 529px) {
+      margin-bottom: 0.4rem;
+      font-size: 1.2rem;
+    }
+  }
+
+  &_text {
+    margin-bottom: 2rem;
+    font-size: 1rem;
+
+    @media (width <= 529px) {
+      margin-bottom: 1.5rem;
+      font-size: 0.7rem;
+    }
+  }
+
+  &_form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1.8rem;
+
+    &_input {
+      width: 80%;
+
+      @media (width <= 1100px) {
+        width: 100%;
+      }
+    }
+
+    @media (width <= 1100px) and (width >= 801) {
+      gap: 1rem;
+    }
+
+    @media (width <= 800px) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+      gap: 1rem;
+    }
+  }
+
+  &_button {
+    grid-area: 3/1/3/3;
+    justify-self: center;
+    width: 15%;
+
+    @media (width <= 800px) {
+      grid-area: 4/1;
+    }
+
+    @media (width <= 650px) {
+      width: 40%;
+    }
+  }
+}

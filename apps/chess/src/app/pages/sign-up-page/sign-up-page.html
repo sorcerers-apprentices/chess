@@ -1,4 +1,45 @@
 <app-header />
-<main tuiNavigationMain>
+<main tuiNavigationMain class="sign-up">
+  <h2 tuiText class="tui-text_h2 sign-up_title">Sign Up to Our Game Service</h2>
+  <p class="sign-up_text">Fill out the form to sign up to our game service</p>
+  <br />
+  <form [formGroup]="signupForm" (submit)="signup()" class="sign-up_form">
+    <label tuiLabel>
+      Name
+      <tui-textfield tuiTextfieldSize="m" class="sign-up_form_input">
+        <input
+          placeholder="Enter your name"
+          type="text"
+          tuiTextfield
+          formControlName="username"
+        />
+      </tui-textfield>
+    </label>
+    <label tuiLabel>
+      Password
+      <tui-textfield tuiTextfieldSize="m" class="sign-up_form_input">
+        <input
+          placeholder="Enter your password"
+          type="password"
+          tuiTextfield
+          formControlName="password"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+    </label>
+    <label tuiLabel>
+      Email
+      <tui-textfield tuiTextfieldSize="m" class="sign-up_form_input">
+        <input
+          placeholder="Enter your email"
+          tuiTextfield
+          formControlName="email"
+        />
+      </tui-textfield>
+    </label>
+    <button size="m" tuiButton type="submit" class="sign-up_button">
+      Sign Up
+    </button>
+  </form>
   <app-navigation />
 </main>
