@@ -83,7 +83,7 @@ import {
 })
 export class SignUpPage {
   protected fb = inject(NonNullableFormBuilder);
-  protected supabaseService = inject(SupabaseService);
+  protected api = inject(SupabaseService);
 
   protected readonly countries: readonly TuiCountryIsoCode[] = [
     'US',
@@ -124,6 +124,6 @@ export class SignUpPage {
 
   protected async signup(): Promise<AuthResponse> {
     const { password, email, username } = this.signupForm.getRawValue();
-    return await this.supabaseService.signup(email, password, username);
+    return await this.api.signup(email, password, username);
   }
 }
