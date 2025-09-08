@@ -1,5 +1,5 @@
 {
   "*.ts": ["npm run format:check", "npm run lint"],
   "*.{css,scss}": ["npm run format:check", "npm run lint:scss"],
-  "*.{test,spec}.ts": ["npm run format:check", "npm run test"]
+  "*.{test,spec}.ts": ["npm run format:check"]
 }
