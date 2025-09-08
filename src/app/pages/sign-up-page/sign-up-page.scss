@@ -1,4 +1,4 @@
-@use '../../styles/mixins' as mix;
+@use "../../styles/mixins" as mix;
 
 .sign-up {
   @include mix.sign-page;
