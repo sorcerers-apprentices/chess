@@ -22,6 +22,7 @@ import { TuiHeaderComponent, TuiNavigation } from '@taiga-ui/layout';
   templateUrl: './header.html',
   styleUrl: './header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class Header {
   protected open = false;

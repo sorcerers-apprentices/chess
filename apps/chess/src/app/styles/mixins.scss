@@ -36,6 +36,13 @@
   }
 }
 
+@mixin sign-page() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3.5rem;
+}
+
 @mixin center($g: 1rem, $fl-dir: row) {
   display: flex;
   flex-direction: $fl-dir;

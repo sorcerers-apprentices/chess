@@ -12,7 +12,8 @@
       "options": {
         "define": {
           "PUBLISHABLE_KEY": "\"sb_publishable_xcVsmJL_0q0lZYtOd55uhg_bMsN2p5h\"",
-          "API_URL": "\"https://jnwnlprjvevgdxnngxnr.supabase.co\""
+          "API_URL": "\"https://jnwnlprjvevgdxnngxnr.supabase.co\"",
+          "REDIRECT_URL": "\"http://localhost:4200/signin\""
         },
         "outputPath": "dist/apps/chess",
         "browser": "apps/chess/src/main.ts",
@@ -41,7 +42,7 @@
           "@taiga-ui/addon-mobile/styles/taiga-ui-mobile.less"
         ],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/chess/src/styles"]
+          "includePaths": ["apps/chess/src/app/styles"]
         }
       },
       "configurations": {

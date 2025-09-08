@@ -7,5 +7,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './navigation.html',
   styleUrl: './navigation.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class Navigation {}
