@@ -2,7 +2,6 @@ import { Header } from '../../components/header/header';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TuiNavigation } from '@taiga-ui/layout';
 import { type TuiCountryIsoCode } from '@taiga-ui/i18n';
-import { Navigation } from '../../components/navigation/navigation';
 import {
   FormsModule,
   NonNullableFormBuilder,
@@ -17,6 +16,7 @@ import {
   tuiValidationErrorsProvider,
 } from '@taiga-ui/kit';
 import {
+  TuiAlertService,
   TuiButton,
   TuiError,
   TuiIcon,
@@ -27,10 +27,9 @@ import {
 } from '@taiga-ui/core';
 import { TuiInputPhoneInternational } from '@taiga-ui/experimental';
 import { SupabaseService } from '../../services/supabase.service';
-import type { AuthResponse } from '@supabase/supabase-js';
 import { TuiInputPhoneModule } from '@taiga-ui/legacy';
 import metadata from 'libphonenumber-js/mobile/metadata';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import {
   maxPasswordLength,
@@ -50,7 +49,6 @@ import {
     Header,
     TuiInputPhoneInternational,
     TuiNavigation,
-    Navigation,
     ReactiveFormsModule,
     TuiInputRange,
     TuiTextfield,
@@ -82,8 +80,9 @@ import {
   standalone: true,
 })
 export class SignUpPage {
-  protected fb = inject(NonNullableFormBuilder);
-  protected api = inject(SupabaseService);
+  protected readonly fb = inject(NonNullableFormBuilder);
+  protected readonly api = inject(SupabaseService);
+  protected readonly alert = inject(TuiAlertService);
 
   protected readonly countries: readonly TuiCountryIsoCode[] = [
     'US',
@@ -122,8 +121,21 @@ export class SignUpPage {
     }),
   });
 
-  protected async signup(): Promise<AuthResponse> {
-    const { password, email, username } = this.signupForm.getRawValue();
-    return await this.api.signup(email, password, username);
+  protected async signup(): Promise<void> {
+    const result = await this.api.signup(this.signupForm.getRawValue());
+
+    if (result.error) {
+      return await firstValueFrom(
+        this.alert.open('ERROR <strong>HTML</strong>', {
+          label: 'With a heading!',
+        }),
+      );
+    }
+
+    return await firstValueFrom(
+      this.alert.open('Check your email', {
+        label: 'With a heading!',
+      }),
+    );
   }
 }

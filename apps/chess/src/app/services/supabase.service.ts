@@ -1,43 +1,49 @@
 import type {
   AuthResponse,
-  SupabaseClient,
   AuthTokenResponsePassword,
+  SupabaseClient,
 } from '@supabase/supabase-js';
-import { inject, Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
+import { inject, Injectable } from '@angular/core';
 import { EnvironmentService } from './environment.service';
+import type {
+  SignInCredentials,
+  SignUpCredentials,
+} from '../types/sign-up.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
-  public enviromentService = inject(EnvironmentService);
-  public apiUrl = this.enviromentService.apiUrl;
-  public publishableKey = this.enviromentService.publishableKey;
-  public redirectUrl = this.enviromentService.redirectURL;
-
-  public supabase: SupabaseClient = createClient(
+  private readonly enviromentService = inject(EnvironmentService);
+  private readonly apiUrl = this.enviromentService.apiUrl;
+  private readonly publishableKey = this.enviromentService.publishableKey;
+  private readonly redirectUrl = this.enviromentService.redirectURL;
+  private readonly supabase: SupabaseClient = createClient(
     this.apiUrl,
     this.publishableKey,
   );
 
-  public async signup(
-    email: string,
-    password: string,
-    username: string,
-  ): Promise<AuthResponse> {
-    const options = {
-      data: { username },
-      emailRedirectTo: this.redirectUrl,
-    };
-    const credentials = { email, password, options };
-    return await this.supabase.auth.signUp(credentials);
+  public async signup(credentials: SignUpCredentials): Promise<AuthResponse> {
+    return await this.supabase.auth.signUp({
+      email: credentials.email,
+      password: credentials.password,
+      options: {
+        data: {
+          username: credentials.username,
+          phone: credentials.phone,
+        },
+        emailRedirectTo: this.redirectUrl,
+      },
+    });
   }
 
   public async signin(
-    email: string,
-    password: string,
+    credentials: SignInCredentials,
   ): Promise<AuthTokenResponsePassword> {
-    return await this.supabase.auth.signInWithPassword({ email, password });
+    return await this.supabase.auth.signInWithPassword({
+      email: credentials.email,
+      password: credentials.password,
+    });
   }
 }

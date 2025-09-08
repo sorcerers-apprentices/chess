@@ -1,0 +1,45 @@
+<app-header />
+<main tuiNavigationMain class="sign-in">
+  <app-navigation />
+  <div class="sign-in_container">
+    <h2 tuiText class="tui-text_h2 sign-in_title">
+      Sign In to Our Game Service
+    </h2>
+    <form [formGroup]="signinForm" (submit)="signin()" class="sign-in_form">
+      <label tuiLabel>
+        Email
+        <tui-textfield tuiTextfieldSize="m">
+          <input
+            placeholder="Enter your email"
+            tuiTextfield
+            formControlName="email"
+          />
+        </tui-textfield>
+        <tui-error
+          formControlName="email"
+          [error]="[] | tuiFieldError | async"
+        />
+      </label>
+      <label tuiLabel>
+        Password
+        <tui-textfield tuiTextfieldSize="m">
+          <input
+            placeholder="Enter your password"
+            type="password"
+            tuiTextfield
+            formControlName="password"
+          />
+          <tui-icon tuiPassword />
+        </tui-textfield>
+        <tui-error
+          formControlName="password"
+          [error]="[] | tuiFieldError | async"
+        />
+      </label>
+      <div class="sign-in_form_buttons-container">
+        <button size="m" tuiButton type="submit">Sign in</button>
+        <button size="m" tuiButton type="button">Sign up</button>
+      </div>
+    </form>
+  </div>
+</main>
