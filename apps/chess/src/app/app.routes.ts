@@ -41,7 +41,7 @@ export const appRoutes: Route[] = [
     path: RoutePath.signin,
     title: 'Login | Chess Game',
     loadComponent: () =>
-      import('./pages/login-page/sign-in-page').then((m) => m.SignInPage),
+      import('./pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
   },
   {
     path: RoutePath.not_found,
