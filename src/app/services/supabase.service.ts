@@ -4,21 +4,20 @@ import type {
   SupabaseClient,
 } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
-import { inject, Injectable } from '@angular/core';
-import { EnvironmentService } from './environment.service';
+import { Injectable } from '@angular/core';
 import type {
   SignInCredentials,
   SignUpCredentials,
 } from '../types/sign-up.type';
+import { environment } from '@/environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
-  private readonly enviromentService = inject(EnvironmentService);
-  private readonly apiUrl = this.enviromentService.apiUrl;
-  private readonly publishableKey = this.enviromentService.publishableKey;
-  private readonly redirectUrl = this.enviromentService.redirectURL;
+  private readonly apiUrl = environment.apiUrl;
+  private readonly publishableKey = environment.publishableKey;
+  private readonly redirectUrl = environment.redirectURL;
   private readonly supabase: SupabaseClient = createClient(
     this.apiUrl,
     this.publishableKey,
