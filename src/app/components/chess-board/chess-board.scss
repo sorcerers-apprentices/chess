@@ -1,0 +1,61 @@
+:host {
+  padding: 20px;
+}
+
+/* только слева (ranks) и снизу (files) */
+.board-wrap {
+  --axis: 28px;
+
+  display: grid;
+  grid-template-columns: var(--axis) 1fr; /* слева ось + доска */
+  grid-template-rows: 1fr var(--axis); /* доска + снизу ось */
+  width: min(96vmin, 640px);
+  margin: 0 auto;
+}
+
+/* левая ось: 8..1 сверху вниз */
+.ranks {
+  user-select: none;
+  display: grid;
+  grid-column: 1;
+  grid-row: 1;
+  grid-template-rows: repeat(8, 1fr);
+  place-items: center center;
+  border-top: 2px solid var(--tui-background-accent-2);
+  border-left: 2px solid var(--tui-background-accent-2);
+  color: var(--tui-text-primary);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
+
+/* нижняя ось: a..h слева направо */
+.files {
+  user-select: none;
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  grid-template-columns: repeat(8, 1fr);
+  place-items: center center;
+  border-right: 2px solid var(--tui-background-accent-2);
+  border-bottom: 2px solid var(--tui-background-accent-2);
+  color: var(--tui-text-primary);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  aspect-ratio: 1 / 1;
+
+  /* доска всегда квадратная */
+  width: min(92vmin, 640px);
+  border: 2px solid var(--tui-background-accent-2);
+}
+
+.corner {
+  grid-column: 1;
+  grid-row: 2;
+  border-bottom: 2px solid var(--tui-background-accent-2);
+  border-left: 2px solid var(--tui-background-accent-2);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
