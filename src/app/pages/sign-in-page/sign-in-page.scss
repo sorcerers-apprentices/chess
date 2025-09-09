@@ -1,7 +1,14 @@
-@use "../../styles/mixins" as mix;
+@use "mixins" as mix;
+@use "variables" as vars;
 
 .sign-in {
   @include mix.sign-page;
+  @include mix.background("/assets/img/signin.jpg");
+
+  height: 100vh;
+  margin: 0 -2rem;
+  padding-top: 0;
+  background-position: center;
 
   &_container {
     max-width: 29.5rem;
@@ -11,7 +18,7 @@
     margin-bottom: 3rem;
     font-size: 2rem;
 
-    @media (width <= 800px) and (width >= 530px) {
+    @media (width <= 950px) and (width >= 530px) {
       font-size: 1.8rem;
     }
 
@@ -35,15 +42,6 @@
       @media (width <= 609px) {
         margin-top: 1rem;
       }
-    }
-
-    @media (width <= 950px) and (width >= 610px) {
-      max-width: 60%;
-    }
-
-    @media (width <= 609px) {
-      gap: 0.5rem;
-      max-width: 90%;
     }
   }
 }

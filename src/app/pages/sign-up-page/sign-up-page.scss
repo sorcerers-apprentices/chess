@@ -1,7 +1,11 @@
-@use "../../styles/mixins" as mix;
+@use "mixins" as mix;
+@use "variables" as vars;
 
 .sign-up {
   @include mix.sign-page;
+  @include mix.background("/assets/img/signup.jpg");
+
+  background-position: -12rem 35%;
 
   &_container {
     max-width: 29.5rem;

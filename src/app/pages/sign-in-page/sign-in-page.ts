@@ -31,7 +31,7 @@ import { Router } from '@angular/router';
 import { token } from '../../store/actions/auth.actions';
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-sign-in-page',
   imports: [
     ReactiveFormsModule,
     Header,

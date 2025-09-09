@@ -134,7 +134,7 @@ export class SignUpPage {
 
     return await firstValueFrom(
       this.alert.open('Check your email', {
-        label: 'With a heading!',
+        label: 'With a heading4!',
       }),
     );
   }
