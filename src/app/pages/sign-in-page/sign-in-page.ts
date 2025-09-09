@@ -28,7 +28,6 @@ import { firstValueFrom } from 'rxjs';
 import { signInUser } from '../../store/actions/user.actions';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { token } from '../../store/actions/auth.actions';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -79,8 +78,11 @@ export class SignInPage {
 
     if (result.error) {
       return await firstValueFrom(
-        this.alert.open('ERROR <strong>HTML</strong>', {
-          label: 'With a heading!',
+        this.alert.open('<strong>ERROR</strong>', {
+          label: result.error.message
+            ? `${result.error.message}!`
+            : 'Something went wrong, try again, please',
+          appearance: 'negative',
         }),
       );
     }
@@ -94,11 +96,10 @@ export class SignInPage {
     });
     this.store.dispatch(signInUserAction);
 
-    const tokenAction = token({
-      token: result.data.session.access_token,
-    });
-    this.store.dispatch(tokenAction);
-
     return this.router.navigate(['/game']).then();
+  }
+
+  protected goToSignUpPage(): void {
+    this.router.navigate(['/signup']).then();
   }
 }
