@@ -89,9 +89,12 @@ export class SignInPage {
 
     const signInUserAction = signInUser({
       user: {
+        isAuth: true,
         email: result.data.user?.email ?? '',
         username: result.data.user?.user_metadata['username'],
         phone: result.data.user?.user_metadata['phone'],
+        elo: 0,
+        gameNumber: 0,
       },
     });
     this.store.dispatch(signInUserAction);

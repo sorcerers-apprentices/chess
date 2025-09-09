@@ -1,8 +1,10 @@
 export type User = {
+  isAuth: boolean;
   email: string;
   username: string;
   phone: string;
-  theme?: string;
+  elo: number;
+  gameNumber: number;
 };
 
 export type SignInCredentials = {
