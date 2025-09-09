@@ -5,7 +5,9 @@
   @include mix.sign-page;
   @include mix.background("/assets/img/signup.jpg");
 
-  background-position: -12rem 35%;
+  height: 100vh;
+  margin: 0;
+  background-position: -10rem 35%;
 
   &_container {
     max-width: 29.5rem;
