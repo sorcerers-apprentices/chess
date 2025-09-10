@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FILES } from '@/app/types/chess-square.type';
-import {
-  RANKS_TOP_DOWN,
-  SQUARE_STATES,
-} from '@/app/constants/chess-square.constans';
+import { RANKS_TOP_DOWN } from '@/app/constants/chess-square.constans';
 import { ChessSquare } from '@/app/components/chess-square/chess-square';
+import { BoardSetupService } from '@/app/services/board-setup.service';
+import type { BoardOrientationType } from '@/app/types/chess-piece.type';
 
 @Component({
   selector: 'app-chess-board',
@@ -16,5 +15,13 @@ import { ChessSquare } from '@/app/components/chess-square/chess-square';
 export class ChessBoard {
   protected readonly files = FILES;
   protected readonly ranks = RANKS_TOP_DOWN;
-  protected readonly squares = SQUARE_STATES;
+  protected readonly boardSetup = inject(BoardSetupService);
+  protected readonly orientation: BoardOrientationType = 'whiteBottom';
+  protected readonly squares = this.boardSetup.createInitialSquares(
+    this.orientation,
+  );
+
+  constructor() {
+    console.log('[ChessBoard] squares:', this.squares);
+  }
 }

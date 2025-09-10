@@ -9,11 +9,11 @@ export type SquareType = `${FileType}${RankType}`;
 /** Фигура на доске: id обязателен */
 export type PieceType = {
   id: string;
-  color: ColorType;
+  color: PieceColorType;
   kind: PieceKindType;
 };
 
-export type ColorType = 'light' | 'dark';
+export type PieceColorType = 'light' | 'dark';
 
 export type ColorLightType = 'var(--tui-chart-categorical-18)';
 export type ColorDarkType = 'var(--tui-background-accent-3)';
