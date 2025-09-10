@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import type { Square, SquareColor } from '@/app/types/chess-square.type';
+import type {
+  SquareType,
+  SquareColorType,
+} from '@/app/types/chess-square.type';
 
 @Component({
   selector: 'app-chess-square',
@@ -9,6 +12,6 @@ import type { Square, SquareColor } from '@/app/types/chess-square.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChessSquare {
-  public readonly square = input.required<Square>();
-  public readonly backgroundColor = input.required<SquareColor>();
+  public readonly square = input.required<SquareType>();
+  public readonly backgroundColor = input.required<SquareColorType>();
 }

@@ -1,15 +1,21 @@
 :host {
   padding: 20px;
+  /* не занимай все 12 колонок грида родителя */
+  grid-column: auto;
+
+  /* ширина по содержимому компонента */
+  max-inline-size: max-content;
+  justify-self: center; /* по центру строки грида */
 }
 
 /* только слева (ranks) и снизу (files) */
 .board-wrap {
   --axis: 28px;
-
+  --size: min(92vmin, 640px);
   display: grid;
   grid-template-columns: var(--axis) 1fr; /* слева ось + доска */
   grid-template-rows: 1fr var(--axis); /* доска + снизу ось */
-  width: min(96vmin, 640px);
+  width: calc(var(--size) + var(--axis));
   margin: 0 auto;
 }
 

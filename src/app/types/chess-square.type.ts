@@ -1,25 +1,25 @@
-export type SquareState = {
-  square: Square;
-  squareColor: SquareColor;
-  piece: Piece | null;
+export type SquareStateType = {
+  square: SquareType;
+  squareColor: SquareColorType;
+  piece: PieceType | null;
 };
 
-export type Square = `${File}${Rank}`;
+export type SquareType = `${FileType}${RankType}`;
 
 /** Фигура на доске: id обязателен */
-export type Piece = {
+export type PieceType = {
   id: string;
-  kind: PieceKind;
-  color: Color;
+  color: ColorType;
+  kind: PieceKindType;
 };
 
-export type Color = 'light' | 'dark';
+export type ColorType = 'light' | 'dark';
 
-export type ColorLight = 'var(--tui-chart-categorical-18)';
-export type ColorDark = 'var(--tui-background-accent-3)';
-export type SquareColor = ColorLight | ColorDark;
+export type ColorLightType = 'var(--tui-chart-categorical-18)';
+export type ColorDarkType = 'var(--tui-background-accent-3)';
+export type SquareColorType = ColorLightType | ColorDarkType;
 
-export type PieceKind =
+export type PieceKindType =
   | 'king'
   | 'queen'
   | 'rook'
@@ -28,7 +28,7 @@ export type PieceKind =
   | 'pawn';
 
 export const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
-export type File = (typeof FILES)[number];
+export type FileType = (typeof FILES)[number];
 
 export const RANK_1 = 1;
 export const RANK_2 = 2;
@@ -50,4 +50,4 @@ export const RANKS = [
   RANK_8,
 ] as const;
 
-export type Rank = (typeof RANKS)[number];
+export type RankType = (typeof RANKS)[number];
