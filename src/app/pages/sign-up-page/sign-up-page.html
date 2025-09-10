@@ -3,17 +3,17 @@
   <main tuiNavigationMain class="sign-up">
     <div class="sign-up_container">
       <h2 tuiText class="tui-text_h2 sign-up_title">
-        Sign Up to Our Game Service
+        {{ "signup.title" | translate }}
       </h2>
       <p class="sign-up_text">
-        Fill out the form to sign up to our game service
+        {{ "signup.description" | translate }}
       </p>
       <form [formGroup]="signupForm" (submit)="signup()" class="sign-up_form">
         <label tuiLabel>
-          Email
+          {{ "signup.emailLabel" | translate }}
           <tui-textfield tuiTextfieldSize="m">
             <input
-              placeholder="Enter your email"
+              placeholder="{{ 'signup.emailPlaceholder' | translate }}"
               tuiTextfield
               formControlName="email"
             />
@@ -24,7 +24,7 @@
           />
         </label>
         <label tuiLabel>
-          Phone number
+          {{ "signup.phoneLabel" | translate }}
           <tui-textfield tuiTextfieldSize="m">
             <input
               formControlName="phone"
@@ -40,10 +40,10 @@
           />
         </label>
         <label tuiLabel>
-          Name
+          {{ "signup.nameLabel" | translate }}
           <tui-textfield tuiTextfieldSize="m">
             <input
-              placeholder="Enter your name"
+              placeholder="{{ 'signup.namePlaceholder' | translate }}"
               type="text"
               tuiTextfield
               formControlName="username"
@@ -55,10 +55,10 @@
           />
         </label>
         <label tuiLabel>
-          Password
+          {{ "signup.passwordLabel" | translate }}
           <tui-textfield tuiTextfieldSize="m">
             <input
-              placeholder="Enter your password"
+              placeholder="{{ 'signup.passwordPlaceholder' | translate }}"
               type="password"
               tuiTextfield
               formControlName="password"
@@ -71,7 +71,7 @@
           />
         </label>
         <button size="m" tuiButton type="submit" class="sign-up_button">
-          Sign Up
+          {{ "signup.signUp" | translate }}
         </button>
       </form>
     </div>
@@ -79,6 +79,6 @@
 } @else {
   <tui-block-status class="sign-up-success">
     <img alt="survived" src="/assets/img/sign-up.svg" tuiSlot="top" />
-    <h4>Well done! Check your email</h4>
+    <h4>{{ "signup.successTitle" | translate }}</h4>
   </tui-block-status>
 }
