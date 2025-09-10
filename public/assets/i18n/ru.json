@@ -1,0 +1,14 @@
+{
+  "sidebar": {
+    "game": "Игра",
+    "analysis": "Анализ",
+    "settings": "Настройки",
+    "newGame": "Новая игра",
+    "resume": "Продолжить",
+    "playVsEngine": "Игра против движка",
+    "analysisBoard": "Доска анализа",
+    "profile": "Профиль",
+    "darkMode": "Темная тема",
+    "language": "Русский"
+  }
+}

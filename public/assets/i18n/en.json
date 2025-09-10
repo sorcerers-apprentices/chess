@@ -1,0 +1,14 @@
+{
+  "sidebar": {
+    "game": "Game",
+    "analysis": "Analysis",
+    "settings": "Settings",
+    "newGame": "New game",
+    "resume": "Resume",
+    "playVsEngine": "Play vs Engine",
+    "analysisBoard": "Analysis board",
+    "profile": "Profile",
+    "darkMode": "Dark mode",
+    "language": "English"
+  }
+}
