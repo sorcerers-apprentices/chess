@@ -12,5 +12,16 @@
     "registration": "Sign Up",
     "darkMode": "Dark mode",
     "language": "English"
-  }
+  },
+  "signin": {
+    "title": "Sign In to Our Game Service",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "errorFallback": "Something went wrong, try again, please"
+  },
+  "signup": {}
 }

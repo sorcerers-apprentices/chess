@@ -3,14 +3,14 @@
   <app-navigation />
   <div class="sign-in_container">
     <h2 tuiText class="tui-text_h2 sign-in_title">
-      Sign In to Our Game Service
+      {{ "signin.title" | translate }}
     </h2>
     <form [formGroup]="signinForm" (submit)="signin()" class="sign-in_form">
       <label tuiLabel>
-        Email
+        {{ "signin.emailLabel" | translate }}
         <tui-textfield tuiTextfieldSize="m">
           <input
-            placeholder="Enter your email"
+            placeholder="{{ 'signin.emailPlaceholder' | translate }}"
             tuiTextfield
             formControlName="email"
           />
@@ -21,10 +21,10 @@
         />
       </label>
       <label tuiLabel>
-        Password
+        {{ "signin.passwordLabel" | translate }}
         <tui-textfield tuiTextfieldSize="m">
           <input
-            placeholder="Enter your password"
+            placeholder="{{ 'signin.passwordPlaceholder' | translate }}"
             type="password"
             tuiTextfield
             formControlName="password"
@@ -37,9 +37,11 @@
         />
       </label>
       <div class="sign-in_form_buttons-container">
-        <button size="m" tuiButton type="submit">Sign in</button>
+        <button size="m" tuiButton type="submit">
+          {{ "signin.signIn" | translate }}
+        </button>
         <button size="m" tuiButton type="button" (click)="goToSignUpPage()">
-          Sign up
+          {{ "signin.signUp" | translate }}
         </button>
       </div>
     </form>

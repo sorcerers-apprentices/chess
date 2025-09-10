@@ -12,5 +12,16 @@
     "registration": "Регистрация",
     "darkMode": "Темная тема",
     "language": "Русский"
-  }
+  },
+  "signin": {
+    "title": "Вход в игровой сервис",
+    "emailLabel": "Эл. почта",
+    "emailPlaceholder": "Введите вашу почту",
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "Введите пароль",
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "errorFallback": "Что-то пошло не так, попробуйте ещё раз"
+  },
+  "signup": {}
 }
