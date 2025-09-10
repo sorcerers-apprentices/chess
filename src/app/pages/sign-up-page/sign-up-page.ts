@@ -1,6 +1,11 @@
 import { Header } from '../../components/header/header';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TuiNavigation } from '@taiga-ui/layout';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { TuiBlockStatusComponent, TuiNavigation } from '@taiga-ui/layout';
 import { type TuiCountryIsoCode } from '@taiga-ui/i18n';
 import {
   FormsModule,
@@ -63,6 +68,7 @@ import {
     TuiError,
     TuiFieldErrorPipe,
     AsyncPipe,
+    TuiBlockStatusComponent,
   ],
   providers: [
     tuiInputPhoneInternationalOptionsProvider({ metadata: of(metadata) }),
@@ -83,6 +89,7 @@ export class SignUpPage {
   protected readonly fb = inject(NonNullableFormBuilder);
   protected readonly api = inject(SupabaseService);
   protected readonly alert = inject(TuiAlertService);
+  protected successSignUp = signal<boolean>(false);
 
   protected readonly countries: readonly TuiCountryIsoCode[] = [
     'US',
@@ -126,16 +133,14 @@ export class SignUpPage {
 
     if (result.error) {
       return await firstValueFrom(
-        this.alert.open('ERROR <strong>HTML</strong>', {
-          label: 'With a heading!',
+        this.alert.open('<strong>ERROR</strong>', {
+          label: result.error.message
+            ? `${result.error.message}!`
+            : 'Something went wrong, try again, please',
+          appearance: 'negative',
         }),
       );
     }
-
-    return await firstValueFrom(
-      this.alert.open('Check your email', {
-        label: 'With a heading!',
-      }),
-    );
+    this.successSignUp.update((prev) => !prev);
   }
 }

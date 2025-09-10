@@ -40,7 +40,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 3.5rem;
+  padding: 5rem 0 9rem;
 }
 
 @mixin center($g: 1rem, $fl-dir: row) {
@@ -51,4 +51,10 @@
   justify-content: center;
   margin: 0 auto;
   text-align: center;
+}
+
+@mixin background($url: "") {
+  background-image: url($url);
+  background-repeat: no-repeat;
+  background-size: cover;
 }

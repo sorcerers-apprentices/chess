@@ -1,5 +1,5 @@
-@use "./mixins.scss" as mixins;
-@use "./variables.scss" as vars;
+@use "mixins" as mix;
+@use "variables" as vars;
 
 html,
 body {
@@ -11,4 +11,20 @@ body {
   scroll-behavior: smooth;
   box-sizing: border-box;
   margin: 0;
+}
+
+tui-root[tuiTheme="dark"] .sign-up {
+  @include mix.background("/assets/img/signup-dark.jpg");
+
+  height: 100vh;
+  margin: 0 -2rem;
+  background-position: center;
+}
+
+tui-root[tuiTheme="dark"] .sign-in {
+  @include mix.background("/assets/img/signin-dark.jpg");
+
+  height: 100vh;
+  margin: 0 -2rem;
+  background-position: center;
 }

@@ -1,7 +1,13 @@
-@use "../../styles/mixins" as mix;
+@use "mixins" as mix;
+@use "variables" as vars;
 
 .sign-up {
   @include mix.sign-page;
+  @include mix.background("/assets/img/signup.jpg");
+
+  height: 100vh;
+  margin: 0;
+  background-position: -10rem 35%;
 
   &_container {
     max-width: 29.5rem;
@@ -40,4 +46,9 @@
   &_button {
     align-self: center;
   }
+}
+
+.sign-up-success {
+  margin-top: -5rem;
+  padding: 0;
 }
