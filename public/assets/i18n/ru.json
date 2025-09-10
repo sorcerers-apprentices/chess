@@ -8,6 +8,8 @@
     "playVsEngine": "Игра против движка",
     "analysisBoard": "Доска анализа",
     "profile": "Профиль",
+    "login": "Авторизация",
+    "registration": "Регистрация",
     "darkMode": "Темная тема",
     "language": "Русский"
   }

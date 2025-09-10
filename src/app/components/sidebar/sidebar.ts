@@ -51,7 +51,11 @@ export class Sidebar {
     'sidebar.analysis': [
       { nameKey: 'sidebar.analysisBoard', route: RoutePath.main },
     ],
-    'sidebar.settings': [{ nameKey: 'sidebar.profile', route: RoutePath.main }],
+    'sidebar.settings': [
+      { nameKey: 'sidebar.profile', route: RoutePath.main },
+      { nameKey: 'sidebar.login', route: RoutePath.signin },
+      { nameKey: 'sidebar.registration', route: RoutePath.signup },
+    ],
   });
 
   protected readonly sidebarGroups = computed(() =>
