@@ -20,8 +20,4 @@ export class ChessBoard {
   protected readonly squares = this.boardSetup.createInitialSquares(
     this.orientation,
   );
-
-  constructor() {
-    console.log('[ChessBoard] squares:', this.squares);
-  }
 }

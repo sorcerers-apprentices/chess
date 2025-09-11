@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   input,
 } from '@angular/core';
 import type {
@@ -31,13 +30,10 @@ export class ChessSquare {
     return p ? PIECE_ICON_URL[p.kind][p.color] : '';
   });
 
-  protected readonly hasPiece = computed(() => this.piece() !== null);
+  protected readonly altText = computed(() => {
+    const p = this.piece();
+    return p ? `${p.color} ${p.kind}` : '';
+  });
 
-  constructor() {
-    effect(() => {
-      console.log('[ChessSquare] square =', this.square());
-      console.log('[ChessSquare] piece =', this.piece());
-      console.log('[ChessSquare] icon =', this.icon());
-    });
-  }
+  protected readonly hasPiece = computed(() => this.piece() !== null);
 }

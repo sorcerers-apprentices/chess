@@ -29,15 +29,31 @@ export class BoardSetupService {
     g: 'knight',
     h: 'rook',
   };
+  private readonly setups: Record<
+    BoardOrientationType,
+    readonly SquareStateType[]
+  >;
+
+  constructor() {
+    this.setups = {
+      whiteBottom: this.calculateSetup('whiteBottom'),
+      whiteTop: this.calculateSetup('whiteTop'),
+    };
+  }
 
   public createInitialSquares(
     orientation: BoardOrientationType = 'whiteBottom',
   ): readonly SquareStateType[] {
-    return SQUARE_STATES.map((state) => {
-      const piece = this.pieceForStart(state.square, orientation);
-      // возвращаем новый объект, не мутируя исходный readonly
-      return { ...state, piece };
-    });
+    return this.setups[orientation];
+  }
+
+  private calculateSetup(
+    orientation: BoardOrientationType,
+  ): readonly SquareStateType[] {
+    return SQUARE_STATES.map((state) => ({
+      ...state,
+      piece: this.pieceForStart(state.square, orientation),
+    }));
   }
 
   private pieceForStart(
