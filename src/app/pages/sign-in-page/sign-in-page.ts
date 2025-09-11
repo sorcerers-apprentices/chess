@@ -1,4 +1,4 @@
-import { SupabaseService } from '../../services/supabase.service';
+import { UserSupabaseService } from '../../services/user-supabase.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   NonNullableFormBuilder,
@@ -28,6 +28,7 @@ import { firstValueFrom } from 'rxjs';
 import { signInUser } from '../../store/actions/user.actions';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
+import type { User } from '@supabase/auth-js/dist/module/lib/types';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -59,7 +60,7 @@ import { Router } from '@angular/router';
 })
 export class SignInPage {
   protected readonly fb = inject(NonNullableFormBuilder);
-  protected readonly api = inject(SupabaseService);
+  protected readonly api = inject(UserSupabaseService);
   protected readonly alert = inject(TuiAlertService);
   protected readonly store = inject(Store);
   protected readonly router = inject(Router);
@@ -87,14 +88,17 @@ export class SignInPage {
       );
     }
 
+    const user: User = result.data.user;
+    const playedGames = await this.api.fetchGamesCount(user.id);
+    const winedGames = await this.api.fetchWinedGamesCount(user.id);
+
     const signInUserAction = signInUser({
       user: {
-        isAuth: true,
-        email: result.data.user?.email ?? '',
-        username: result.data.user?.user_metadata['username'],
-        phone: result.data.user?.user_metadata['phone'],
-        elo: 0,
-        gameNumber: 0,
+        email: user.email ?? '',
+        username: user.user_metadata['username'],
+        phone: user.user_metadata['phone'],
+        playedGames,
+        winedGames,
       },
     });
     this.store.dispatch(signInUserAction);

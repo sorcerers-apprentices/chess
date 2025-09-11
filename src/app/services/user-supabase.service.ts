@@ -14,7 +14,7 @@ import { environment } from '@/environments/environment.development';
 @Injectable({
   providedIn: 'root',
 })
-export class SupabaseService {
+export class UserSupabaseService {
   private readonly apiUrl = environment.apiUrl;
   private readonly publishableKey = environment.publishableKey;
   private readonly redirectUrl = environment.redirectURL;
@@ -44,5 +44,39 @@ export class SupabaseService {
       email: credentials.email,
       password: credentials.password,
     });
+  }
+
+  public async fetchGamesCount(userId: string): Promise<number> {
+    const { count, error } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`);
+
+    if (error || count === null) {
+      console.error('Error fetching data:', error?.message);
+      return 0;
+    }
+
+    return +count;
+  }
+
+  public async fetchWinedGamesCount(userId: string): Promise<number> {
+    const { count: countW, error: errorW } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .eq('white_player_id', userId)
+      .eq('result', 'WHITE_WINS');
+    const { count: countB, error: errorB } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .eq('black_player_id', userId)
+      .eq('result', 'BLACK_WINS');
+
+    if (errorW || errorB || countW === null || countB === null) {
+      console.error('Error fetching data: ', errorW?.message, errorB?.message);
+      return 0;
+    }
+
+    return countW + countB;
   }
 }

@@ -31,7 +31,7 @@ import {
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { TuiInputPhoneInternational } from '@taiga-ui/experimental';
-import { SupabaseService } from '../../services/supabase.service';
+import { UserSupabaseService } from '../../services/user-supabase.service';
 import { TuiInputPhoneModule } from '@taiga-ui/legacy';
 import metadata from 'libphonenumber-js/mobile/metadata';
 import { firstValueFrom, of } from 'rxjs';
@@ -87,7 +87,7 @@ import {
 })
 export class SignUpPage {
   protected readonly fb = inject(NonNullableFormBuilder);
-  protected readonly api = inject(SupabaseService);
+  protected readonly api = inject(UserSupabaseService);
   protected readonly alert = inject(TuiAlertService);
   protected successSignUp = signal<boolean>(false);
 
