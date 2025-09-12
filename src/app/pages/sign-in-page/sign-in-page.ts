@@ -25,7 +25,6 @@ import { AsyncPipe } from '@angular/common';
 import { TuiMainComponent } from '@taiga-ui/layout';
 import { Header } from '../../components/header/header';
 import { signInUser } from '../../store/actions/user.actions';
-import { SupabaseService } from '../../services/supabase.service';
 import type { User } from '@supabase/auth-js/dist/module/lib/types';
 import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -57,6 +56,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
       email: 'Enter a valid email address',
     }),
   ],
+  standalone: true,
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
