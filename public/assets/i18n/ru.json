@@ -1,0 +1,40 @@
+{
+  "sidebar": {
+    "game": "Игра",
+    "analysis": "Анализ",
+    "settings": "Настройки",
+    "newGame": "Новая игра",
+    "resume": "Продолжить",
+    "playVsEngine": "Игра против движка",
+    "analysisBoard": "Доска анализа",
+    "profile": "Профиль",
+    "login": "Авторизация",
+    "registration": "Регистрация",
+    "darkMode": "Темная тема",
+    "language": "Русский"
+  },
+  "signin": {
+    "title": "Вход в игровой сервис",
+    "emailLabel": "Эл. почта",
+    "emailPlaceholder": "Введите вашу почту",
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "Введите пароль",
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "errorFallback": "Что-то пошло не так, попробуйте ещё раз"
+  },
+  "signup": {
+    "title": "Регистрация в игровом сервисе",
+    "description": "Заполните форму для регистрации в нашем игровом сервисе",
+    "emailLabel": "Эл. почта",
+    "emailPlaceholder": "Введите вашу почту",
+    "phoneLabel": "Номер телефона",
+    "nameLabel": "Имя",
+    "namePlaceholder": "Введите ваше имя",
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "Введите пароль",
+    "signUp": "Зарегистрироваться",
+    "successTitle": "Отлично! Проверьте вашу почту",
+    "errorFallback": "Что-то пошло не так, попробуйте ещё раз"
+  }
+}

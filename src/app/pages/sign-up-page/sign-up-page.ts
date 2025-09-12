@@ -47,6 +47,7 @@ import {
   noValidEmailFormat,
   noWhitespace,
 } from '../../utilities/validation-funtions';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game-page',
@@ -69,6 +70,7 @@ import {
     TuiFieldErrorPipe,
     AsyncPipe,
     TuiBlockStatusComponent,
+    TranslatePipe,
   ],
   providers: [
     tuiInputPhoneInternationalOptionsProvider({ metadata: of(metadata) }),
@@ -90,6 +92,7 @@ export class SignUpPage {
   protected readonly api = inject(UserSupabaseService);
   protected readonly alert = inject(TuiAlertService);
   protected successSignUp = signal<boolean>(false);
+  protected readonly translate = inject(TranslateService);
 
   protected readonly countries: readonly TuiCountryIsoCode[] = [
     'US',
@@ -136,7 +139,7 @@ export class SignUpPage {
         this.alert.open('<strong>ERROR</strong>', {
           label: result.error.message
             ? `${result.error.message}!`
-            : 'Something went wrong, try again, please',
+            : this.translate.instant('signup.errorFallback'),
           appearance: 'negative',
         }),
       );
