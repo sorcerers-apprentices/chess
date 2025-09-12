@@ -2,4 +2,7 @@
   class="square"
   [style.background-color]="backgroundColor()"
   [attr.data-square]="square()"
-></div>
+  [class.is-empty]="!hasPiece()"
+>
+  <img class="piece" [src]="icon()" [alt]="altText()" />
+</div>

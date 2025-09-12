@@ -22,12 +22,14 @@ import { Store } from '@ngrx/store';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TuiMainComponent } from '@taiga-ui/layout';
 import { Header } from '../../components/header/header';
 import { signInUser } from '../../store/actions/user.actions';
 import { SupabaseService } from '../../services/supabase.service';
+import type { User } from '@supabase/auth-js/dist/module/lib/types';
 import { Navigation } from '../../components/navigation/navigation';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { UserSupabaseService } from '../../services/user-supabase.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 @Component({
@@ -62,7 +64,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 export class SignInPage {
   protected readonly fb = inject(NonNullableFormBuilder);
   protected readonly translate = inject(TranslateService);
-  protected readonly api = inject(SupabaseService);
+  protected readonly api = inject(UserSupabaseService);
   protected readonly alert = inject(TuiAlertService);
   protected readonly store = inject(Store);
   protected readonly router = inject(Router);
@@ -90,14 +92,17 @@ export class SignInPage {
       );
     }
 
+    const user: User = result.data.user;
+    const playedGames = await this.api.fetchGamesCount(user.id);
+    const winedGames = await this.api.fetchWinedGamesCount(user.id);
+
     const signInUserAction = signInUser({
       user: {
-        isAuth: true,
-        email: result.data.user?.email ?? '',
-        username: result.data.user?.user_metadata['username'],
-        phone: result.data.user?.user_metadata['phone'],
-        elo: 0,
-        gameNumber: 0,
+        email: user.email ?? '',
+        username: user.user_metadata['username'],
+        phone: user.user_metadata['phone'],
+        playedGames,
+        winedGames,
       },
     });
     this.store.dispatch(signInUserAction);
