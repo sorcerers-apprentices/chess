@@ -1,0 +1,22 @@
+@use "variables" as vars;
+
+.game-wrapper {
+  grid-column: 1 / -1; /* занять все 12 колонок Taiga */
+  inline-size: 100%;
+  min-height: calc(100vh - 48px);
+  display: grid;
+  grid-template-columns:
+    1fr
+    vars.$board-wrap-width
+    vars.$panel-width
+    1fr;
+  gap: 1rem;
+  align-items: stretch;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.game-settings {
+  background-color: var(--tui-background-neutral-2-pressed);
+  align-self: stretch;
+}
