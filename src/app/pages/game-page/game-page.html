@@ -4,7 +4,13 @@
   <section class="game-wrapper">
     <section class="game-extra-left"><!-- слева --></section>
     <article class="game-board">
-      <app-chess-board />
+      <div class="player-panel top">
+        <app-player-panel [color]="topPlayerColor" />
+      </div>
+      <app-chess-board [orientation]="orientation" />
+      <div class="player-panel bottom">
+        <app-player-panel [color]="bottomPlayerColor" />
+      </div>
     </article>
     <aside class="game-settings">
       <app-game-settings />

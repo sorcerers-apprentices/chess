@@ -1,0 +1,14 @@
+.player-panel-wrapper {
+  display: grid;
+  grid-template-columns: 54px 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  border: 2px solid var(--tui-background-accent-2);
+}
+
+.player-icon {
+  img {
+    width: 54px;
+    height: 54px;
+  }
+}

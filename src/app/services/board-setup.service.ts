@@ -74,13 +74,13 @@ export class BoardSetupService {
     const blackPawnRank = isWhiteBottom ? RANK_7 : RANK_2;
     const blackBackRank = isWhiteBottom ? RANK_8 : RANK_1;
 
-    if (rank === whitePawnRank) return this.make('pawn', 'light');
-    if (rank === blackPawnRank) return this.make('pawn', 'dark');
+    if (rank === whitePawnRank) return this.make('pawn', 'white');
+    if (rank === blackPawnRank) return this.make('pawn', 'black');
 
     if (rank === whiteBackRank)
-      return this.make(this.backRankKind(file), 'light');
+      return this.make(this.backRankKind(file), 'white');
     if (rank === blackBackRank)
-      return this.make(this.backRankKind(file), 'dark');
+      return this.make(this.backRankKind(file), 'black');
 
     return null;
   }
