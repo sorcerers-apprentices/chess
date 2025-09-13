@@ -46,6 +46,34 @@ export class UserSupabaseService {
     });
   }
 
+  public async fetchUsernameExists(username: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('user_data')
+      .select('username')
+      .eq('username', username);
+
+    if (error) {
+      console.error('Error fetching data:', error.message);
+      return false;
+    }
+
+    return data?.length !== 0;
+  }
+
+  public async fetchUserData(userId: string): Promise<UserData | null> {
+    const { data, error } = await this.supabase
+      .from('user_data')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching data:', error.message);
+      return null;
+    }
+
+    return data[0];
+  }
+
   public async fetchGamesCount(userId: string): Promise<number> {
     const { count, error } = await this.supabase
       .from('game')
@@ -80,3 +108,4 @@ export class UserSupabaseService {
     return countW + countB;
   }
 }
+type UserData = { username: string };

@@ -1,6 +1,8 @@
-import { type CanActivateFn, type Route, Router } from '@angular/router';
-import { inject } from '@angular/core';
-import { LOCAL_STORAGE_KEY } from '@/app/constants/constants';
+import { type Route } from '@angular/router';
+import {
+  anonymousGuardFunction,
+  authenticatedGuardFunction,
+} from '@/app/guards/auth.guard';
 
 export const AppRoutes = {
   MAIN: 'main',
@@ -19,20 +21,6 @@ export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.SIGN_UP]: 'signup',
   [AppRoutes.SIGN_IN]: 'signin',
   [AppRoutes.NOT_FOUND]: '**',
-};
-
-const authenticatedGuardFunction: CanActivateFn = () => {
-  const router = inject(Router);
-  const token = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-  return token !== null ? true : router.parseUrl('signin');
-};
-
-const anonymousGuardFunction: CanActivateFn = () => {
-  const router = inject(Router);
-  const token = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-  return token !== null ? router.parseUrl('game') : true;
 };
 
 export const appRoutes: Route[] = [
