@@ -1,4 +1,6 @@
-import type { Route } from '@angular/router';
+import { type CanActivateFn, type Route, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { LOCAL_STORAGE_KEY } from '@/app/constants/constants';
 
 export const AppRoutes = {
   MAIN: 'main',
@@ -19,6 +21,20 @@ export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.NOT_FOUND]: '**',
 };
 
+const authenticatedGuardFunction: CanActivateFn = () => {
+  const router = inject(Router);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+  return token !== null ? true : router.parseUrl('signin');
+};
+
+const anonymousGuardFunction: CanActivateFn = () => {
+  const router = inject(Router);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+  return token !== null ? router.parseUrl('game') : true;
+};
+
 export const appRoutes: Route[] = [
   {
     path: RoutePath.main,
@@ -28,18 +44,21 @@ export const appRoutes: Route[] = [
   {
     path: RoutePath.game,
     title: 'Chess Game',
+    canActivate: [authenticatedGuardFunction],
     loadComponent: () =>
       import('./pages/game-page/game-page').then((m) => m.GamePage),
   },
   {
     path: RoutePath.signup,
     title: 'SignUp | Chess Game',
+    canActivate: [anonymousGuardFunction],
     loadComponent: () =>
       import('./pages/sign-up-page/sign-up-page').then((m) => m.SignUpPage),
   },
   {
     path: RoutePath.signin,
-    title: 'Login | Chess Game',
+    title: 'SignIn | Chess Game',
+    canActivate: [anonymousGuardFunction],
     loadComponent: () =>
       import('./pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
   },

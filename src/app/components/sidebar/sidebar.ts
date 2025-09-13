@@ -14,10 +14,12 @@ import {
 import { Router } from '@angular/router';
 import { TuiSwitch } from '@taiga-ui/kit';
 import { RoutePath } from '../../app.routes';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { RoutePathValue } from '../../app.routes';
+import { LanguageService } from '@/app/services/language.service';
 
 type SidebarItemType = {
-  name: string;
+  nameKey: string;
   route: RoutePathValue;
 };
 
@@ -25,22 +27,35 @@ type SidebarMapType = Record<string, SidebarItemType[]>;
 
 @Component({
   selector: 'app-sidebar',
-  imports: [TuiDataListComponent, TuiOptGroup, TuiOption, TuiSwitch],
+  imports: [
+    TuiDataListComponent,
+    TuiOptGroup,
+    TuiOption,
+    TuiSwitch,
+    TranslatePipe,
+  ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Sidebar {
   protected readonly darkMode = inject(TUI_DARK_MODE);
+  protected readonly translate = inject(LanguageService);
 
   protected readonly sidebarMenu = signal<SidebarMapType>({
-    Game: [
-      { name: 'New game', route: RoutePath.main },
-      { name: 'Resume', route: RoutePath.main },
-      { name: 'Play vs Engine', route: RoutePath.main },
+    'sidebar.game': [
+      { nameKey: 'sidebar.newGame', route: RoutePath.main },
+      { nameKey: 'sidebar.resume', route: RoutePath.main },
+      { nameKey: 'sidebar.playVsEngine', route: RoutePath.main },
     ],
-    Analysis: [{ name: 'Analysis board', route: RoutePath.main }],
-    Settings: [{ name: 'Profile', route: RoutePath.main }],
+    'sidebar.analysis': [
+      { nameKey: 'sidebar.analysisBoard', route: RoutePath.main },
+    ],
+    'sidebar.settings': [
+      { nameKey: 'sidebar.profile', route: RoutePath.main },
+      { nameKey: 'sidebar.login', route: RoutePath.signin },
+      { nameKey: 'sidebar.registration', route: RoutePath.signup },
+    ],
   });
 
   protected readonly sidebarGroups = computed(() =>
@@ -51,6 +66,10 @@ export class Sidebar {
 
   protected toggleTheme(): void {
     this.darkMode.set(!this.darkMode());
+  }
+
+  protected toggleLanguage(): void {
+    this.translate.toggleLanguage();
   }
 
   protected onClick(item: SidebarItemType): void {

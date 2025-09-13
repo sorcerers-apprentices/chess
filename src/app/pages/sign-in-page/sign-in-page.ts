@@ -1,33 +1,35 @@
-import { SupabaseService } from '../../services/supabase.service';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Header } from '../../components/header/header';
-import { Navigation } from '../../components/navigation/navigation';
-import {
-  TuiAlertService,
-  TuiButton,
-  TuiError,
   TuiIcon,
+  TuiError,
   TuiLabel,
+  TuiButton,
+  TuiAlertService,
   TuiTextfieldComponent,
   TuiTextfieldDirective,
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
-import { TuiMainComponent } from '@taiga-ui/layout';
 import {
-  TuiFieldErrorPipe,
+  Validators,
+  ReactiveFormsModule,
+  NonNullableFormBuilder,
+} from '@angular/forms';
+import {
   TuiPassword,
+  TuiFieldErrorPipe,
   tuiValidationErrorsProvider,
 } from '@taiga-ui/kit';
-import { AsyncPipe } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
-import { signInUser } from '../../store/actions/user.actions';
 import { Store } from '@ngrx/store';
+import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { TuiMainComponent } from '@taiga-ui/layout';
+import { Header } from '../../components/header/header';
+import { signInUser } from '../../store/actions/user.actions';
+import type { User } from '@supabase/auth-js/dist/module/lib/types';
+import { Navigation } from '../../components/navigation/navigation';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { UserSupabaseService } from '../../services/user-supabase.service';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -46,6 +48,7 @@ import { Router } from '@angular/router';
     AsyncPipe,
     TuiFieldErrorPipe,
     TuiError,
+    TranslatePipe,
   ],
   providers: [
     tuiValidationErrorsProvider({
@@ -53,13 +56,15 @@ import { Router } from '@angular/router';
       email: 'Enter a valid email address',
     }),
   ],
+  standalone: true,
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInPage {
   protected readonly fb = inject(NonNullableFormBuilder);
-  protected readonly api = inject(SupabaseService);
+  protected readonly translate = inject(TranslateService);
+  protected readonly api = inject(UserSupabaseService);
   protected readonly alert = inject(TuiAlertService);
   protected readonly store = inject(Store);
   protected readonly router = inject(Router);
@@ -81,20 +86,23 @@ export class SignInPage {
         this.alert.open('<strong>ERROR</strong>', {
           label: result.error.message
             ? `${result.error.message}!`
-            : 'Something went wrong, try again, please',
+            : this.translate.instant('signin.errorFallback'),
           appearance: 'negative',
         }),
       );
     }
 
+    const user: User = result.data.user;
+    const playedGames = await this.api.fetchGamesCount(user.id);
+    const winedGames = await this.api.fetchWinedGamesCount(user.id);
+
     const signInUserAction = signInUser({
       user: {
-        isAuth: true,
-        email: result.data.user?.email ?? '',
-        username: result.data.user?.user_metadata['username'],
-        phone: result.data.user?.user_metadata['phone'],
-        elo: 0,
-        gameNumber: 0,
+        email: user.email ?? '',
+        username: user.user_metadata['username'],
+        phone: user.user_metadata['phone'],
+        playedGames,
+        winedGames,
       },
     });
     this.store.dispatch(signInUserAction);
