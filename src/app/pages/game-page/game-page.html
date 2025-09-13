@@ -1,5 +1,14 @@
 <app-header />
 <main tuiNavigationMain>
   <app-navigation />
-  <app-chess-board />
+  <section class="game-wrapper">
+    <section class="game-extra-left"><!-- слева --></section>
+    <article class="game-board">
+      <app-chess-board />
+    </article>
+    <aside class="game-settings">
+      <app-game-settings />
+    </aside>
+    <section class="game-extra-right"><!-- справа --></section>
+  </section>
 </main>

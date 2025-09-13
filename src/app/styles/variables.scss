@@ -17,3 +17,15 @@ $color-blue2: #273b8d;
 $color-blue3: #b6d0e2;
 $color-yellow: #ffea00;
 $color-red: #cd5c5c;
+
+/* размеры осей/доски */
+$axis: 28px;
+$board-size: min(96vmin, 992px);
+$board-wrap-width: calc(#{$board-size} + #{$axis});
+$board-wrap-block: calc(var(--board-size) + var(--axis));
+
+/* панель управления */
+$panel-min: 280px;
+$panel-ideal: 24vw;
+$panel-max: 480px;
+$panel-width: clamp(#{$panel-min}, #{$panel-ideal}, #{$panel-max});

@@ -1,23 +1,12 @@
-:host {
-  /* не занимай все 12 колонок грида родителя */
-  grid-column: auto;
-  justify-self: center; /* по центру строки грида */
-
-  /* ширина по содержимому компонента */
-  max-inline-size: max-content;
-  padding: 20px;
-}
+@use "variables" as vars;
 
 /* только слева (ranks) и снизу (files) */
 .board-wrap {
-  --axis: 28px;
-  --size: min(92vmin, 640px);
-
   display: grid;
-  grid-template-columns: var(--axis) 1fr; /* слева ось + доска */
-  grid-template-rows: 1fr var(--axis); /* доска + снизу ось */
-  width: calc(var(--size) + var(--axis));
-  margin: 0 auto;
+  grid-template-columns: vars.$axis 1fr; /* слева ось + доска */
+  grid-template-rows: 1fr vars.$axis; /* доска + снизу ось */
+  width: vars.$board-wrap-width;
+  height: vars.$board-wrap-block;
 }
 
 /* левая ось: 8..1 сверху вниз */
@@ -55,7 +44,7 @@
   aspect-ratio: 1 / 1;
 
   /* доска всегда квадратная */
-  width: min(92vmin, 640px);
+  width: vars.$board-size;
   border: 2px solid var(--tui-background-accent-2);
 }
 
