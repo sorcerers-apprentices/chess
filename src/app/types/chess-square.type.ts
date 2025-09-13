@@ -13,7 +13,7 @@ export type PieceType = {
   kind: PieceKindType;
 };
 
-export type PieceColorType = 'light' | 'dark';
+export type PieceColorType = 'white' | 'black';
 
 export type ColorLightType = 'var(--tui-chart-categorical-18)';
 export type ColorDarkType = 'var(--tui-background-accent-3)';

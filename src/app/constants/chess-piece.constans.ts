@@ -8,27 +8,27 @@ export const PIECE_ICON_URL: Record<
   Record<PieceColorType, string>
 > = {
   king: {
-    light: 'assets/img/chess-piece/white/wK.svg',
-    dark: 'assets/img/chess-piece/black/bK.svg',
+    white: 'assets/img/chess-piece/white/wK.svg',
+    black: 'assets/img/chess-piece/black/bK.svg',
   },
   queen: {
-    light: 'assets/img/chess-piece/white/wQ.svg',
-    dark: 'assets/img/chess-piece/black/bQ.svg',
+    white: 'assets/img/chess-piece/white/wQ.svg',
+    black: 'assets/img/chess-piece/black/bQ.svg',
   },
   rook: {
-    light: 'assets/img/chess-piece/white/wR.svg',
-    dark: 'assets/img/chess-piece/black/bR.svg',
+    white: 'assets/img/chess-piece/white/wR.svg',
+    black: 'assets/img/chess-piece/black/bR.svg',
   },
   bishop: {
-    light: 'assets/img/chess-piece/white/wB.svg',
-    dark: 'assets/img/chess-piece/black/bB.svg',
+    white: 'assets/img/chess-piece/white/wB.svg',
+    black: 'assets/img/chess-piece/black/bB.svg',
   },
   knight: {
-    light: 'assets/img/chess-piece/white/wN.svg',
-    dark: 'assets/img/chess-piece/black/bN.svg',
+    white: 'assets/img/chess-piece/white/wN.svg',
+    black: 'assets/img/chess-piece/black/bN.svg',
   },
   pawn: {
-    light: 'assets/img/chess-piece/white/wP.svg',
-    dark: 'assets/img/chess-piece/black/bP.svg',
+    white: 'assets/img/chess-piece/white/wP.svg',
+    black: 'assets/img/chess-piece/black/bP.svg',
   },
 };

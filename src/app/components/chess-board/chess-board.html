@@ -6,7 +6,7 @@
   </div>
 
   <div class="board">
-    @for (square of squares; track square.square) {
+    @for (square of squares(); track square.square) {
       <app-chess-square
         [square]="square.square"
         [backgroundColor]="square.squareColor"
