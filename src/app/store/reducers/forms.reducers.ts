@@ -1,7 +1,11 @@
+import {
+  writeLogin,
+  writePassword,
+  submitLoginForm,
+} from '@/app/store/actions/forms.actions';
 import { createReducer, on } from '@ngrx/store';
 import { initialFormsState } from '@/app/store/states/forms.state';
 import type { FormsStateType } from '@/app/store/states/forms.state';
-import { writeLogin, writePassword } from '@/app/store/actions/forms.actions';
 
 export const formsReducers = createReducer(
   initialFormsState,
@@ -18,6 +22,14 @@ export const formsReducers = createReducer(
     (state, action): FormsStateType => ({
       ...state,
       password: action.password,
+    }),
+  ),
+  on(
+    submitLoginForm,
+    (state): FormsStateType => ({
+      ...state,
+      password: '',
+      login: '',
     }),
   ),
 );

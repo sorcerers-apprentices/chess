@@ -8,3 +8,4 @@ export const writePassword = createAction(
   '[Forms] Write Password',
   props<{ password: string }>(),
 );
+export const submitLoginForm = createAction('[Forms] Submit Login Form');
