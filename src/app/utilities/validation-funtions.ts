@@ -1,10 +1,12 @@
 import type {
   AbstractControl,
+  AsyncValidatorFn,
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { inject } from '@angular/core';
+import { UserSupabaseService } from '@/app/services/user-supabase.service';
 
 export function noWhitespace(): ValidatorFn {
   const translateService = inject(TranslateService);
@@ -113,5 +115,24 @@ export function createSamePasswordValidator(): ValidatorFn {
         ),
       };
     }
+  };
+}
+
+export function uniqueUsernameValidator(): AsyncValidatorFn {
+  const translateService = inject(TranslateService);
+  const api = inject(UserSupabaseService);
+  return async (control: AbstractControl): Promise<ValidationErrors | null> => {
+    const value: string | null = control.value;
+    if (value === null) {
+      return null;
+    }
+    const response = await api.fetchUsernameExists(control.value);
+    return response
+      ? {
+          noUniqueUserName: translateService.instant(
+            'validationErrors.noUniqueUserName',
+          ),
+        }
+      : null;
   };
 }

@@ -40,6 +40,22 @@
           />
         </label>
         <label tuiLabel>
+          {{ "signup.displayNameLabel" | translate }}
+          <tui-textfield tuiTextfieldSize="m">
+            <input
+              placeholder="{{ 'signup.displayNamePlaceholder' | translate }}"
+              type="text"
+              tuiTextfield
+              formControlName="displayName"
+            />
+            <tui-icon tuiPassword />
+          </tui-textfield>
+          <tui-error
+            formControlName="displayName"
+            [error]="[] | tuiFieldError | async"
+          />
+        </label>
+        <label tuiLabel>
           {{ "signup.passwordLabel" | translate }}
           <tui-textfield tuiTextfieldSize="m">
             <input
