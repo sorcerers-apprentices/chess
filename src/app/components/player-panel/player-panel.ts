@@ -4,10 +4,11 @@ import {
   computed,
   input,
 } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-panel',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './player-panel.html',
   styleUrl: './player-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

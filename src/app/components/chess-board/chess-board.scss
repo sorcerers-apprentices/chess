@@ -3,9 +3,11 @@
 /* только слева (ranks) и снизу (files) */
 .board-wrap {
   display: grid;
-  grid-template-columns: vars.$axis 1fr; /* слева ось + доска */
-  grid-template-rows: 1fr vars.$axis; /* доска + снизу ось */
+  grid-template-columns: vars.$axis 1fr;
+  grid-template-rows: 1fr vars.$axis;
   width: vars.$board-wrap-width;
+  inline-size: 100%;
+  max-inline-size: vars.$board-wrap-width;
   height: vars.$board-wrap-block;
 }
 
@@ -44,7 +46,8 @@
   aspect-ratio: 1 / 1;
 
   /* доска всегда квадратная */
-  width: vars.$board-size;
+  inline-size: 100%;
+  max-inline-size: vars.$board-size;
   border: 2px solid var(--tui-background-accent-2);
 }
 
@@ -54,4 +57,16 @@
   border-bottom: 2px solid var(--tui-background-accent-2);
   border-left: 2px solid var(--tui-background-accent-2);
   background-color: var(--tui-background-neutral-2-pressed);
+}
+
+@media (width <= 768px) {
+  .board-wrap {
+    inline-size: 100%;
+    max-inline-size: vars.$board-wrap-width;
+  }
+
+  .board {
+    inline-size: 100%;
+    max-inline-size: vars.$board-size;
+  }
 }

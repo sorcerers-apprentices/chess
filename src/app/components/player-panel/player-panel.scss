@@ -12,3 +12,16 @@
     height: 54px;
   }
 }
+
+@media (width <= 768px) {
+  .player-panel-wrapper {
+    grid-template-columns: 34px 1fr 1fr;
+  }
+
+  .player-icon {
+    img {
+      width: 34px;
+      height: 34px;
+    }
+  }
+}
