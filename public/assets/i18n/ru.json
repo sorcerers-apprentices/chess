@@ -29,12 +29,24 @@
     "emailLabel": "Эл. почта",
     "emailPlaceholder": "Введите вашу почту",
     "phoneLabel": "Номер телефона",
-    "nameLabel": "Имя",
-    "namePlaceholder": "Введите ваше имя",
     "passwordLabel": "Пароль",
     "passwordPlaceholder": "Введите пароль",
+    "confirmPasswordLabel": "Подтвердите пароль",
+    "confirmPasswordPlaceholder": "Введите пароль",
     "signUp": "Зарегистрироваться",
     "successTitle": "Отлично! Проверьте вашу почту",
     "errorFallback": "Что-то пошло не так, попробуйте ещё раз"
+  },
+  "validationErrors": {
+    "samePasswordValidator": "Пароли не совпадают",
+    "noSymbol": "Адрес электронной почты должен включать @",
+    "noPropperFormat": "Неверный формат адреса электронной почты, правильный формат — 'user@example.com'",
+    "noNumbers": "Поле должно содержать цифры",
+    "noLowerCaseLetters": "Поле должно содержать строчные буквы",
+    "noUpperCaseLetters": "Поле должно содержать заглавные буквы",
+    "whitespace": "Пробелы не допускаются",
+    "required": "Это поле обязательно к заполнению",
+    "minlength": "Минимальная длина — ",
+    "maxlength": "Максимальная длина — "
   }
 }

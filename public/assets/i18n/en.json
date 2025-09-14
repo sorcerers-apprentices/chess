@@ -29,12 +29,24 @@
     "emailLabel": "Email",
     "emailPlaceholder": "Enter your email",
     "phoneLabel": "Phone number",
-    "nameLabel": "Name",
-    "namePlaceholder": "Enter your name",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "Enter your password",
     "signUp": "Sign Up",
     "successTitle": "Well done! Check your email",
     "errorFallback": "Something went wrong, try again, please"
+  },
+  "validationErrors": {
+    "samePasswordValidator": "Passwords are not matching",
+    "noSymbol": "Email should include @",
+    "noPropperFormat": "Invalid email format, proper format is 'user@example.com'",
+    "noNumbers": "Field should include numbers",
+    "noLowerCaseLetters": "Field should include lowercase letters",
+    "noUpperCaseLetters": "Field should include uppercase letters",
+    "whitespace": "No whitespace allowed",
+    "required": "This field is required",
+    "minlength": "Minimum length — ",
+    "maxlength": "Maximum length — "
   }
 }

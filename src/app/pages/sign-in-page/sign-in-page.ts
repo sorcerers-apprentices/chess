@@ -1,22 +1,22 @@
 import {
-  TuiIcon,
-  TuiError,
-  TuiLabel,
-  TuiButton,
   TuiAlertService,
+  TuiButton,
+  TuiError,
+  TuiIcon,
+  TuiLabel,
   TuiTextfieldComponent,
   TuiTextfieldDirective,
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import {
-  Validators,
-  ReactiveFormsModule,
   NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import {
-  TuiPassword,
+  TUI_VALIDATION_ERRORS,
   TuiFieldErrorPipe,
-  tuiValidationErrorsProvider,
+  TuiPassword,
 } from '@taiga-ui/kit';
 import { Store } from '@ngrx/store';
 import { firstValueFrom } from 'rxjs';
@@ -30,6 +30,10 @@ import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserSupabaseService } from '../../services/user-supabase.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  noValidEmailFormat,
+  noWhitespace,
+} from '@/app/utilities/validation-funtions';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -51,10 +55,22 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
     TranslatePipe,
   ],
   providers: [
-    tuiValidationErrorsProvider({
-      required: 'This field is required',
-      email: 'Enter a valid email address',
-    }),
+    {
+      provide: TUI_VALIDATION_ERRORS,
+      useFactory: (translate: TranslateService): unknown => {
+        translate.stream('validationErrors.required');
+        return {
+          required: translate.get('validationErrors.required'),
+          minlength: ({ requiredLength }: { requiredLength: string }) =>
+            translate.instant('validationErrors.minlength') +
+            `${requiredLength}`,
+          maxlength: ({ requiredLength }: { requiredLength: string }) =>
+            translate.instant('validationErrors.maxlength') +
+            `${requiredLength}`,
+        };
+      },
+      deps: [TranslateService],
+    },
   ],
   standalone: true,
   templateUrl: './sign-in-page.html',
@@ -71,7 +87,7 @@ export class SignInPage {
 
   protected signinForm = this.fb.group({
     email: this.fb.control('', {
-      validators: [Validators.required, Validators.email],
+      validators: [Validators.required, noWhitespace(), noValidEmailFormat()],
     }),
     password: this.fb.control('', {
       validators: [Validators.required],
@@ -79,6 +95,10 @@ export class SignInPage {
   });
 
   protected async signin(): Promise<void> {
+    this.signinForm.markAllAsTouched();
+    if (this.signinForm.invalid) {
+      return;
+    }
     const result = await this.api.signin(this.signinForm.getRawValue());
 
     if (result.error) {

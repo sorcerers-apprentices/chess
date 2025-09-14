@@ -14,11 +14,11 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  TUI_VALIDATION_ERRORS,
   TuiFieldErrorPipe,
   tuiInputPhoneInternationalOptionsProvider,
   TuiInputRange,
   TuiPassword,
-  tuiValidationErrorsProvider,
 } from '@taiga-ui/kit';
 import {
   TuiAlertService,
@@ -41,11 +41,12 @@ import {
   minPasswordLength,
 } from '../../constants/constants';
 import {
-  noLowerCaseLetters,
-  noNumbers,
-  noUpperCaseLetters,
+  createSamePasswordValidator,
+  lowerCasePresent,
   noValidEmailFormat,
   noWhitespace,
+  numbersPresent,
+  upperCasePresent,
 } from '../../utilities/validation-funtions';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -74,13 +75,22 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   ],
   providers: [
     tuiInputPhoneInternationalOptionsProvider({ metadata: of(metadata) }),
-    tuiValidationErrorsProvider({
-      required: 'This field is required',
-      minlength: ({ requiredLength }: { requiredLength: string }) =>
-        of(`Minimum length — ${requiredLength}`),
-      maxlength: ({ requiredLength }: { requiredLength: string }) =>
-        `Maximum length — ${requiredLength}`,
-    }),
+    {
+      provide: TUI_VALIDATION_ERRORS,
+      useFactory: (translate: TranslateService): unknown => {
+        translate.stream('validationErrors.required');
+        return {
+          required: translate.get('validationErrors.required'),
+          minlength: ({ requiredLength }: { requiredLength: string }) =>
+            translate.instant('validationErrors.minlength') +
+            `${requiredLength}`,
+          maxlength: ({ requiredLength }: { requiredLength: string }) =>
+            translate.instant('validationErrors.maxlength') +
+            `${requiredLength}`,
+        };
+      },
+      deps: [TranslateService],
+    },
   ],
   templateUrl: './sign-up-page.html',
   styleUrl: './sign-up-page.scss',
@@ -108,30 +118,41 @@ export class SignUpPage {
   ];
   protected countryIsoCode: TuiCountryIsoCode = 'ES';
 
-  protected signupForm = this.fb.group({
-    email: this.fb.control('', {
-      validators: [Validators.required, noWhitespace(), noValidEmailFormat()],
-    }),
-    phone: this.fb.control('', {
-      validators: [Validators.required],
-    }),
-    username: this.fb.control('', {
-      validators: [Validators.required],
-    }),
-    password: this.fb.control('', {
-      validators: [
-        Validators.required,
-        noWhitespace(),
-        Validators.minLength(minPasswordLength),
-        Validators.maxLength(maxPasswordLength),
-        noUpperCaseLetters(),
-        noLowerCaseLetters(),
-        noNumbers(),
-      ],
-    }),
-  });
+  protected signupForm = this.fb.group(
+    {
+      email: this.fb.control('', {
+        validators: [Validators.required, noWhitespace(), noValidEmailFormat()],
+      }),
+      phone: this.fb.control('', {
+        validators: [Validators.required],
+      }),
+      username: this.fb.control('', {
+        validators: [Validators.required],
+      }),
+      password: this.fb.control('', {
+        validators: [
+          Validators.required,
+          noWhitespace(),
+          Validators.minLength(minPasswordLength),
+          Validators.maxLength(maxPasswordLength),
+          upperCasePresent(),
+          lowerCasePresent(),
+          numbersPresent(),
+        ],
+      }),
+      confirmPassword: this.fb.control(''),
+    },
+    {
+      validators: [createSamePasswordValidator()],
+    },
+  );
 
   protected async signup(): Promise<void> {
+    this.signupForm.markAllAsTouched();
+    if (this.signupForm.invalid) {
+      return;
+    }
+
     const result = await this.api.signup(this.signupForm.getRawValue());
 
     if (result.error) {
