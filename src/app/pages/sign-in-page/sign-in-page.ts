@@ -119,7 +119,7 @@ export class SignInPage {
     const signInUserAction = signInUser({
       user: {
         email: user.email ?? '',
-        username: user.user_metadata['username'],
+        displayName: user.user_metadata['username'],
         phone: user.user_metadata['phone'],
         playedGames,
         winedGames,

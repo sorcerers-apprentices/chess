@@ -29,6 +29,8 @@
     "emailLabel": "Email",
     "emailPlaceholder": "Enter your email",
     "phoneLabel": "Phone number",
+    "displayNameLabel": "Name",
+    "displayNamePlaceholder": "Enter your name",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
     "confirmPasswordLabel": "Confirm password",
@@ -47,6 +49,7 @@
     "whitespace": "No whitespace allowed",
     "required": "This field is required",
     "minlength": "Minimum length — ",
-    "maxlength": "Maximum length — "
+    "maxlength": "Maximum length — ",
+    "noUniqueUserName": "The user with this name already exists"
   }
 }
