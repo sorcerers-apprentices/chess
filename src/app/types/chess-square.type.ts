@@ -16,7 +16,7 @@ export type PieceType = {
 export type PieceColorType = 'white' | 'black';
 
 export type ColorLightType = 'var(--tui-chart-categorical-18)';
-export type ColorDarkType = 'var(--tui-background-accent-3)';
+export type ColorDarkType = 'var(--tui-background-elevation-3)';
 export type SquareColorType = ColorLightType | ColorDarkType;
 
 export type PieceKindType =
