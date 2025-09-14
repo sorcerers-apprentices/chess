@@ -1,8 +1,8 @@
-import { type Route } from '@angular/router';
 import {
   anonymousGuardFunction,
   authenticatedGuardFunction,
 } from '@/app/guards/auth.guard';
+import { type Route } from '@angular/router';
 
 export const AppRoutes = {
   MAIN: 'main',

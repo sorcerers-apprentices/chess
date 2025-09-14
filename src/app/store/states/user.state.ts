@@ -1,9 +1,13 @@
-import type { User } from '../../types/sign-up.type';
+import type { UserType } from '../../types/sign-up.type';
 
-export const userInitialState: UserState = {
-  user: null,
+export type UserStateType = {
+  isAuth: boolean;
+  user: UserType | null;
+  elo: number;
 };
 
-export type UserState = {
-  user: User | null;
+export const initialUserState: UserStateType = {
+  isAuth: false,
+  user: null,
+  elo: 0,
 };
