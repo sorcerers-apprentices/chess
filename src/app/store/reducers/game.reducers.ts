@@ -6,8 +6,8 @@ import { initialGameState } from '@/app/store/states/game.state';
 export const gameReducers = createReducer(
   initialGameState,
 
-  on(newGame, (state) => ({
+  on(newGame, (state, action) => ({
     ...state,
-    game: new Chess(),
+    game: new Chess(action.initialFen),
   })),
 );
