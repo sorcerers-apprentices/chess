@@ -39,7 +39,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   maxPasswordLength,
   minPasswordLength,
-} from '../../constants/constants';
+} from '../../constants/validation.constants';
 import {
   createSamePasswordValidator,
   lowerCasePresent,
