@@ -6,5 +6,5 @@ const selectGame = (state: AppStateType): GameStateType => state.game;
 
 export const selectGameMoves = createSelector(
   selectGame,
-  (state: GameStateType) => state.gameMoves,
+  (state: GameStateType) => state.moves,
 );
