@@ -11,6 +11,10 @@
         [square]="square.square"
         [backgroundColor]="square.squareColor"
         [piece]="square.piece"
+        [isFrom]="square.isFrom"
+        [isOverAllowed]="square.isOverAllowed"
+        [isOverDenied]="square.isOverDenied"
+        (chessMove)="onSquareMove($event)"
       />
     }
   </div>

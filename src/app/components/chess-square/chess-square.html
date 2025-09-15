@@ -1,8 +1,22 @@
 <div
   class="square"
+  [class.is-from]="isFrom()"
+  [class.is-over-allowed]="isOverAllowed()"
+  [class.is-over-denied]="isOverDenied()"
+  cdkDropList
+  [cdkDropListData]="dropData()"
+  [cdkDropListEnterPredicate]="canEnter"
+  (cdkDropListDropped)="onDrop($event)"
   [style.background-color]="backgroundColor()"
   [attr.data-square]="square()"
   [class.is-empty]="!hasPiece()"
 >
-  <img class="piece" [src]="icon()" [alt]="altText()" />
+  <img
+    cdkDrag
+    [cdkDragData]="dragData()"
+    draggable="false"
+    class="piece"
+    [src]="icon()"
+    [alt]="altText()"
+  />
 </div>
