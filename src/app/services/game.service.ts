@@ -1,20 +1,16 @@
-import { Chess } from 'chess.js';
 import { Store } from '@ngrx/store';
-import { inject, Injectable, signal } from '@angular/core';
-import { DEFAULT_POSITION } from '@/app/constants/chess-game.constants';
+import { inject, Injectable } from '@angular/core';
+import { newGame } from '@/app/store/actions/game.actions';
+import { selectChessGame } from '@/app/store/selectors/game.selectors';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
-  private store = inject(Store);
-  private game = signal<Chess | null>(null);
-
-  constructor() {
-    this.newGame();
-  }
+  private readonly store = inject(Store);
+  private readonly game = this.store.selectSignal(selectChessGame);
 
   public newGame(): void {
-    this.game.set(new Chess(DEFAULT_POSITION));
+    this.store.dispatch(newGame());
   }
 }

@@ -1,20 +1,9 @@
-import { DEFAULT_POSITION } from '@/app/constants/chess-game.constants';
-
-export type ChessMoveType = {
-  move: string;
-  timestamp: number;
-  moveNumber: number;
-  color: 'white' | 'black';
-};
+import { Chess } from 'chess.js';
 
 export type GameStateType = {
-  moves: ChessMoveType[];
-  currentMoveIndex: number;
-  initialFen: string;
+  game: Chess;
 };
 
 export const initialGameState: GameStateType = {
-  moves: [],
-  currentMoveIndex: -1,
-  initialFen: DEFAULT_POSITION,
+  game: new Chess(),
 };
