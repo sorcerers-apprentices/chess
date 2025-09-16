@@ -1,15 +1,24 @@
 import { createReducer, on } from '@ngrx/store';
-import { userInitialState, type UserState } from '../states/user.state';
-import { signInUser } from '../actions/user.actions';
+import { signInUser, signUpUser } from '../actions/user.actions';
+import { initialUserState, type UserStateType } from '../states/user.state';
 
 export const userReducers = createReducer(
-  userInitialState,
+  initialUserState,
 
   on(
     signInUser,
-    (state, action): UserState => ({
+    (state, action): UserStateType => ({
       ...state,
+      isAuth: true,
       user: action.user,
+    }),
+  ),
+  on(
+    signUpUser,
+    (state): UserStateType => ({
+      ...state,
+      isAuth: false,
+      user: null,
     }),
   ),
 );

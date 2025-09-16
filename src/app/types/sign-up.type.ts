@@ -1,4 +1,4 @@
-export type User = {
+export type UserType = {
   email: string;
   displayName: string;
   phone: string;
@@ -6,12 +6,12 @@ export type User = {
   playedGames: number;
 };
 
-export type SignInCredentials = {
+export type SignInCredentialsType = {
   email: string;
   password: string;
 };
 
-export type SignUpCredentials = SignInCredentials & {
+export type SignUpCredentialsType = SignInCredentialsType & {
   displayName: string;
   phone: string;
 };

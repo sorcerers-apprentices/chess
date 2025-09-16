@@ -1,7 +1,28 @@
+import type { Move } from 'chess.js';
+import { DEFAULT_POSITION } from 'chess.js';
+
+export type MoveRecordType = {
+  uci: string;
+  san: string;
+  move: Move;
+  fenAfter: string;
+  timestamp?: number;
+};
+
 export type GameStateType = {
-  gameMoves: string[];
+  fen: string;
+  moves: MoveRecordType[];
+  undoneMoves: MoveRecordType[];
+  lastMove?: { from: string; to: string } | null;
+  orientation?: 'white' | 'black';
+  clocks?: { white: number; black: number } | null;
 };
 
 export const initialGameState: GameStateType = {
-  gameMoves: [],
+  fen: DEFAULT_POSITION,
+  moves: [],
+  undoneMoves: [],
+  lastMove: null,
+  orientation: undefined,
+  clocks: null,
 };

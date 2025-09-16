@@ -6,8 +6,8 @@ import type {
 import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import type {
-  SignInCredentials,
-  SignUpCredentials,
+  SignInCredentialsType,
+  SignUpCredentialsType,
 } from '../types/sign-up.type';
 import { environment } from '@/environments/environment.development';
 
@@ -23,7 +23,9 @@ export class UserSupabaseService {
     this.publishableKey,
   );
 
-  public async signup(credentials: SignUpCredentials): Promise<AuthResponse> {
+  public async signup(
+    credentials: SignUpCredentialsType,
+  ): Promise<AuthResponse> {
     return await this.supabase.auth.signUp({
       email: credentials.email,
       password: credentials.password,
@@ -38,7 +40,7 @@ export class UserSupabaseService {
   }
 
   public async signin(
-    credentials: SignInCredentials,
+    credentials: SignInCredentialsType,
   ): Promise<AuthTokenResponsePassword> {
     return await this.supabase.auth.signInWithPassword({
       email: credentials.email,

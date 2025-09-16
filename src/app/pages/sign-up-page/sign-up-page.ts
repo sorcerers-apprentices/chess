@@ -41,7 +41,7 @@ import {
   maxUserNameLength,
   minPasswordLength,
   minUserNameLength,
-} from '../../constants/constants';
+} from '../../constants/validation.constants';
 import {
   createSamePasswordValidator,
   lowerCasePresent,

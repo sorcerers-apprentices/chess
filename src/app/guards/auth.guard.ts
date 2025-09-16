@@ -1,6 +1,6 @@
-import { type CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { LOCAL_STORAGE_KEY } from '@/app/constants/constants';
+import { type CanActivateFn, Router } from '@angular/router';
+import { LOCAL_STORAGE_KEY } from '../constants/auth.constants';
 
 export const authenticatedGuardFunction: CanActivateFn = () => {
   const router = inject(Router);

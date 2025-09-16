@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideEventPlugins(),
     provideStore(appReducers, { initialState: getInitialState }),
     provideRouterStore(),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode(), trace: true }),
     provideEffects(appEffects),
     provideTranslateService({
       loader: provideTranslateHttpLoader({
