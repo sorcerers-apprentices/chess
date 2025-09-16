@@ -3,6 +3,7 @@
   [cdkDropListData]="dropData()"
   (cdkDropListEntered)="handleDragEnter()"
   [cdkDropListEnterPredicate]="canEnter"
+  cdkDropListSortingDisabled
   (cdkDropListDropped)="onDrop($event)"
   [cdkDropListConnectedTo]="connectedToIds()"
   [style.background-color]="backgroundColor()"
@@ -24,4 +25,5 @@
     [src]="icon()"
     [alt]="altText()"
   />
+  <ng-template cdkDragPlaceholder></ng-template>
 </div>
