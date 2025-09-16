@@ -31,7 +31,7 @@ export class UserSupabaseService {
       password: credentials.password,
       options: {
         data: {
-          username: credentials.username,
+          display_name: credentials.displayName,
           phone: credentials.phone,
         },
         emailRedirectTo: this.redirectUrl,
@@ -48,15 +48,15 @@ export class UserSupabaseService {
     });
   }
 
-  public async fetchUsernameExists(username: string): Promise<boolean> {
+  public async fetchUsernameExists(displayName: string): Promise<boolean> {
     const { data, error } = await this.supabase
-      .from('user_data')
-      .select('username')
-      .eq('username', username);
+      .from('profile')
+      .select('*')
+      .eq('display_name', displayName);
 
     if (error) {
       console.error('Error fetching data:', error.message);
-      return false;
+      return true;
     }
 
     return data?.length !== 0;

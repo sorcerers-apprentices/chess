@@ -38,7 +38,9 @@ import { firstValueFrom, of } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import {
   maxPasswordLength,
+  maxUserNameLength,
   minPasswordLength,
+  minUserNameLength,
 } from '../../constants/validation.constants';
 import {
   createSamePasswordValidator,
@@ -46,6 +48,7 @@ import {
   noValidEmailFormat,
   noWhitespace,
   numbersPresent,
+  uniqueUsernameValidator,
   upperCasePresent,
 } from '../../utilities/validation-funtions';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -126,8 +129,13 @@ export class SignUpPage {
       phone: this.fb.control('', {
         validators: [Validators.required],
       }),
-      username: this.fb.control('', {
-        validators: [Validators.required],
+      displayName: this.fb.control('', {
+        validators: [
+          Validators.required,
+          Validators.minLength(minUserNameLength),
+          Validators.maxLength(maxUserNameLength),
+        ],
+        asyncValidators: [uniqueUsernameValidator()],
       }),
       password: this.fb.control('', {
         validators: [

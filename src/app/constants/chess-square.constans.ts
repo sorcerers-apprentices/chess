@@ -10,7 +10,7 @@ import { FILES, RANKS } from '@/app/types/chess-square.type';
 export const RANKS_TOP_DOWN = [...RANKS].reverse();
 
 export const LIGHT: ColorLightType = 'var(--tui-chart-categorical-18)';
-export const DARK: ColorDarkType = 'var(--tui-background-accent-3)';
+export const DARK: ColorDarkType = 'var(--tui-background-elevation-3)';
 
 /** Готовые 64 клетки с цветами */
 export const SQUARE_STATES: readonly SquareStateType[] =
