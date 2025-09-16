@@ -39,11 +39,21 @@ export class ChessSquare {
   public readonly isFrom = input<boolean>(false);
   public readonly isOverAllowed = input<boolean>(false);
   public readonly isOverDenied = input<boolean>(false);
+  // добавляем события для родителя
+  public readonly dragStartSquare = output<SquareType>();
+  public readonly dragEnterSquare = output<SquareType>();
+  public readonly dragEndSquare = output<void>();
+
+  public readonly allSquares = input.required<readonly SquareType[]>();
 
   protected readonly icon: Signal<string> = computed(() => {
     const p = this.piece();
     return p ? PIECE_ICON_URL[p.kind][p.color] : '';
   });
+
+  protected readonly connectedToIds = computed(() =>
+    this.allSquares().filter((id) => id !== this.square()),
+  );
 
   protected readonly altText = computed(() => {
     const p = this.piece();
@@ -63,6 +73,20 @@ export class ChessSquare {
     piece: this.piece(),
   }));
 
+  // тонкие хендлеры без логики
+  public handleDragStart(): void {
+    console.log('[ChessSquare] dragStart', this.square());
+    this.dragStartSquare.emit(this.square());
+  }
+  public handleDragEnter(): void {
+    console.log('[ChessSquare] dragEnter', this.square());
+    this.dragEnterSquare.emit(this.square());
+  }
+  public handleDragEnd(): void {
+    console.log('[ChessSquare] dragEnd', this.square());
+    this.dragEndSquare.emit();
+  }
+
   public readonly canEnter = (
     drag: CdkDrag<DragDataType>,
     drop: CdkDropList<DropDataType>,
@@ -70,15 +94,31 @@ export class ChessSquare {
     const dragData = drag.data;
     const dropData = drop.data;
 
-    if (!isDragData(dragData) || !isDropData(dropData)) return false;
+    const isAllowed =
+      isDragData(dragData) &&
+      isDropData(dropData) &&
+      dragData.fromSquare !== dropData.square;
 
-    // запрет "дропа в ту же клетку"
-    return dragData.fromSquare !== dropData.square;
+    console.log(
+      '[ChessSquare] canEnter? from=',
+      isDragData(dragData) ? dragData.fromSquare : 'X',
+      'to=',
+      isDropData(dropData) ? dropData.square : 'X',
+      '=>',
+      isAllowed,
+    );
+
+    return isAllowed;
   };
 
   public onDrop(
     event: CdkDragDrop<DropDataType, DropDataType, DragDataType>,
   ): void {
+    console.log('[ChessSquare] onDrop', {
+      from: event.item?.data,
+      to: event.container?.data,
+    });
+
     const dragged = event.item?.data;
     const target = event.container?.data;
 

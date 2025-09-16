@@ -1,19 +1,24 @@
 <div
+  cdkDropList
+  [cdkDropListData]="dropData()"
+  (cdkDropListEntered)="handleDragEnter()"
+  [cdkDropListEnterPredicate]="canEnter"
+  (cdkDropListDropped)="onDrop($event)"
+  [cdkDropListConnectedTo]="connectedToIds()"
+  [style.background-color]="backgroundColor()"
+  [id]="square()"
+  [attr.data-square]="square()"
   class="square"
   [class.is-from]="isFrom()"
   [class.is-over-allowed]="isOverAllowed()"
   [class.is-over-denied]="isOverDenied()"
-  cdkDropList
-  [cdkDropListData]="dropData()"
-  [cdkDropListEnterPredicate]="canEnter"
-  (cdkDropListDropped)="onDrop($event)"
-  [style.background-color]="backgroundColor()"
-  [attr.data-square]="square()"
   [class.is-empty]="!hasPiece()"
 >
   <img
     cdkDrag
     [cdkDragData]="dragData()"
+    (cdkDragStarted)="handleDragStart()"
+    (cdkDragEnded)="handleDragEnd()"
     draggable="false"
     class="piece"
     [src]="icon()"
