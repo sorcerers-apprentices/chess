@@ -1,9 +1,9 @@
-import { Chess } from 'chess.js';
+import { DEFAULT_POSITION } from 'chess.js';
 
 export type GameStateType = {
-  game: Chess;
+  fen: string;
 };
 
 export const initialGameState: GameStateType = {
-  game: new Chess(),
+  fen: DEFAULT_POSITION,
 };
