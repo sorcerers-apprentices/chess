@@ -7,9 +7,7 @@
     "resume": "Resume",
     "playVsEngine": "Play vs Engine",
     "analysisBoard": "Analysis board",
-    "profile": "Profile",
-    "login": "Sign In",
-    "registration": "Sign Up",
+    "logout": "Logout",
     "darkMode": "Dark mode",
     "language": "English"
   },

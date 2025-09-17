@@ -3,10 +3,17 @@
     @for (group of sidebarGroups(); track group.key) {
       <tui-opt-group [label]="group.key | translate">
         @for (item of group.value; track item.nameKey) {
-          <button tuiOption type="button" (click)="onClick(item)">
-            <img alt="icon" src="/assets/img/sidebar-item.svg" />
-            {{ item.nameKey | translate }}
-          </button>
+          @if (item.nameKey === "sidebar.logout") {
+            <button tuiOption type="button" (click)="onLogout()">
+              <img alt="icon" src="/assets/img/sidebar-item.svg" />
+              {{ item.nameKey | translate }}
+            </button>
+          } @else {
+            <button tuiOption type="button" (click)="onClick(item)">
+              <img alt="icon" src="/assets/img/sidebar-item.svg" />
+              {{ item.nameKey | translate }}
+            </button>
+          }
         }
       </tui-opt-group>
     }
