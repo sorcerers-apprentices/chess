@@ -31,7 +31,6 @@ import {
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { TuiInputPhoneInternational } from '@taiga-ui/experimental';
-import { UserSupabaseService } from '../../services/user-supabase.service';
 import { TuiInputPhoneModule } from '@taiga-ui/legacy';
 import metadata from 'libphonenumber-js/mobile/metadata';
 import { firstValueFrom, of } from 'rxjs';
@@ -52,6 +51,8 @@ import {
   upperCasePresent,
 } from '../../utilities/validation-funtions';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '@/app/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-page',
@@ -102,7 +103,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 })
 export class SignUpPage {
   protected readonly fb = inject(NonNullableFormBuilder);
-  protected readonly api = inject(UserSupabaseService);
+  protected readonly auth = inject(AuthService);
   protected readonly alert = inject(TuiAlertService);
   protected successSignUp = signal<boolean>(false);
   protected readonly translate = inject(TranslateService);
@@ -120,6 +121,7 @@ export class SignUpPage {
     'UA',
   ];
   protected countryIsoCode: TuiCountryIsoCode = 'ES';
+  protected readonly router = inject(Router);
 
   protected signupForm = this.fb.group(
     {
@@ -161,7 +163,7 @@ export class SignUpPage {
       return;
     }
 
-    const result = await this.api.signup(this.signupForm.getRawValue());
+    const result = await this.auth.signup(this.signupForm.getRawValue());
 
     if (result.error) {
       return await firstValueFrom(
@@ -174,5 +176,9 @@ export class SignUpPage {
       );
     }
     this.successSignUp.update((prev) => !prev);
+  }
+
+  protected goToSignInPage(): void {
+    this.router.navigate(['/signin']).then();
   }
 }

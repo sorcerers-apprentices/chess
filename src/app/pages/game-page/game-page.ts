@@ -24,7 +24,7 @@ import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GamePage {
-  protected readonly orientation: BoardOrientationType = 'whiteBottom';
+  protected orientation: BoardOrientationType = 'whiteBottom';
 
   protected readonly topPlayerColor: 'white' | 'black' =
     this.orientation === 'whiteBottom' ? 'black' : 'white';

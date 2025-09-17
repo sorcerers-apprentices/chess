@@ -6,6 +6,7 @@ import { type Route } from '@angular/router';
 
 export const AppRoutes = {
   MAIN: 'main',
+  HOME: 'home',
   GAME: 'game',
   SIGN_UP: 'signup',
   SIGN_IN: 'signin',
@@ -17,6 +18,7 @@ export type RoutePathValue = (typeof RoutePath)[keyof typeof RoutePath];
 
 export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.MAIN]: '',
+  [AppRoutes.HOME]: 'home',
   [AppRoutes.GAME]: 'game',
   [AppRoutes.SIGN_UP]: 'signup',
   [AppRoutes.SIGN_IN]: 'signin',
@@ -26,8 +28,15 @@ export const RoutePath: Record<AppRouteType, string> = {
 export const appRoutes: Route[] = [
   {
     path: RoutePath.main,
-    redirectTo: RoutePath.game,
+    redirectTo: RoutePath.home,
     pathMatch: 'full',
+  },
+  {
+    path: RoutePath.home,
+    title: 'Home Page',
+    canActivate: [authenticatedGuardFunction],
+    loadComponent: () =>
+      import('./pages/home-page/home-page').then((m) => m.HomePage),
   },
   {
     path: RoutePath.game,

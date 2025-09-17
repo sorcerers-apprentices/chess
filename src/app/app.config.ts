@@ -2,6 +2,7 @@ import {
   isDevMode,
   provideZonelessChangeDetection,
   provideBrowserGlobalErrorListeners,
+  signal,
 } from '@angular/core';
 import { appRoutes } from './app.routes';
 import { provideStore } from '@ngrx/store';
@@ -17,6 +18,7 @@ import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { LANGUAGE_TOKEN } from '@/app/services/language.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,5 +39,9 @@ export const appConfig: ApplicationConfig = {
       fallbackLang: 'en',
       lang: 'en',
     }),
+    {
+      provide: LANGUAGE_TOKEN,
+      useValue: signal('en'),
+    },
   ],
 };

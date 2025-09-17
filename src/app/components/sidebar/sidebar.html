@@ -1,28 +1,29 @@
 <tui-data-list>
-  @for (group of sidebarGroups(); track group.key) {
-    <tui-opt-group [label]="group.key | translate">
-      @for (item of group.value; track item.nameKey) {
-        <button tuiOption type="button" (click)="onClick(item)">
-          <img alt="icon" src="/assets/img/sidebar-item.svg" />
-          {{ item.nameKey | translate }}
-        </button>
-      }
-    </tui-opt-group>
+  @if (token) {
+    @for (group of sidebarGroups(); track group.key) {
+      <tui-opt-group [label]="group.key | translate">
+        @for (item of group.value; track item.nameKey) {
+          <button tuiOption type="button" (click)="onClick(item)">
+            <img alt="icon" src="/assets/img/sidebar-item.svg" />
+            {{ item.nameKey | translate }}
+          </button>
+        }
+      </tui-opt-group>
+    }
   }
-
   <tui-opt-group>
-    <label tuiOption (click)="toggleTheme()" tabindex="0">
+    <label tuiOption tabindex="0">
       <input
         size="s"
         tuiSwitch
         type="checkbox"
-        [checked]="darkMode()"
+        [(ngModel)]="darkMode"
         readonly
       />
       {{ "sidebar.darkMode" | translate }}
     </label>
-    <label tuiOption (click)="toggleLanguage()" tabindex="0">
-      <input size="s" tuiSwitch type="checkbox" [checked]="true" readonly />
+    <label tuiOption tabindex="0">
+      <input size="s" tuiSwitch type="checkbox" [(ngModel)]="langEn" readonly />
       {{ "sidebar.language" | translate }}
     </label>
   </tui-opt-group>

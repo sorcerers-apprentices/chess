@@ -1,15 +1,9 @@
-import type {
-  AuthResponse,
-  AuthTokenResponsePassword,
-  SupabaseClient,
-} from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
-import type {
-  SignInCredentialsType,
-  SignUpCredentialsType,
-} from '../types/sign-up.type';
 import { environment } from '@/environments/environment.development';
+
+type UserData = { username: string };
 
 @Injectable({
   providedIn: 'root',
@@ -17,36 +11,10 @@ import { environment } from '@/environments/environment.development';
 export class UserSupabaseService {
   private readonly apiUrl = environment.apiUrl;
   private readonly publishableKey = environment.publishableKey;
-  private readonly redirectUrl = environment.redirectURL;
   private readonly supabase: SupabaseClient = createClient(
     this.apiUrl,
     this.publishableKey,
   );
-
-  public async signup(
-    credentials: SignUpCredentialsType,
-  ): Promise<AuthResponse> {
-    return await this.supabase.auth.signUp({
-      email: credentials.email,
-      password: credentials.password,
-      options: {
-        data: {
-          display_name: credentials.displayName,
-          phone: credentials.phone,
-        },
-        emailRedirectTo: this.redirectUrl,
-      },
-    });
-  }
-
-  public async signin(
-    credentials: SignInCredentialsType,
-  ): Promise<AuthTokenResponsePassword> {
-    return await this.supabase.auth.signInWithPassword({
-      email: credentials.email,
-      password: credentials.password,
-    });
-  }
 
   public async fetchUsernameExists(displayName: string): Promise<boolean> {
     const { data, error } = await this.supabase
@@ -110,4 +78,3 @@ export class UserSupabaseService {
     return countW + countB;
   }
 }
-type UserData = { username: string };

@@ -1,8 +1,8 @@
 import {
-  inject,
-  computed,
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
 } from '@angular/core';
 import { Sidebar } from '../sidebar/sidebar';
 import { TuiBadge, TuiFade } from '@taiga-ui/kit';
