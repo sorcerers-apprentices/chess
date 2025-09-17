@@ -1,29 +1,40 @@
 import { TranslateService } from '@ngx-translate/core';
-import { Injectable, inject, signal } from '@angular/core';
+import {
+  effect,
+  inject,
+  Injectable,
+  InjectionToken,
+  type WritableSignal,
+} from '@angular/core';
 
 type SupportedLanguageType = 'en' | 'ru';
 
 const LANGUAGE_KEY = 'language';
 
+export const LANGUAGE_TOKEN = new InjectionToken<WritableSignal<'en' | 'ru'>>(
+  'LANGUAGE_TOKEN',
+);
+
 @Injectable({
   providedIn: 'root',
 })
 export class LanguageService {
-  public readonly isEnglish = signal<boolean>(
-    this.getInitialLanguage() === 'en',
-  );
-
-  private readonly translate = inject(TranslateService);
+  public readonly translate = inject(TranslateService);
+  // protected lang = toSignal(
+  //   this.translate.onLangChange.pipe(map((event) => event.lang)),
+  //   {
+  //     initialValue: this.translate.getCurrentLang(),
+  //   },
+  // );
+  // public language: ModelSignal<'en' | 'ru'> = signal(this.getInitialLanguage());
+  public readonly language = inject(LANGUAGE_TOKEN);
+  public readonly setLanguageEffect = effect(() => {
+    this.translate.use(this.language());
+    localStorage.setItem(LANGUAGE_KEY, this.language());
+  });
 
   constructor() {
-    this.translate.use(this.getInitialLanguage());
-  }
-
-  public toggleLanguage(): void {
-    const newLang = this.isEnglish() ? 'ru' : 'en';
-    this.translate.use(newLang);
-    this.isEnglish.set(newLang === 'en');
-    localStorage.setItem(LANGUAGE_KEY, newLang);
+    this.language.set(this.getInitialLanguage());
   }
 
   private getInitialLanguage(): SupportedLanguageType {

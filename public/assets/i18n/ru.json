@@ -37,7 +37,8 @@
     "confirmPasswordPlaceholder": "Введите пароль",
     "signUp": "Зарегистрироваться",
     "successTitle": "Отлично! Проверьте вашу почту",
-    "errorFallback": "Что-то пошло не так, попробуйте ещё раз"
+    "errorFallback": "Что-то пошло не так, попробуйте ещё раз",
+    "signIn": "Войти"
   },
   "validationErrors": {
     "samePasswordValidator": "Пароли не совпадают",

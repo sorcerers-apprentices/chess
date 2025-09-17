@@ -1,22 +1,29 @@
 import {
-  signal,
-  inject,
-  computed,
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  linkedSignal,
+  signal,
 } from '@angular/core';
 import {
-  TuiOption,
-  TuiOptGroup,
   TUI_DARK_MODE,
+  TuiDataList,
   TuiDataListComponent,
+  TuiOptGroup,
 } from '@taiga-ui/core';
 import { Router } from '@angular/router';
-import { TuiSwitch } from '@taiga-ui/kit';
+import { TuiSwitch, tuiSwitchOptionsProvider } from '@taiga-ui/kit';
+import type { RoutePathValue } from '../../app.routes';
 import { RoutePath } from '../../app.routes';
 import { TranslatePipe } from '@ngx-translate/core';
-import type { RoutePathValue } from '../../app.routes';
-import { LanguageService } from '@/app/services/language.service';
+import {
+  LANGUAGE_TOKEN,
+  LanguageService,
+} from '@/app/services/language.service';
+import { LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
+import { FormsModule } from '@angular/forms';
 
 type SidebarItemType = {
   nameKey: string;
@@ -30,32 +37,38 @@ type SidebarMapType = Record<string, SidebarItemType[]>;
   imports: [
     TuiDataListComponent,
     TuiOptGroup,
-    TuiOption,
     TuiSwitch,
     TranslatePipe,
+    FormsModule,
+    TuiDataList,
   ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    tuiSwitchOptionsProvider({ showIcons: false, appearance: () => 'primary' }),
+  ],
 })
 export class Sidebar {
+  protected readonly language = inject(LANGUAGE_TOKEN);
   protected readonly darkMode = inject(TUI_DARK_MODE);
   protected readonly translate = inject(LanguageService);
+  protected token = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+  protected langEn = linkedSignal(() => this.language() === 'en');
+  protected langEffect = effect(() =>
+    this.language.set(this.langEn() ? 'en' : 'ru'),
+  );
 
   protected readonly sidebarMenu = signal<SidebarMapType>({
     'sidebar.game': [
-      { nameKey: 'sidebar.newGame', route: RoutePath.main },
-      { nameKey: 'sidebar.resume', route: RoutePath.main },
-      { nameKey: 'sidebar.playVsEngine', route: RoutePath.main },
+      { nameKey: 'sidebar.newGame', route: RoutePath.game },
+      { nameKey: 'sidebar.playVsEngine', route: RoutePath.game },
     ],
     'sidebar.analysis': [
       { nameKey: 'sidebar.analysisBoard', route: RoutePath.main },
     ],
-    'sidebar.settings': [
-      { nameKey: 'sidebar.profile', route: RoutePath.main },
-      { nameKey: 'sidebar.login', route: RoutePath.signin },
-      { nameKey: 'sidebar.registration', route: RoutePath.signup },
-    ],
+    'sidebar.settings': [{ nameKey: 'sidebar.login', route: RoutePath.signin }],
   });
 
   protected readonly sidebarGroups = computed(() =>
@@ -63,14 +76,6 @@ export class Sidebar {
   );
 
   private readonly router = inject(Router);
-
-  protected toggleTheme(): void {
-    this.darkMode.set(!this.darkMode());
-  }
-
-  protected toggleLanguage(): void {
-    this.translate.toggleLanguage();
-  }
 
   protected onClick(item: SidebarItemType): void {
     this.router.navigate([item.route]);

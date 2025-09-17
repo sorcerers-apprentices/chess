@@ -28,12 +28,13 @@ import { signInUser } from '../../store/actions/user.actions';
 import type { User } from '@supabase/auth-js/dist/module/lib/types';
 import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { UserSupabaseService } from '../../services/user-supabase.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   noValidEmailFormat,
   noWhitespace,
 } from '@/app/utilities/validation-funtions';
+import { AuthService } from '@/app/services/auth.service';
+import { UserSupabaseService } from '@/app/services/user-supabase.service';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -80,6 +81,7 @@ import {
 export class SignInPage {
   protected readonly fb = inject(NonNullableFormBuilder);
   protected readonly translate = inject(TranslateService);
+  protected readonly auth = inject(AuthService);
   protected readonly api = inject(UserSupabaseService);
   protected readonly alert = inject(TuiAlertService);
   protected readonly store = inject(Store);
@@ -99,7 +101,7 @@ export class SignInPage {
     if (this.signinForm.invalid) {
       return;
     }
-    const result = await this.api.signin(this.signinForm.getRawValue());
+    const result = await this.auth.signin(this.signinForm.getRawValue());
 
     if (result.error) {
       return await firstValueFrom(
@@ -127,7 +129,7 @@ export class SignInPage {
     });
     this.store.dispatch(signInUserAction);
 
-    return this.router.navigate(['/game']).then();
+    return this.router.navigate(['/home']).then();
   }
 
   protected goToSignUpPage(): void {

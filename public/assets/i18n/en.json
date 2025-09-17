@@ -37,7 +37,8 @@
     "confirmPasswordPlaceholder": "Enter your password",
     "signUp": "Sign Up",
     "successTitle": "Well done! Check your email",
-    "errorFallback": "Something went wrong, try again, please"
+    "errorFallback": "Something went wrong, try again, please",
+    "signIn": "Sign in"
   },
   "validationErrors": {
     "samePasswordValidator": "Passwords are not matching",

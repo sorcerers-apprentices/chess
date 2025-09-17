@@ -89,9 +89,14 @@
             [error]="[] | tuiFieldError | async"
           />
         </label>
-        <button size="m" tuiButton type="submit" class="sign-up_button">
-          {{ "signup.signUp" | translate }}
-        </button>
+        <div class="sign-up_form_buttons-container">
+          <button size="m" tuiButton type="submit" class="sign-up_button">
+            {{ "signup.signUp" | translate }}
+          </button>
+          <button size="m" tuiButton type="button" (click)="goToSignInPage()">
+            {{ "signup.signIn" | translate }}
+          </button>
+        </div>
       </form>
     </div>
   </main>
