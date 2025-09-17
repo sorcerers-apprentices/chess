@@ -1,3 +1,5 @@
+@use "variables" as vars;
+
 .square {
   display: flex;
   align-items: center;
@@ -5,6 +7,26 @@
   width: 100%;
   height: 100%;
   font-size: 20px;
+
+  // состояние: откуда тащим
+  &.is-from {
+    outline: 3px solid var(--tui-background-accent-1);
+    outline-offset: -3px;
+  }
+
+  // состояние: можно бросить
+  &.is-over-allowed {
+    z-index: 1;
+    outline: 4px solid var(--tui-status-positive);
+    outline-offset: -4px;
+  }
+
+  // состояние: бросить нельзя
+  &.is-over-denied {
+    z-index: 1;
+    outline: 4px solid vars.$color-red2;
+    outline-offset: -4px;
+  }
 }
 
 .piece {
@@ -17,4 +39,12 @@
 
 .is-empty .piece {
   display: none; // фигура скрыта, если её нет
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.square.is-over-allowed .piece {
+  opacity: 0;
 }

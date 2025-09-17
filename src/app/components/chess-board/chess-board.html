@@ -5,12 +5,20 @@
     }
   </div>
 
-  <div class="board">
+  <div cdkDropListGroup class="board">
     @for (square of squares(); track square.square) {
       <app-chess-square
         [square]="square.square"
         [backgroundColor]="square.squareColor"
         [piece]="square.piece"
+        [isFrom]="square.isFrom"
+        [isOverAllowed]="square.isOverAllowed"
+        [isOverDenied]="square.isOverDenied"
+        (chessMove)="onSquareMove($event)"
+        (dragStartSquare)="onDragStart($event)"
+        (dragEnterSquare)="onDragEnter($event)"
+        (dragEndSquare)="onDragEnd()"
+        [allSquares]="allSquareIds()"
       />
     }
   </div>

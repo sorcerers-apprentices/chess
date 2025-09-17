@@ -1,8 +1,29 @@
 <div
-  class="square"
+  cdkDropList
+  [cdkDropListData]="dropData()"
+  (cdkDropListEntered)="handleDragEnter()"
+  [cdkDropListEnterPredicate]="canEnter"
+  (cdkDropListDropped)="onDrop($event)"
+  [cdkDropListConnectedTo]="connectedToIds()"
+  cdkDropListSortingDisabled
   [style.background-color]="backgroundColor()"
+  [id]="square()"
   [attr.data-square]="square()"
+  class="square"
+  [class.is-from]="isFrom()"
+  [class.is-over-allowed]="isOverAllowed()"
+  [class.is-over-denied]="isOverDenied()"
   [class.is-empty]="!hasPiece()"
 >
-  <img class="piece" [src]="icon()" [alt]="altText()" />
+  <img
+    cdkDrag
+    [cdkDragData]="dragData()"
+    (cdkDragStarted)="handleDragStart()"
+    (cdkDragEnded)="handleDragEnd()"
+    draggable="false"
+    class="piece"
+    [src]="icon()"
+    [alt]="altText()"
+  />
+  <ng-template cdkDragPlaceholder></ng-template>
 </div>

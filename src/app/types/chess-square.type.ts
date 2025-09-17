@@ -15,9 +15,9 @@ export type PieceType = {
 
 export type PieceColorType = 'white' | 'black';
 
-export type ColorLightType = 'var(--tui-chart-categorical-18)';
-export type ColorDarkType = 'var(--tui-background-elevation-3)';
-export type SquareColorType = ColorLightType | ColorDarkType;
+export type ColorWhiteType = 'var(--tui-chart-categorical-18)';
+export type ColorBlackType = 'var(--tui-background-elevation-3)';
+export type SquareColorType = ColorWhiteType | ColorBlackType;
 
 export type PieceKindType =
   | 'king'
@@ -51,3 +51,9 @@ export const RANKS = [
 ] as const;
 
 export type RankType = (typeof RANKS)[number];
+
+export type SquareUiStateType = SquareStateType & {
+  isFrom: boolean;
+  isOverAllowed: boolean;
+  isOverDenied: boolean;
+};
