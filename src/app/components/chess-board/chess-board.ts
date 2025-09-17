@@ -110,9 +110,6 @@ export class ChessBoard {
 
   //клетка-цель сгенерировала итог события «фигура упала ко мне», и прислала payload { from, to }
   protected onSquareMove = (payload: ChessMovePayloadType): void => {
-    // пока лог и сброс подсветки
-    console.log('[ChessBoard] DND move payload', payload);
-
     this.dragFrom.set(null);
     this.dragOver.set(null);
 

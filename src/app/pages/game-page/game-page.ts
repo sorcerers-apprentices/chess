@@ -51,7 +51,5 @@ export class GamePage {
   public onBoardMove(event: ChessMovePayloadType): void {
     this.lastMove.set(event);
     // здесь позже дергать движок/сервис, таймеры, историю и т.д.
-    // сейчас просто логировать:
-    console.log('[GamePage] move', event);
   }
 }

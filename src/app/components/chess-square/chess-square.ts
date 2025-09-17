@@ -97,15 +97,12 @@ export class ChessSquare {
 
   // хендлеры без логики
   public handleDragStart(): void {
-    console.log('[ChessSquare] dragStart', this.square());
     this.dragStartSquare.emit(this.square());
   }
   public handleDragEnter(): void {
-    console.log('[ChessSquare] dragEnter', this.square());
     this.dragEnterSquare.emit(this.square());
   }
   public handleDragEnd(): void {
-    console.log('[ChessSquare] dragEnd', this.square());
     this.dragEndSquare.emit();
   }
 
@@ -124,26 +121,12 @@ export class ChessSquare {
       // запрещаем вход на свою фигуру
       (!dropData.piece || dropData.piece.color !== dragData.piece.color);
 
-    console.log(
-      '[ChessSquare] canEnter? from=',
-      isDragData(dragData) ? dragData.fromSquare : 'X',
-      'to=',
-      isDropData(dropData) ? dropData.square : 'X',
-      '=>',
-      isAllowed,
-    );
-
     return isAllowed;
   };
 
   public onDrop(
     event: CdkDragDrop<DropDataType, DropDataType, DragDataType>,
   ): void {
-    console.log('[ChessSquare] onDrop', {
-      from: event.item?.data,
-      to: event.container?.data,
-    });
-
     const dragged = event.item?.data;
     const target = event.container?.data;
 

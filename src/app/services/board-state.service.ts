@@ -22,7 +22,7 @@ export class BoardStateService {
     this._squares.set(initial);
   }
 
-  /** Узнать фигуру на клетке */
+  /** Узнать фигуру на клетке для подсветки допустимых ходов, правила шахматной логики*/
   public pieceAt(square: SquareType): PieceType | null {
     return this._squares().find((s) => s.square === square)?.piece ?? null;
   }
@@ -31,11 +31,6 @@ export class BoardStateService {
   public movePiece(payload: ChessMovePayloadType): void {
     const { from, to } = payload;
 
-    if (from === to) {
-      console.log('[movePiece] from === to → игнор', { from, to });
-      return;
-    }
-
     // игнор «хода в ту же клетку»
     if (from === to) return;
 
@@ -43,30 +38,9 @@ export class BoardStateService {
     const fromCell = list.find((s) => s.square === from);
     const toCell = list.find((s) => s.square === to);
 
-    if (from === to) {
-      console.log('[movePiece] from === to → игнор', { from, to });
-      return;
-    }
-
-    if (!fromCell) {
-      console.log('[movePiece] fromCell not found', { from });
-      return;
-    }
-    if (!fromCell.piece) {
-      console.log('[movePiece] no piece at from', { from });
-      return;
-    }
-    if (!toCell) {
-      console.log('[movePiece] toCell not found', { to });
-      return;
-    }
-    if (toCell.piece && toCell.piece.color === fromCell.piece.color) {
-      console.log('[movePiece] target has same-color piece → запрещено', {
-        to,
-        target: toCell.piece,
-      });
-      return;
-    }
+    if (!fromCell || !fromCell.piece) return;
+    if (!toCell) return;
+    if (toCell.piece && toCell.piece.color === fromCell.piece.color) return;
 
     const moved = fromCell.piece;
 
@@ -76,8 +50,6 @@ export class BoardStateService {
       if (s.square === to) return { ...s, piece: moved };
       return s;
     });
-
-    console.log('[movePiece] OK', { from, to, moved });
 
     this._squares.set(next);
   }
