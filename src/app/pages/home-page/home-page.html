@@ -2,6 +2,58 @@
 <main tuiNavigationMain>
   <app-navigation />
   <section class="home-wrapper">
-    <p>Home</p>
+    <div class="information">
+      <div class="avatar">
+        <img alt="avatar" src="/assets/img/avatar.jpg" class="avatar_img" />
+      </div>
+      <div>
+        <h4>User Name</h4>
+      </div>
+    </div>
+    <div class="game-settings">
+      <form class="form">
+        <label
+          class="radio-label"
+          for="black"
+          [class.selected]="chosenColor() === 'black'"
+        >
+          <input
+            type="radio"
+            id="black"
+            value="black"
+            [checked]="chosenColor() === 'black'"
+            (input)="setColor($event)"
+            class="radio-input"
+          />
+          <img
+            src="/assets/img/black.jpg"
+            alt="color"
+            class="radio-input_img"
+          />
+        </label>
+        <label
+          class="radio-label"
+          for="white"
+          [class.selected]="chosenColor() === 'white'"
+        >
+          <input
+            type="radio"
+            id="white"
+            value="white"
+            [checked]="chosenColor() === 'white'"
+            (input)="setColor($event)"
+            class="radio-input"
+          />
+          <img
+            src="/assets/img/white.jpg"
+            alt="color"
+            class="radio-input_img"
+          />
+        </label>
+      </form>
+      <button size="m" tuiButton type="button" class="button">
+        {{ "home.play" | translate }}
+      </button>
+    </div>
   </section>
 </main>

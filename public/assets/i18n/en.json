@@ -50,5 +50,8 @@
     "minlength": "Minimum length — ",
     "maxlength": "Maximum length — ",
     "noUniqueUserName": "The user with this name already exists"
+  },
+  "home": {
+    "play": "Play Game"
   }
 }

@@ -1,0 +1,67 @@
+.home-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 3rem 14.4rem;
+}
+
+.information {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  max-height: 45rem;
+}
+
+.game-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.avatar {
+  overflow: hidden;
+  width: 14rem;
+
+  &_img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4%;
+    object-fit: cover;
+  }
+}
+
+.form {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.radio-label {
+  cursor: pointer;
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  padding: 0.4rem;
+  border-radius: 4%;
+  transition: all 0.4s ease-in;
+}
+
+.selected {
+  border: 2px solid var(--tui-text-action);
+}
+
+.radio-input {
+  position: absolute;
+  left: -100vw;
+  opacity: 0;
+
+  &_img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4%;
+    object-fit: cover;
+  }
+}
+
+.button {
+  width: 10rem;
+}
