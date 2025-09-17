@@ -120,7 +120,9 @@ export class ChessSquare {
     const isAllowed =
       isDragData(dragData) &&
       isDropData(dropData) &&
-      dragData.fromSquare !== dropData.square;
+      dragData.fromSquare !== dropData.square &&
+      // запрещаем вход на свою фигуру
+      (!dropData.piece || dropData.piece.color !== dragData.piece.color);
 
     console.log(
       '[ChessSquare] canEnter? from=',

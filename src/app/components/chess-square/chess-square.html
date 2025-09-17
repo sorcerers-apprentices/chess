@@ -3,9 +3,9 @@
   [cdkDropListData]="dropData()"
   (cdkDropListEntered)="handleDragEnter()"
   [cdkDropListEnterPredicate]="canEnter"
-  cdkDropListSortingDisabled
   (cdkDropListDropped)="onDrop($event)"
   [cdkDropListConnectedTo]="connectedToIds()"
+  cdkDropListSortingDisabled
   [style.background-color]="backgroundColor()"
   [id]="square()"
   [attr.data-square]="square()"

@@ -32,7 +32,7 @@ export class GamePage {
   protected readonly bottomPlayerColor: 'white' | 'black' =
     this.orientation === 'whiteBottom' ? 'white' : 'black';
 
-  // последний совершённый ход (для логов/истории/нотации — по желанию)
+  // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
   // локально можем хранить, откуда началось перетаскивание (если нужно для UI страницы)
@@ -40,18 +40,18 @@ export class GamePage {
 
   public onBoardDragStart(from: SquareType): void {
     this.dragFrom.set(from);
-    // здесь позже (когда будет движок) посчитаешь allowedTargets и пробросишь в Board
+    // здесь когда будет движок посчитать allowedTargets и пробросить в Board
   }
 
   public onBoardDragEnd(): void {
     this.dragFrom.set(null);
-    // здесь позже очистишь allowedTargets
+    // здесь позже очистить allowedTargets
   }
 
-  public onBoardMove(e: ChessMovePayloadType): void {
-    this.lastMove.set(e);
-    // здесь позже дергаешь движок/сервис, таймеры, историю и т.д.
-    // сейчас можно просто логировать:
-    console.log('[GamePage] move', e);
+  public onBoardMove(event: ChessMovePayloadType): void {
+    this.lastMove.set(event);
+    // здесь позже дергать движок/сервис, таймеры, историю и т.д.
+    // сейчас просто логировать:
+    console.log('[GamePage] move', event);
   }
 }
