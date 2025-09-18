@@ -1,14 +1,13 @@
 .home-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 2rem;
   padding: 3rem 14.4rem;
 }
 
 .information {
   display: flex;
   gap: 1rem;
-  align-items: center;
   max-height: 45rem;
 }
 
@@ -64,4 +63,23 @@
 
 .button {
   width: 10rem;
+}
+
+.user_info {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  min-height: 100%;
+
+  &__name {
+    font-size: 1.5rem;
+  }
+
+  &__game {
+    font-size: 1rem;
+  }
+
+  &__text {
+    font-size: 1rem;
+  }
 }

@@ -14,7 +14,7 @@ export type GameStateType = {
   moves: MoveRecordType[];
   undoneMoves: MoveRecordType[];
   lastMove?: { from: string; to: string } | null;
-  orientation?: 'white' | 'black';
+  orientation: 'white' | 'black';
   clocks?: { white: number; black: number } | null;
 };
 
@@ -23,6 +23,6 @@ export const initialGameState: GameStateType = {
   moves: [],
   undoneMoves: [],
   lastMove: null,
-  orientation: undefined,
+  orientation: 'black',
   clocks: null,
 };

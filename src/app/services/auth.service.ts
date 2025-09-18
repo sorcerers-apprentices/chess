@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import type {
+  SavedUserData,
   SignInCredentialsType,
   SignUpCredentialsType,
 } from '@/app/types/sign-up.type';
@@ -10,6 +11,7 @@ import {
   type SupabaseClient,
 } from '@supabase/supabase-js';
 import { environment } from '@/environments/environment.development';
+import { LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -45,5 +47,10 @@ export class AuthService {
       email: credentials.email,
       password: credentials.password,
     });
+  }
+
+  public getUserData(): SavedUserData {
+    const token = localStorage.getItem(LOCAL_STORAGE_KEY) ?? '';
+    return JSON.parse(token) ?? {};
   }
 }

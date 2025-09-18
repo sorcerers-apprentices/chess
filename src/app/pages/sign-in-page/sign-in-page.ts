@@ -115,16 +115,12 @@ export class SignInPage {
     }
 
     const user: User = result.data.user;
-    const playedGames = await this.api.fetchGamesCount(user.id);
-    const winedGames = await this.api.fetchWinedGamesCount(user.id);
 
     const signInUserAction = signInUser({
       user: {
         email: user.email ?? '',
         displayName: user.user_metadata['username'],
         phone: user.user_metadata['phone'],
-        playedGames,
-        winedGames,
       },
     });
     this.store.dispatch(signInUserAction);

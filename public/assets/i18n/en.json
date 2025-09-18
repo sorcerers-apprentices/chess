@@ -52,6 +52,11 @@
     "noUniqueUserName": "The user with this name already exists"
   },
   "home": {
-    "play": "Play Game"
+    "play": "Play Game",
+    "winedGames": "Wined Games: ",
+    "playedGames": "Played Games: ",
+    "phone": "Phone: ",
+    "lastSignIn": "Last sign in: ",
+    "choseColor": "Chose color:"
   }
 }
