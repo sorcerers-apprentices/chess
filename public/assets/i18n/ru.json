@@ -4,12 +4,9 @@
     "analysis": "Анализ",
     "settings": "Настройки",
     "newGame": "Новая игра",
-    "resume": "Продолжить",
     "playVsEngine": "Игра против движка",
     "analysisBoard": "Доска анализа",
-    "profile": "Профиль",
-    "login": "Авторизация",
-    "registration": "Регистрация",
+    "logout": "Выход",
     "darkMode": "Темная тема",
     "language": "Русский"
   },
@@ -52,5 +49,13 @@
     "minlength": "Минимальная длина — ",
     "maxlength": "Максимальная длина — ",
     "noUniqueUserName": "Пользователь с таким именем уже существует"
+  },
+  "home": {
+    "play": "Играть",
+    "winedGames": "Выигранные игры: ",
+    "playedGames": "Сыгранные игры: ",
+    "phone": "Телефон: ",
+    "lastSignIn": "Последний вход: ",
+    "choseColor": "Выберете цвет:"
   }
 }

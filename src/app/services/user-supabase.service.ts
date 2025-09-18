@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import { environment } from '@/environments/environment.development';
 
-type UserData = { username: string };
+type UserData = { display_name: string };
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class UserSupabaseService {
 
   public async fetchUserData(userId: string): Promise<UserData | null> {
     const { data, error } = await this.supabase
-      .from('user_data')
+      .from('profile')
       .select('*')
       .eq('user_id', userId);
 

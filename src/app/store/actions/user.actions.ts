@@ -6,3 +6,5 @@ export const signInUser = createAction(
   props<{ user: UserType }>(),
 );
 export const signUpUser = createAction('[User] Sign Up User');
+
+export const logoutUser = createAction('[User] Logout User');
