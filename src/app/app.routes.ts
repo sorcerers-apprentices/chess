@@ -1,6 +1,7 @@
 import {
   anonymousGuardFunction,
   authenticatedGuardFunction,
+  canDeactivatePopup,
 } from '@/app/guards/auth.guard';
 import { type Route } from '@angular/router';
 
@@ -42,6 +43,7 @@ export const appRoutes: Route[] = [
     path: RoutePath.game,
     title: 'Chess Game',
     canActivate: [authenticatedGuardFunction],
+    canDeactivate: [canDeactivatePopup],
     loadComponent: () =>
       import('./pages/game-page/game-page').then((m) => m.GamePage),
   },
