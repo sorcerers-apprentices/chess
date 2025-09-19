@@ -6,12 +6,12 @@ import {
 } from '@/app/store/actions/game.actions';
 import { Chess } from 'chess.js';
 import { Store } from '@ngrx/store';
-import type { Square, Piece } from 'chess.js';
+import type { Square, Piece, Move, Color } from 'chess.js';
 import { computed, inject, Injectable } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { selectChessFen } from '@/app/store/selectors/game.selectors';
 
-type BoardMatrix = (Piece | null)[][];
+export type BoardMatrix = (Piece | null)[][];
 
 @Injectable({
   providedIn: 'root',
@@ -68,5 +68,42 @@ export class GameService {
 
   public redoMove(): void {
     this.store.dispatch(redoMove());
+  }
+
+  public getTargets(square: Square): readonly Square[] {
+    const moves: Move[] = this.game().moves({ square, verbose: true });
+    return moves.map((move) => move.to);
+  }
+
+  public getTargetsSet(square: Square): ReadonlySet<Square> {
+    return new Set(this.getTargets(square));
+  }
+
+  // возвращает очередь хода
+  public turn(): Color {
+    return this.game().turn();
+  }
+
+  // есть ли фигура на клетке и какого цвета
+  public pieceColorAt(square: Square): Color | null {
+    const piece = this.game().get(square);
+    return piece ? piece.color : null;
+  }
+
+  // даёт полный объект фигуры ({ type: 'p', color: 'w' }).
+  public getPieceAt(square: Square): Piece | undefined {
+    return this.game().get(square);
+  }
+
+  // возвращает всю доску матрицей 8×8 (Piece | null в каждой клетке).
+  public getBoardFromFen(fen: string): (Piece | null)[][] {
+    const chess = new Chess(fen);
+    return chess.board();
+  }
+
+  // возвращает только одну фигуру на клетке
+  public getPieceAtFromFen(fen: string, square: Square): Piece | undefined {
+    const chess = new Chess(fen);
+    return chess.get(square);
   }
 }

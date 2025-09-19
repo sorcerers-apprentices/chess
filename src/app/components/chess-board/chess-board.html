@@ -19,6 +19,8 @@
         (dragEnterSquare)="onDragEnter($event)"
         (dragEndSquare)="onDragEnd()"
         [allSquares]="allSquareIds()"
+        [fromSquare]="fromSquare()"
+        [allowedTargets]="allowedTargets()"
       />
     }
   </div>
