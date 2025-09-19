@@ -58,5 +58,10 @@
     "phone": "Phone: ",
     "lastSignIn": "Last sign in: ",
     "choseColor": "Chose color:"
+  },
+  "game": {
+    "notification": "Are you sure you want to leave your game?",
+    "yes": "Yes",
+    "no": "No"
   }
 }
