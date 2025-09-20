@@ -1,4 +1,5 @@
 import {
+  gameOver,
   newGame,
   playMove,
   redoMove,
@@ -29,6 +30,9 @@ export const gameReducers = createReducer(
       lastMove: null,
       orientation,
       clocks: null,
+      finished: false,
+      result: null,
+      finalFen: null,
     };
   }),
 
@@ -79,4 +83,11 @@ export const gameReducers = createReducer(
       },
     };
   }),
+
+  on(gameOver, (state, { result, finalFen }) => ({
+    ...state,
+    finished: true,
+    result,
+    finalFen,
+  })),
 );
