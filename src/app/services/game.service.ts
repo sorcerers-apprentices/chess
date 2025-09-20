@@ -5,12 +5,16 @@ import {
   redoMove,
   undoMove,
 } from '@/app/store/actions/game.actions';
+import {
+  selectChessFen,
+  selectOrientation,
+} from '@/app/store/selectors/game.selectors';
 import { Chess } from 'chess.js';
 import { Store } from '@ngrx/store';
 import type { Square, Piece } from 'chess.js';
+import { EloService } from '@/app/services/elo.service';
 import { computed, inject, Injectable } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
-import { selectChessFen } from '@/app/store/selectors/game.selectors';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -24,8 +28,10 @@ type BoardMatrix = (Piece | null)[][];
 })
 export class GameService {
   private readonly store = inject(Store);
+  private readonly elo = inject(EloService);
   private readonly fen = this.store.selectSignal(selectChessFen);
   private readonly game = computed(() => new Chess(this.fen()));
+  private readonly orientation = this.store.selectSignal(selectOrientation);
 
   public newGame(fen?: string): void {
     this.store.dispatch(newGame({ initialFen: fen }));
@@ -62,11 +68,7 @@ export class GameService {
       };
 
       this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
-
-      const result = this.evaluateResultFromInstance(chess);
-      if (result.draw || result.winner !== null) {
-        this.store.dispatch(gameOver({ result, finalFen: chess.fen() }));
-      }
+      this.handleGameEnd(chess);
 
       return true;
     } catch {
@@ -118,13 +120,24 @@ export class GameService {
     };
 
     this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+    this.handleGameEnd(chess);
+    return moveRecord;
+  }
 
+  private handleGameEnd(chess: Chess): void {
     const result = this.evaluateResultFromInstance(chess);
     if (result.draw || result.winner !== null) {
       this.store.dispatch(gameOver({ result, finalFen: chess.fen() }));
-    }
 
-    return moveRecord;
+      const player: 'white' | 'black' = this.orientation();
+      if (result.draw) {
+        this.elo.draw();
+      } else if (result.winner === player) {
+        this.elo.win();
+      } else {
+        this.elo.loss();
+      }
+    }
   }
 
   private evaluateResultFromInstance(chess: Chess): GameResultType {
