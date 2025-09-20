@@ -69,4 +69,39 @@ export class GameService {
   public redoMove(): void {
     this.store.dispatch(redoMove());
   }
+
+  public playOpponentMove(): MoveRecordType | null {
+    const chess = new Chess(this.fen());
+
+    const possibleMoves = chess.moves({ verbose: true });
+
+    if (possibleMoves.length === 0) {
+      return null;
+    }
+
+    const idx = Math.floor(Math.random() * possibleMoves.length);
+    const chosen = possibleMoves[idx];
+
+    const moveResult = chess.move({
+      from: chosen.from,
+      to: chosen.to,
+      promotion: chosen.promotion ?? undefined,
+    });
+
+    if (moveResult === null) {
+      return null;
+    }
+
+    const moveRecord: MoveRecordType = {
+      uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
+      san: moveResult.san,
+      move: moveResult,
+      fenAfter: chess.fen(),
+      timestamp: Date.now(),
+    };
+
+    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+
+    return moveRecord;
+  }
 }
