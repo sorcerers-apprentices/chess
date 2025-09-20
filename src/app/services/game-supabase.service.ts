@@ -2,8 +2,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import { environment } from '@/environments/environment.development';
-
-type BoardCell = { file: string; rank: number };
+import { GAME_ID } from '@/app/constants/auth.constants';
+import type { GameModel, MoveModel } from '@/app/types/supabase-game.type';
 
 @Injectable({
   providedIn: 'root',
@@ -34,20 +34,38 @@ export class GameSupabaseService {
       return null;
     }
 
+    this.setGameId(data.id);
     return data.id;
   }
 
-  public async move(
-    gameId: string,
-    from: BoardCell,
-    to: BoardCell,
-  ): Promise<void> {
+  public async fetchGame(id: string): Promise<GameModel | null> {
+    const { data, error } = await this.supabase
+      .from('game')
+      .select('*')
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error fetching data:', error.message);
+      return null;
+    }
+
+    return data[0];
+  }
+
+  public async move(move: MoveModel): Promise<void> {
     const { error } = await this.supabase.from('move').insert({
-      game_id: gameId,
-      from_file: from.file,
-      from_rank: from.rank,
-      to_file: to.file,
-      to_rank: to.rank,
+      game_id: move.gameId,
+      from_file: move.from.file,
+      from_rank: move.from.rank,
+      to_file: move.to.file,
+      to_rank: move.to.rank,
+      uci: move.uci,
+      san: move.san,
+      fenAfter: move.fenAfter,
+      timestamp: move.timestamp,
+      piece: move.piece,
+      captured: move.captured,
+      promotion: move.promotion,
     });
 
     if (error) {
@@ -63,5 +81,16 @@ export class GameSupabaseService {
     if (error) {
       console.error('Error undoing move:', error?.message);
     }
+  }
+
+  public setGameId(id: string | null): void {
+    if (id == null) {
+      return;
+    }
+    localStorage.setItem(GAME_ID, id);
+  }
+
+  public getGameId(): string {
+    return localStorage.getItem(GAME_ID) ?? '';
   }
 }
