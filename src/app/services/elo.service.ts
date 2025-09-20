@@ -7,10 +7,12 @@ import {
   incrementGamesPlayed,
 } from '@/app/store/actions/user.actions';
 import {
+  PRO_RATING,
   INITIAL_ELO,
   PRO_K_FACTOR,
   INITIAL_K_FACTOR,
   DEFAULT_K_FACTOR,
+  INITIAL_GAMES_FOR_RATING,
 } from '@/app/constants/elo.constants';
 import { Store } from '@ngrx/store';
 import { inject, Injectable } from '@angular/core';
@@ -67,8 +69,8 @@ export class EloService {
   }
 
   private getKFactor(rating: number, gamesPlayed: number): number {
-    if (rating >= 2400) return PRO_K_FACTOR;
-    if (gamesPlayed < 30) return INITIAL_K_FACTOR;
+    if (rating >= PRO_RATING) return PRO_K_FACTOR;
+    if (gamesPlayed < INITIAL_GAMES_FOR_RATING) return INITIAL_K_FACTOR;
     return DEFAULT_K_FACTOR;
   }
 }
