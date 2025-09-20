@@ -12,20 +12,18 @@ import { initialGameState } from '@/app/store/states/game.state';
 export const gameReducers = createReducer(
   initialGameState,
 
-
   on(newGame, (state, { initialFen, orientation }) => ({
     ...state,
     fen: initialFen ?? state.fen,
     moves: [],
     undoneMoves: [],
     lastMove: null,
-    orientation: orientation ?? state.orientation, // ← берём из payload или оставляем как было    
+    orientation: orientation ?? state.orientation, // ← берём из payload или оставляем как было
     clocks: null,
     finished: false,
     result: null,
     finalFen: null,
   })),
-
 
   on(playMove, (state, { fen, moveRecord }) => ({
     ...state,

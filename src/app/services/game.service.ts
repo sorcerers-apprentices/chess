@@ -86,7 +86,6 @@ export class GameService {
     this.store.dispatch(redoMove());
   }
 
-
   public getTargets(square: Square): readonly Square[] {
     const moves: Move[] = this.game().moves({ square, verbose: true });
     return moves.map((move) => move.to);
@@ -122,6 +121,7 @@ export class GameService {
   public getPieceAtFromFen(fen: string, square: Square): Piece | undefined {
     const chess = new Chess(fen);
     return chess.get(square);
+  }
 
   public getGameResult(): GameResultType {
     const chess = new Chess(this.fen());
@@ -195,6 +195,5 @@ export class GameService {
     }
 
     return { winner: null, draw: false };
-
   }
 }
