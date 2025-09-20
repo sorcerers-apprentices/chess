@@ -1,7 +1,9 @@
+import type { Piece } from 'chess.js';
+
 export type SquareStateType = {
   square: SquareType;
   squareColor: SquareColorType;
-  piece: PieceType | null;
+  piece: Piece | null;
 };
 
 export type SquareType = `${FileType}${RankType}`;

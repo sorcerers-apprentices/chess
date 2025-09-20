@@ -1,15 +1,16 @@
-import type { PieceType, SquareType } from '@/app/types/chess-square.type';
+import type { SquareType } from '@/app/types/chess-square.type';
+import type { Piece } from 'chess.js';
 
 /** Что тащим (источник) */
 export type DragDataType = {
-  piece: PieceType;
+  piece: Piece;
   fromSquare: SquareType;
 };
 
 /** Куда бросаем (цель) */
 export type DropDataType = {
   square: SquareType;
-  piece: PieceType | null;
+  piece: Piece | null;
 };
 
 export type ChessMovePayloadType = {

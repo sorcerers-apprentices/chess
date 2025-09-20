@@ -1,5 +1,6 @@
 import type { Move } from 'chess.js';
 import { DEFAULT_POSITION } from 'chess.js';
+import type { GameResultType } from '@/app/services/game.service';
 
 export type MoveRecordType = {
   uci: string;
@@ -17,6 +18,9 @@ export type GameStateType = {
   lastMove?: { from: string; to: string } | null;
   orientation: 'white' | 'black';
   clocks?: { white: number; black: number } | null;
+  finished: boolean;
+  result: GameResultType | null;
+  finalFen?: string | null;
 };
 
 export const initialGameState: GameStateType = {
@@ -27,4 +31,7 @@ export const initialGameState: GameStateType = {
   lastMove: null,
   orientation: 'black',
   clocks: null,
+  finished: false,
+  result: null,
+  finalFen: null,
 };

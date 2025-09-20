@@ -1,34 +1,28 @@
-import type {
-  PieceColorType,
-  PieceKindType,
-} from '@/app/types/chess-square.type';
+import type { Color, PieceSymbol } from 'chess.js';
 
-export const PIECE_ICON_URL: Record<
-  PieceKindType,
-  Record<PieceColorType, string>
-> = {
-  king: {
-    white: 'assets/img/chess-piece/white/wK.svg',
-    black: 'assets/img/chess-piece/black/bK.svg',
+export const PIECE_ICON_URL: Record<PieceSymbol, Record<Color, string>> = {
+  k: {
+    w: 'assets/img/chess-piece/white/wK.svg',
+    b: 'assets/img/chess-piece/black/bK.svg',
   },
-  queen: {
-    white: 'assets/img/chess-piece/white/wQ.svg',
-    black: 'assets/img/chess-piece/black/bQ.svg',
+  q: {
+    w: 'assets/img/chess-piece/white/wQ.svg',
+    b: 'assets/img/chess-piece/black/bQ.svg',
   },
-  rook: {
-    white: 'assets/img/chess-piece/white/wR.svg',
-    black: 'assets/img/chess-piece/black/bR.svg',
+  r: {
+    w: 'assets/img/chess-piece/white/wR.svg',
+    b: 'assets/img/chess-piece/black/bR.svg',
   },
-  bishop: {
-    white: 'assets/img/chess-piece/white/wB.svg',
-    black: 'assets/img/chess-piece/black/bB.svg',
+  b: {
+    w: 'assets/img/chess-piece/white/wB.svg',
+    b: 'assets/img/chess-piece/black/bB.svg',
   },
-  knight: {
-    white: 'assets/img/chess-piece/white/wN.svg',
-    black: 'assets/img/chess-piece/black/bN.svg',
+  n: {
+    w: 'assets/img/chess-piece/white/wN.svg',
+    b: 'assets/img/chess-piece/black/bN.svg',
   },
-  pawn: {
-    white: 'assets/img/chess-piece/white/wP.svg',
-    black: 'assets/img/chess-piece/black/bP.svg',
+  p: {
+    w: 'assets/img/chess-piece/white/wP.svg',
+    b: 'assets/img/chess-piece/black/bP.svg',
   },
 };
