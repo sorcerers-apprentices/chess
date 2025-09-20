@@ -3,7 +3,12 @@ import type { MoveRecordType } from '@/app/store/states/game.state';
 
 export const newGame = createAction(
   '[Chess] New Game',
-  props<{ initialFen?: string }>(),
+  props<{ initialFen: string }>(),
+);
+
+export const setGameId = createAction(
+  '[Game] Set Id',
+  props<{ gameId: string }>(),
 );
 
 export const playMove = createAction(

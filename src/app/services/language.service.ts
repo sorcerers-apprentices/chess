@@ -20,13 +20,6 @@ export const LANGUAGE_TOKEN = new InjectionToken<WritableSignal<'en' | 'ru'>>(
 })
 export class LanguageService {
   public readonly translate = inject(TranslateService);
-  // protected lang = toSignal(
-  //   this.translate.onLangChange.pipe(map((event) => event.lang)),
-  //   {
-  //     initialValue: this.translate.getCurrentLang(),
-  //   },
-  // );
-  // public language: ModelSignal<'en' | 'ru'> = signal(this.getInitialLanguage());
   public readonly language = inject(LANGUAGE_TOKEN);
   public readonly setLanguageEffect = effect(() => {
     this.translate.use(this.language());

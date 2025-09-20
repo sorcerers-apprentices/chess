@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import { environment } from '@/environments/environment.development';
+import { GAME_ID } from '@/app/constants/auth.constants';
 
 type BoardCell = { file: string; rank: number };
 
@@ -34,6 +35,7 @@ export class GameSupabaseService {
       return null;
     }
 
+    this.setGameId(data.id);
     return data.id;
   }
 
@@ -63,5 +65,16 @@ export class GameSupabaseService {
     if (error) {
       console.error('Error undoing move:', error?.message);
     }
+  }
+
+  public setGameId(id: string | null): void {
+    if (id == null) {
+      return;
+    }
+    localStorage.setItem(GAME_ID, id);
+  }
+
+  public getGameId(): string {
+    return localStorage.getItem(GAME_ID) ?? '';
   }
 }

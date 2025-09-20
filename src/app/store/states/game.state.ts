@@ -11,6 +11,7 @@ export type MoveRecordType = {
 
 export type GameStateType = {
   fen: string;
+  id: string;
   moves: MoveRecordType[];
   undoneMoves: MoveRecordType[];
   lastMove?: { from: string; to: string } | null;
@@ -20,6 +21,7 @@ export type GameStateType = {
 
 export const initialGameState: GameStateType = {
   fen: DEFAULT_POSITION,
+  id: '',
   moves: [],
   undoneMoves: [],
   lastMove: null,
