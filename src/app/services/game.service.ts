@@ -1,4 +1,5 @@
 import {
+  gameOver,
   newGame,
   playMove,
   redoMove,
@@ -10,6 +11,11 @@ import type { Square, Piece } from 'chess.js';
 import { computed, inject, Injectable } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { selectChessFen } from '@/app/store/selectors/game.selectors';
+
+export type GameResultType = {
+  winner: 'white' | 'black' | null;
+  draw: boolean;
+};
 
 type BoardMatrix = (Piece | null)[][];
 
@@ -56,6 +62,12 @@ export class GameService {
       };
 
       this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+
+      const result = this.evaluateResultFromInstance(chess);
+      if (result.draw || result.winner !== null) {
+        this.store.dispatch(gameOver({ result, finalFen: chess.fen() }));
+      }
+
       return true;
     } catch {
       return false;
@@ -68,5 +80,68 @@ export class GameService {
 
   public redoMove(): void {
     this.store.dispatch(redoMove());
+  }
+
+  public getGameResult(): GameResultType {
+    const chess = new Chess(this.fen());
+    return this.evaluateResultFromInstance(chess);
+  }
+
+  public playOpponentMove(): MoveRecordType | null {
+    const chess = new Chess(this.fen());
+
+    const possibleMoves = chess.moves({ verbose: true }) ?? [];
+
+    if (possibleMoves.length === 0) {
+      return null;
+    }
+
+    const idx = Math.floor(Math.random() * possibleMoves.length);
+    const chosen = possibleMoves[idx];
+
+    const moveResult = chess.move({
+      from: chosen.from,
+      to: chosen.to,
+      promotion: chosen.promotion ?? undefined,
+    });
+
+    if (moveResult === null) {
+      return null;
+    }
+
+    const moveRecord: MoveRecordType = {
+      uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
+      san: moveResult.san,
+      move: moveResult,
+      fenAfter: chess.fen(),
+      timestamp: Date.now(),
+    };
+
+    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+
+    const result = this.evaluateResultFromInstance(chess);
+    if (result.draw || result.winner !== null) {
+      this.store.dispatch(gameOver({ result, finalFen: chess.fen() }));
+    }
+
+    return moveRecord;
+  }
+
+  private evaluateResultFromInstance(chess: Chess): GameResultType {
+    if (chess.isCheckmate()) {
+      const winner = chess.turn() === 'w' ? 'black' : 'white';
+      return { winner, draw: false };
+    }
+
+    if (
+      chess.isStalemate() ||
+      chess.isThreefoldRepetition() ||
+      chess.isInsufficientMaterial() ||
+      chess.isDraw()
+    ) {
+      return { winner: null, draw: true };
+    }
+
+    return { winner: null, draw: false };
   }
 }
