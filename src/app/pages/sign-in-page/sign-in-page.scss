@@ -6,9 +6,10 @@
   @include mix.background("/assets/img/signin.jpg");
 
   height: 100vh;
-  margin: 0 -2rem;
+  margin: 0;
   padding-top: 0;
-  background-position: center;
+  background-position: -2rem 45%;
+  background-size: 110% auto;
 
   &_container {
     max-width: 29.5rem;

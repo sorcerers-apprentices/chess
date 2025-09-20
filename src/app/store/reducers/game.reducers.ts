@@ -1,4 +1,5 @@
 import {
+  gameOver,
   newGame,
   playMove,
   redoMove,
@@ -11,15 +12,20 @@ import { initialGameState } from '@/app/store/states/game.state';
 export const gameReducers = createReducer(
   initialGameState,
 
+
   on(newGame, (state, { initialFen, orientation }) => ({
     ...state,
     fen: initialFen ?? state.fen,
-    orientation: orientation ?? state.orientation, // ← берём из payload или оставляем как было
     moves: [],
     undoneMoves: [],
     lastMove: null,
+    orientation: orientation ?? state.orientation, // ← берём из payload или оставляем как было    
     clocks: null,
+    finished: false,
+    result: null,
+    finalFen: null,
   })),
+
 
   on(playMove, (state, { fen, moveRecord }) => ({
     ...state,
@@ -68,4 +74,11 @@ export const gameReducers = createReducer(
       },
     };
   }),
+
+  on(gameOver, (state, { result, finalFen }) => ({
+    ...state,
+    finished: true,
+    result,
+    finalFen,
+  })),
 );

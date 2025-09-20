@@ -6,5 +6,13 @@ export const signInUser = createAction(
   props<{ user: UserType }>(),
 );
 export const signUpUser = createAction('[User] Sign Up User');
-
 export const logoutUser = createAction('[User] Logout User');
+
+export const updateElo = createAction(
+  '[User] Update Elo',
+  props<{ elo: number }>(),
+);
+export const incrementGamesPlayed = createAction(
+  '[User] Increment Games Played',
+  props<{ by?: number }>(),
+);
