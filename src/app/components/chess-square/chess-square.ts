@@ -9,7 +9,6 @@ import {
 import type {
   SquareType,
   SquareColorType,
-  PieceType,
 } from '@/app/types/chess-square.type';
 
 import { PIECE_ICON_URL } from '@/app/constants/chess-piece.constans';
@@ -22,6 +21,7 @@ import type {
   DropDataType,
 } from '@/app/types/drag-drop-data.type';
 import { isDragData, isDropData } from '@/app/utilities/chess-piece';
+import type { Piece } from 'chess.js';
 
 @Component({
   selector: 'app-chess-square',
@@ -36,7 +36,7 @@ export class ChessSquare {
   //фон клетки
   public readonly backgroundColor = input.required<SquareColorType>();
   // объект фигуры в клетке (id, цвет, что за фигура)
-  public readonly piece = input<PieceType | null>(null);
+  public readonly piece = input<Piece | null>(null);
   //event попытка хода drop: { from, to }
   public readonly chessMove = output<ChessMovePayloadType>();
 
@@ -47,6 +47,9 @@ export class ChessSquare {
   public readonly isOverAllowed = input<boolean>(false);
   // курсор/фигура «над этой клеткой, ход запрещён».
   public readonly isOverDenied = input<boolean>(false);
+
+  public readonly fromSquare = input<SquareType | null>(null);
+  public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);
 
   // добавляем события для родителя
   // старт с этой клетки а4 h5
@@ -62,7 +65,7 @@ export class ChessSquare {
   // От фигуры → к URL иконки: PIECE_ICON_URL[kind][color] или пустая строка, если фигуры нет. Идёт в <img [src]>
   protected readonly icon: Signal<string> = computed(() => {
     const pieceIcon = this.piece();
-    return pieceIcon ? PIECE_ICON_URL[pieceIcon.kind][pieceIcon.color] : '';
+    return pieceIcon ? PIECE_ICON_URL[pieceIcon.type][pieceIcon.color] : '';
   });
 
   //Массив «подключённых» DropList (все клетки кроме себя). Используется в шаблоне на cdkDropListConnectedTo
@@ -74,7 +77,7 @@ export class ChessSquare {
   // Альт-текст для иконки фигуры
   protected readonly altText = computed(() => {
     const pieceAltText = this.piece();
-    return pieceAltText ? `${pieceAltText.color} ${pieceAltText.kind}` : '';
+    return pieceAltText ? `${pieceAltText.color} ${pieceAltText.type}` : '';
   });
 
   // Флаг «в клетке есть фигура»
@@ -111,17 +114,24 @@ export class ChessSquare {
     drag: CdkDrag<DragDataType>,
     drop: CdkDropList<DropDataType>,
   ): boolean => {
+    const allow = this.allowedTargets();
+    const from = this.fromSquare();
+    const here = drop.data?.square;
+
     const dragData = drag.data;
     const dropData = drop.data;
 
-    const isAllowed =
-      isDragData(dragData) &&
-      isDropData(dropData) &&
-      dragData.fromSquare !== dropData.square &&
-      // запрещаем вход на свою фигуру
-      (!dropData.piece || dropData.piece.color !== dragData.piece.color);
+    if (!isDragData(dragData) || !isDropData(dropData)) return false;
+    if (dragData.fromSquare === here) return false;
+    if (dropData.piece && dropData.piece.color === dragData.piece.color)
+      return false;
 
-    return isAllowed;
+    // если allow/from ещё не приехали — пускаем по дефолту
+    const canByDefault = allow == null || from == null;
+    if (canByDefault) return true;
+
+    // обычное правило, когда всё уже есть
+    return allow.has(here) && dragData.fromSquare === from;
   };
 
   public onDrop(
@@ -137,6 +147,7 @@ export class ChessSquare {
 
     // тут НЕТ шахматной валидации — только событие UX.
     // шахматные правила пусть проверяет родитель/сервис с chess.js.
-    this.chessMove.emit({ from: dragged.fromSquare, to: target.square });
+    const movePayload = { from: dragged.fromSquare, to: target.square };
+    this.chessMove.emit(movePayload);
   }
 }

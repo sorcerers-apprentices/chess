@@ -4,7 +4,7 @@ import type { MoveRecordType } from '@/app/store/states/game.state';
 
 export const newGame = createAction(
   '[Chess] New Game',
-  props<{ initialFen?: string }>(),
+  props<{ initialFen: string; orientation?: 'white' | 'black' }>(),
 );
 export const gameOver = createAction(
   '[Game] Game Over',

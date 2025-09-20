@@ -1,96 +1,77 @@
-import { inject, Injectable } from '@angular/core';
-import { ChessPieceIdService } from '@/app/services/chess-piece-id.service';
-import type { BoardOrientationType } from '@/app/types/chess-piece.type';
-import { isFileType, isRankType } from '@/app/utilities/chess-piece';
+import { computed, inject, Injectable } from '@angular/core';
 import type {
-  FileType,
-  PieceColorType,
-  PieceKindType,
-  PieceType,
-  RankType,
+  SquareColorType,
   SquareStateType,
   SquareType,
 } from '@/app/types/chess-square.type';
-import { RANK_1, RANK_2, RANK_7, RANK_8 } from '@/app/types/chess-square.type';
-import { SQUARE_STATES } from '@/app/constants/chess-square.constans';
+import { RANK_8 } from '@/app/types/chess-square.type';
+import { FILES, RANKS } from '@/app/types/chess-square.type';
+import {
+  DARK,
+  LIGHT,
+  RANKS_TOP_DOWN,
+} from '@/app/constants/chess-square.constans';
+import type { BoardMatrix } from '@/app/services/game.service';
+import { GameService } from '@/app/services/game.service';
+import type { Piece, Square } from 'chess.js';
+import { Store } from '@ngrx/store';
+import type { GameStateType } from '@/app/store/states/game.state';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoardSetupService {
-  private readonly pieceFactory = inject(ChessPieceIdService);
-  private readonly backRankMap: Record<FileType, PieceKindType> = {
-    a: 'rook',
-    b: 'knight',
-    c: 'bishop',
-    d: 'queen',
-    e: 'king',
-    f: 'bishop',
-    g: 'knight',
-    h: 'rook',
-  };
-  private readonly setups: Record<
-    BoardOrientationType,
-    readonly SquareStateType[]
-  >;
+  // выдает текущее состояние board
 
-  constructor() {
-    this.setups = {
-      whiteBottom: this.calculateSetup('whiteBottom'),
-      whiteTop: this.calculateSetup('whiteTop'),
-    };
+  public readonly squaresBoard = computed<readonly SquareStateType[]>(() => {
+    const fen = this.fen();
+    const matrix = this.game.getBoardFromFen(fen);
+    return this.createInitialSquaresPieces(matrix);
+  });
+
+  protected readonly store: Store<{ game: GameStateType }> = inject(
+    Store<{ game: GameStateType }>,
+  );
+
+  protected readonly fen = this.store.selectSignal((state) => state.game.fen);
+  protected readonly orientation = this.store.selectSignal(
+    (state) => state.game.orientation,
+  );
+
+  private readonly game = inject(GameService);
+
+  public createInitialSquaresPieces(board: BoardMatrix): SquareStateType[] {
+    const ranksOrder = this.orientation() === 'white' ? RANKS_TOP_DOWN : RANKS;
+    const filesOrder =
+      this.orientation() === 'white' ? FILES : [...FILES].reverse();
+
+    const acc: SquareStateType[] = [];
+
+    for (const rank of ranksOrder) {
+      const rowIndex = RANK_8 - Number(rank);
+      const row = board[rowIndex];
+
+      for (const file of filesOrder) {
+        const colIndex = FILES.indexOf(file);
+        const enginePiece = row[colIndex];
+
+        const square: SquareType = `${file}${rank}`;
+
+        const even = (Number(rank) - 1 + colIndex) % 2 === 0;
+        const squareColor: SquareColorType = even ? LIGHT : DARK;
+
+        acc.push({
+          square,
+          squareColor,
+          piece: enginePiece,
+        });
+      }
+    }
+    return acc;
   }
 
-  public createInitialSquares(
-    orientation: BoardOrientationType = 'whiteBottom',
-  ): readonly SquareStateType[] {
-    return this.setups[orientation];
-  }
-
-  private calculateSetup(
-    orientation: BoardOrientationType,
-  ): readonly SquareStateType[] {
-    return SQUARE_STATES.map((state) => ({
-      ...state,
-      piece: this.pieceForStart(state.square, orientation),
-    }));
-  }
-
-  private pieceForStart(
-    square: SquareType,
-    orientation: BoardOrientationType,
-  ): PieceType | null {
-    const fileChar = square.charAt(0);
-    const rankNum = Number(square.charAt(1));
-
-    if (!isFileType(fileChar) || !isRankType(rankNum)) return null;
-
-    const file: FileType = fileChar;
-    const rank: RankType = rankNum;
-    const isWhiteBottom = orientation === 'whiteBottom';
-
-    const whitePawnRank = isWhiteBottom ? RANK_2 : RANK_7;
-    const whiteBackRank = isWhiteBottom ? RANK_1 : RANK_8;
-    const blackPawnRank = isWhiteBottom ? RANK_7 : RANK_2;
-    const blackBackRank = isWhiteBottom ? RANK_8 : RANK_1;
-
-    if (rank === whitePawnRank) return this.make('pawn', 'white');
-    if (rank === blackPawnRank) return this.make('pawn', 'black');
-
-    if (rank === whiteBackRank)
-      return this.make(this.backRankKind(file), 'white');
-    if (rank === blackBackRank)
-      return this.make(this.backRankKind(file), 'black');
-
-    return null;
-  }
-
-  private backRankKind(file: FileType): PieceKindType {
-    return this.backRankMap[file];
-  }
-
-  private make(kind: PieceKindType, color: PieceColorType): PieceType {
-    // единая точка создания фигуры с UUID
-    return this.pieceFactory.createPiece(kind, color);
+  /** Узнать фигуру на клетке для подсветки допустимых ходов, правила шахматной логики */
+  public pieceAt(square: Square): Piece | undefined {
+    return this.game.getPieceAtFromFen(this.fen(), square);
   }
 }
