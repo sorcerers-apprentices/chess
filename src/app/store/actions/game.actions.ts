@@ -15,5 +15,11 @@ export const playMove = createAction(
   '[Game] Play Move',
   props<{ fen: string; moveRecord: MoveRecordType }>(),
 );
+
+export const moveSuccess = createAction(
+  '[Game] Move Success',
+  props<{ fen: string; moveRecord: MoveRecordType }>(),
+);
+
 export const undoMove = createAction('[Game] Undo Move');
 export const redoMove = createAction('[Game] Redo Move');

@@ -1,10 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { GameSupabaseService } from '@/app/services/game-supabase.service';
-import { newGame, setGameId } from '@/app/store/actions/game.actions';
+import {
+  moveSuccess,
+  newGame,
+  playMove,
+  setGameId,
+} from '@/app/store/actions/game.actions';
 import { from, map, switchMap } from 'rxjs';
 import { DEFAULT_WHITE_POSITION } from '@/app/constants/chess-game.constants';
 import { AuthService } from '@/app/services/auth.service';
+import type { BoardCell, MoveModel } from '@/app/types/supabase-game.type';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +38,37 @@ export class GameEffects {
             map((id) => setGameId({ gameId: id ?? '' })),
           );
         }
+      }),
+    );
+  });
+
+  private move$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(playMove),
+      switchMap(async ({ fen, moveRecord }) => {
+        const gameId = this.api.getGameId();
+        const from: BoardCell = {
+          file: moveRecord.move.from[0],
+          rank: +moveRecord.move.from[1],
+        };
+        const to: BoardCell = {
+          file: moveRecord.move.to[0],
+          rank: +moveRecord.move.to[1],
+        };
+        const move: MoveModel = {
+          gameId: gameId,
+          from: from,
+          to: to,
+          uci: moveRecord.uci,
+          san: moveRecord.san,
+          fenAfter: moveRecord.fenAfter,
+          timestamp: moveRecord.timestamp,
+          piece: moveRecord.move.piece,
+          captured: moveRecord.move.captured ?? '',
+          promotion: moveRecord.move.promotion ?? '',
+        };
+        await this.api.move(move);
+        return moveSuccess({ fen, moveRecord });
       }),
     );
   });
