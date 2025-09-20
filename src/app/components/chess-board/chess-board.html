@@ -1,6 +1,6 @@
 <div class="board-wrap">
   <div class="ranks">
-    @for (rank of ranks; track rank) {
+    @for (rank of ranksUi(); track rank) {
       <div class="rank">{{ rank }}</div>
     }
   </div>
@@ -26,7 +26,7 @@
   </div>
 
   <div class="files">
-    @for (file of files; track file) {
+    @for (file of filesUi(); track file) {
       <div class="file">{{ file }}</div>
     }
   </div>

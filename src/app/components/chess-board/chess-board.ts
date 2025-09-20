@@ -11,13 +11,14 @@ import type {
   SquareType,
   SquareUiStateType,
 } from '@/app/types/chess-square.type';
+import { RANKS } from '@/app/types/chess-square.type';
 import { FILES } from '@/app/types/chess-square.type';
 import { RANKS_TOP_DOWN } from '@/app/constants/chess-square.constans';
 import { ChessSquare } from '@/app/components/chess-square/chess-square';
-import type { BoardOrientationType } from '@/app/types/chess-piece.type';
 import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { BoardSetupService } from '@/app/services/board-setup.service';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-chess-board',
@@ -27,7 +28,6 @@ import { BoardSetupService } from '@/app/services/board-setup.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChessBoard {
-  public readonly orientation = input.required<BoardOrientationType>();
   // emit event наверх, один раз на «успешный» DnD-ход: { from, to }.
   public readonly move = output<ChessMovePayloadType>();
 
@@ -40,9 +40,19 @@ export class ChessBoard {
   public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);
 
   // Массив файлов (a…h) для подписи оси X.
-  protected readonly files = FILES;
+  protected readonly ranksUi = computed(() =>
+    this.orientation() === 'white' ? RANKS_TOP_DOWN : RANKS,
+  );
   // Массив рангов (8…1) для подписи оси Y в «верх-вниз».
-  protected readonly ranks = RANKS_TOP_DOWN;
+  protected readonly filesUi = computed(() =>
+    this.orientation() === 'white' ? FILES : [...FILES].reverse(),
+  );
+
+  protected readonly store = inject(Store);
+
+  protected readonly orientation = this.store.selectSignal(
+    (state) => state.game.orientation,
+  );
 
   //список id клеток в текущей разметке передается в клетку
   protected readonly allSquareIds = computed(() =>

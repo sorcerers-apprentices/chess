@@ -1,12 +1,15 @@
 import { computed, inject, Injectable } from '@angular/core';
 import type {
+  SquareColorType,
   SquareStateType,
   SquareType,
 } from '@/app/types/chess-square.type';
+import { RANK_8 } from '@/app/types/chess-square.type';
 import { FILES, RANKS } from '@/app/types/chess-square.type';
 import {
+  DARK,
+  LIGHT,
   RANKS_TOP_DOWN,
-  SQUARE_STATES,
 } from '@/app/constants/chess-square.constans';
 import type { BoardMatrix } from '@/app/services/game.service';
 import { GameService } from '@/app/services/game.service';
@@ -39,20 +42,29 @@ export class BoardSetupService {
 
   public createInitialSquaresPieces(board: BoardMatrix): SquareStateType[] {
     const ranksOrder = this.orientation() === 'white' ? RANKS_TOP_DOWN : RANKS;
+    const filesOrder =
+      this.orientation() === 'white' ? FILES : [...FILES].reverse();
+
     const acc: SquareStateType[] = [];
-    let i = 0;
+
     for (const rank of ranksOrder) {
-      const row = board[RANKS_TOP_DOWN.indexOf(rank)];
-      for (const file of FILES) {
-        const enginePiece = row[FILES.indexOf(file)];
+      const rowIndex = RANK_8 - Number(rank);
+      const row = board[rowIndex];
+
+      for (const file of filesOrder) {
+        const colIndex = FILES.indexOf(file);
+        const enginePiece = row[colIndex];
+
         const square: SquareType = `${file}${rank}`;
+
+        const even = (Number(rank) - 1 + colIndex) % 2 === 0;
+        const squareColor: SquareColorType = even ? LIGHT : DARK;
 
         acc.push({
           square,
-          squareColor: SQUARE_STATES[i].squareColor,
+          squareColor,
           piece: enginePiece,
         });
-        i++;
       }
     }
     return acc;

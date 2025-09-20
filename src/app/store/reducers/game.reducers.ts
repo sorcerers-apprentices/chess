@@ -11,26 +11,15 @@ import { initialGameState } from '@/app/store/states/game.state';
 export const gameReducers = createReducer(
   initialGameState,
 
-  on(newGame, (state, { initialFen }) => {
-    let orientation: 'white' | 'black' = 'black';
-
-    if (initialFen !== undefined) {
-      const fenParts = initialFen.split(' ');
-      if (fenParts.length > 1) {
-        orientation = fenParts[1] === 'w' ? 'white' : 'black';
-      }
-    }
-
-    return {
-      ...state,
-      fen: initialFen ?? state.fen,
-      moves: [],
-      undoneMoves: [],
-      lastMove: null,
-      orientation,
-      clocks: null,
-    };
-  }),
+  on(newGame, (state, { initialFen, orientation }) => ({
+    ...state,
+    fen: initialFen ?? state.fen,
+    orientation: orientation ?? state.orientation, // ← берём из payload или оставляем как было
+    moves: [],
+    undoneMoves: [],
+    lastMove: null,
+    clocks: null,
+  })),
 
   on(playMove, (state, { fen, moveRecord }) => ({
     ...state,

@@ -18,10 +18,7 @@ import { AuthService } from '@/app/services/auth.service';
 import { DatePipe } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { from } from 'rxjs';
-import {
-  DEFAULT_BLACK_POSITION,
-  DEFAULT_WHITE_POSITION,
-} from '@/app/constants/chess-game.constants';
+import { START_FEN } from '@/app/constants/chess-game.constants';
 import { newGame } from '@/app/store/actions/game.actions';
 import { Router } from '@angular/router';
 
@@ -54,12 +51,24 @@ export class HomePage {
     this.authService.getUserData().user.last_sign_in_at;
 
   protected setOrientation = effect(() => {
-    switch (this.chosenColor()) {
+    const color = this.chosenColor();
+    switch (color) {
       case 'black':
-        this.store.dispatch(newGame({ initialFen: DEFAULT_BLACK_POSITION }));
+        this.store.dispatch(
+          newGame({
+            initialFen: START_FEN,
+            orientation: 'black', // чёрные снизу, но ход белых
+          }),
+        );
         break;
+
       case 'white':
-        this.store.dispatch(newGame({ initialFen: DEFAULT_WHITE_POSITION }));
+        this.store.dispatch(
+          newGame({
+            initialFen: START_FEN,
+            orientation: 'white', // белые снизу, и тоже ход белых
+          }),
+        );
         break;
     }
   });

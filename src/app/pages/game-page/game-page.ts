@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   inject,
-  type Signal,
   signal,
 } from '@angular/core';
 import { TuiNavigation } from '@taiga-ui/layout';
@@ -16,7 +15,6 @@ import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { GameService } from '@/app/services/game.service';
 import type { Square } from 'chess.js';
 
@@ -41,12 +39,10 @@ export class GamePage {
 
   protected readonly game = inject(GameService);
 
-  protected orientation: Signal<'white' | 'black'> = toSignal(
-    this.store.select((state) => state.game.orientation),
-    {
-      initialValue: 'white',
-    },
+  protected readonly orientation = this.store.selectSignal(
+    (state) => state.game.orientation,
   );
+
   protected boardOrientation = computed(() =>
     this.orientation() === 'white' ? 'whiteBottom' : 'whiteTop',
   );
@@ -60,9 +56,7 @@ export class GamePage {
   );
 
   // куда можно поставить фигуру
-  protected readonly allowedTargets = signal<ReadonlySet<SquareType> | null>(
-    null,
-  );
+  protected readonly allowedTargets = signal<ReadonlySet<Square> | null>(null);
 
   // локально можем хранить, откуда началось перетаскивание (если нужно для UI страницы)
   protected readonly dragFrom = signal<SquareType | null>(null);
@@ -78,16 +72,17 @@ export class GamePage {
     if (!colorPieceSquare || colorPieceSquare !== turnPiece) {
       this.dragFrom.set(null);
       this.allowedTargets.set(null);
+      return;
     }
+
+    const targets = this.game.getTargetsSet(from);
 
     this.dragFrom.set(from);
     this.allowedTargets.set(this.game.getTargetsSet(from));
+    this.allowedTargets.set(targets);
   }
 
-  public onBoardDragEnd(): void {
-    //this.dragFrom.set(null);
-    //this.allowedTargets.set(null);
-  }
+  public onBoardDragEnd(): void {}
 
   public onBoardMove(move: ChessMovePayloadType): void {
     const allowed = this.allowedTargets();

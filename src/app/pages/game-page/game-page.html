@@ -13,7 +13,6 @@
         (move)="onBoardMove($event)"
         (dragStart)="onBoardDragStart($event)"
         (dragEnd)="onBoardDragEnd()"
-        [orientation]="boardOrientation()"
       />
       <div class="player-panel bottom">
         <app-player-panel [color]="bottomPlayerColor()" />

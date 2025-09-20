@@ -21,8 +21,8 @@ export class GameService {
   private readonly fen = this.store.selectSignal(selectChessFen);
   private readonly game = computed(() => new Chess(this.fen()));
 
-  public newGame(fen?: string): void {
-    this.store.dispatch(newGame({ initialFen: fen }));
+  public newGame(fen: string, orientation?: 'white' | 'black'): void {
+    this.store.dispatch(newGame({ initialFen: fen, orientation }));
   }
 
   public getBoard(): BoardMatrix {
