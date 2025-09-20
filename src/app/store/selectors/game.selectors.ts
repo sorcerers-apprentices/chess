@@ -41,3 +41,8 @@ export const selectCanRedo = createSelector(
   selectUndoneMoves,
   (undoneMoves) => undoneMoves.length > 0,
 );
+
+export const selectOrientation = createSelector(
+  selectGameState,
+  (state) => state.orientation,
+);

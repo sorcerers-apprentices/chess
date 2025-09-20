@@ -1,5 +1,11 @@
+import {
+  updateElo,
+  signInUser,
+  logoutUser,
+  signUpUser,
+  incrementGamesPlayed,
+} from '../actions/user.actions';
 import { createReducer, on } from '@ngrx/store';
-import { logoutUser, signInUser, signUpUser } from '../actions/user.actions';
 import { initialUserState, type UserStateType } from '../states/user.state';
 
 export const userReducers = createReducer(
@@ -13,6 +19,7 @@ export const userReducers = createReducer(
       user: action.user,
     }),
   ),
+
   on(
     signUpUser,
     (state): UserStateType => ({
@@ -21,6 +28,7 @@ export const userReducers = createReducer(
       user: null,
     }),
   ),
+
   on(
     logoutUser,
     (state): UserStateType => ({
@@ -28,6 +36,22 @@ export const userReducers = createReducer(
       isAuth: false,
       user: null,
       elo: 0,
+    }),
+  ),
+
+  on(
+    updateElo,
+    (state, { elo }): UserStateType => ({
+      ...state,
+      elo,
+    }),
+  ),
+
+  on(
+    incrementGamesPlayed,
+    (state, { by = 1 }): UserStateType => ({
+      ...state,
+      gamesPlayed: Math.max(0, state.gamesPlayed + by),
     }),
   ),
 );
