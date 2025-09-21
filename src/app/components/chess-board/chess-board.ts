@@ -78,17 +78,15 @@ export class ChessBoard {
       const isFrom = from === s.square;
       const isOver = over === s.square;
 
-      // единое правило: если allow=null → как раньше (разрешено всё, кроме from)
-      const canDropHere =
-        from !== null &&
-        s.square !== from &&
-        (allow ? allow.has(s.square) : true);
+      const isAllowed =
+        !!allow && from !== null && s.square !== from && allow.has(s.square);
 
-      const isOverAllowed = isOver && canDropHere;
-      const isOverDenied = isOver && !canDropHere;
+      const isOverAllowed = isOver && isAllowed;
+      const isOverDenied =
+        isOver && from !== null && s.square !== from && !isAllowed;
 
       // возвращаем расширенный SquareUiStateType с флагами подсветок
-      return { ...s, isFrom, isOverAllowed, isOverDenied };
+      return { ...s, isFrom, isAllowed, isOverAllowed, isOverDenied };
     });
   });
 

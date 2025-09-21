@@ -1,6 +1,7 @@
 @use "variables" as vars;
 
 .square {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,22 +11,8 @@
 
   // состояние: откуда тащим
   &.is-from {
-    outline: 3px solid var(--tui-background-accent-1);
-    outline-offset: -3px;
-  }
-
-  // состояние: можно бросить
-  &.is-over-allowed {
-    z-index: 1;
-    outline: 4px solid var(--tui-status-positive);
-    outline-offset: -4px;
-  }
-
-  // состояние: бросить нельзя
-  &.is-over-denied {
-    z-index: 1;
-    outline: 4px solid vars.$color-red2;
-    outline-offset: -4px;
+    outline: 3px solid var(--tui-status-warning);
+    outline-offset: -2px;
   }
 }
 
@@ -47,4 +34,38 @@
 
 .square.is-over-allowed .piece {
   opacity: 0;
+}
+
+/* общий оверлей */
+.square::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  z-index: 1; /* над базовым фоном клетки */
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+// все доступные клетки
+.square.is-allowed::after {
+  opacity: 1;
+  background-color: color-mix(
+    in srgb,
+    var(--tui-status-warning) 62%,
+    transparent
+  );
+}
+
+// состояние: можно бросить
+.square.is-over-allowed::after {
+  opacity: 1;
+  box-shadow: inset 0 0 0 4px var(--tui-status-warning);
+}
+
+// состояние: бросить нельзя
+.square.is-over-denied::after {
+  opacity: 1;
+  background-color: color-mix(in srgb, vars.$color-red2 42%, transparent);
 }

@@ -47,6 +47,8 @@ export class ChessSquare {
   public readonly isOverAllowed = input<boolean>(false);
   // курсор/фигура «над этой клеткой, ход запрещён».
   public readonly isOverDenied = input<boolean>(false);
+  // возможные ходы
+  public readonly isAllowed = input<boolean>(false);
 
   public readonly fromSquare = input<SquareType | null>(null);
   public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);
