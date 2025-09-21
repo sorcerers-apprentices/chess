@@ -7,10 +7,12 @@
 
   height: 100vh;
   margin: 0;
+  padding: 3rem 0 9rem;
   background-position: -11rem 35%;
 
   &_container {
     max-width: 29.5rem;
+    padding: 10px;
   }
 
   &_title {
@@ -52,6 +54,19 @@
 
   &_button {
     align-self: center;
+  }
+
+  @media (width <= 660px) {
+    padding: 48px 0 5rem;
+  }
+
+  @media (width <= 560px) {
+    height: auto;
+    min-block-size: 100svh;
+    margin: 0;
+    padding: 48px 0 0;
+    background-position: center 50%;
+    background-size: 200% auto;
   }
 }
 

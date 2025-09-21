@@ -2,9 +2,12 @@
 @use "variables" as vars;
 
 .sign-in {
+  @include mix.sign-page;
+  @include mix.background("/assets/img/signin.jpg");
+
   height: 100vh;
   margin: 0;
-  padding-top: 48px;
+  padding: 3rem 0 9rem;
   border: 0;
   background-position: -2rem 45%;
   background-size: 110% auto;
@@ -61,7 +64,4 @@
     background-position: center 50%;
     background-size: 200% auto;
   }
-
-  @include mix.sign-page;
-  @include mix.background("/assets/img/signin.jpg");
 }
