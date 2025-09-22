@@ -142,7 +142,8 @@ To ensure a smooth user experience, we defined the following **performance budge
 - Bundle size reduced by ~18% through code-splitting and tree-shaking
 
 These gains were achieved by:
+
 - migrating local state from RxJS to Angular Signals (fewer change detections),
 - enabling Angular built-in optimizations in v20,
 - lazy-loading non-critical routes and components,
-- reducing unused SCSS and third-party imports.  
+- reducing unused SCSS and third-party imports.
