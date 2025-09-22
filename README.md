@@ -1,5 +1,10 @@
 # Chess
 
+This is a web-based chess game built with **Angular** and powered by **chess.js** for the core game logic.  
+The application uses **Supabase** as a backend database for storing game sessions, player data, and match history.  
+The UI is implemented with **Taiga UI**, providing a clean and modern user experience.  
+The project demonstrates a full-stack setup where Angular manages the client-side logic and Supabase handles persistence and real-time updates.
+
 ## Technology stack used
 
 The project uses the following technologies:
