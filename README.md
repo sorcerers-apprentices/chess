@@ -20,6 +20,17 @@ The project uses the following technologies:
 
 - Jest
 
+#### State Management Rationale
+
+This project uses **Angular Signals** as the primary reactive primitive for local and component-level state.  
+Signals were chosen for their simplicity, direct integration into Angular templates, and performance benefits due to fine-grained change detection.  
+**RxJS** is still used where streams are a natural fit: handling async events, effects, and complex data flows (e.g., API calls, NgRx).  
+This hybrid approach combines the clarity and ergonomics of signals with the expressive power of RxJS, ensuring both readability and scalability.
+
+#### AI Assistance Notice
+
+AI tools were used during the development of the backend part of this project. All generated code and suggestions were carefully reviewed and adapted by the development team.
+
 ## Setup and Running
 
 Use `node 21.x` or higher.
