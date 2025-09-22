@@ -11,6 +11,7 @@ export const AppRoutes = {
   GAME: 'game',
   SIGN_UP: 'signup',
   SIGN_IN: 'signin',
+  ABOUT: 'about',
   NOT_FOUND: 'not_found',
 } as const;
 
@@ -23,6 +24,7 @@ export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.GAME]: 'game',
   [AppRoutes.SIGN_UP]: 'signup',
   [AppRoutes.SIGN_IN]: 'signin',
+  [AppRoutes.ABOUT]: 'about',
   [AppRoutes.NOT_FOUND]: '**',
 };
 
@@ -60,6 +62,12 @@ export const appRoutes: Route[] = [
     canActivate: [anonymousGuardFunction],
     loadComponent: () =>
       import('./pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
+  },
+  {
+    path: RoutePath.about,
+    title: 'About | Chess Game',
+    loadComponent: () =>
+      import('./pages/about-page/about-page').then((m) => m.AboutPage),
   },
   {
     path: RoutePath.not_found,
