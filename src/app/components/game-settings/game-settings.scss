@@ -1,3 +1,167 @@
-.game-setting-wrapper {
-  // background-color: var(--tui-background-neutral-2-pressed);
+:host {
+  /* Вертикальный флекс-каркас из 4 блоков */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0; /* важно для сжатия третьего блока */
+  padding: 0;
+}
+
+/* общие рамки */
+.game-timer,
+.game-nav,
+.game-pairs-users,
+.game-controls {
+  min-inline-size: 0;
+  padding: 0.75rem;
+  border: 2px solid var(--tui-background-accent-2);
+
+  button {
+    cursor: pointer;
+  }
+}
+
+/* 1) таймер — фикс */
+.game-timer {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  text-align: center;
+
+  .tui-text_body-xl {
+    font: var(--tui-font-text-xl);
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* 2) навигация по ходам — фикс */
+.game-nav {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+
+  tui-icon {
+    justify-content: center;
+    min-inline-size: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--tui-text-primary);
+  }
+}
+
+/* 3) список ходов — растягивается и скроллится */
+.game-pairs-users {
+  overflow: hidden; /* внешний скролл не нужен */
+  display: flex; /* внутренняя обёртка тоже флексом */
+  flex: 1 1 0; /* занимает остаток высоты */
+  min-block-size: 0; /* ключ к сжатию во флексе */
+  background-color: var(--tui-background-neutral-1-pressed);
+}
+
+/* taiga scrollbar должен занять всю доступную высоту */
+.game-pairs-users {
+  tui-scrollbar {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+}
+
+/* внутренности taiga: не даём раздувать контейнер */
+.game-pairs-users tui-scrollbar div.t-content {
+  overflow: hidden;
+  display: flex;
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+/* реальный скролл — на этом блоке */
+.moves-scroll {
+  overflow: auto;
+  display: block;
+  flex: 1 1 auto;
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+/* таблица остаётся обычной, sticky-заголовок работает внутри .moves-scroll */
+table[role="table"] {
+  table-layout: fixed;
+  border-spacing: 0;
+  border-collapse: separate;
+  inline-size: 100%;
+  color: var(--tui-text-primary);
+
+  thead {
+    position: sticky;
+    z-index: 2; /* выше строк */
+    top: 0;
+    background: var(--tui-background-base);
+
+    /* опционально: тонкая тень, чтобы отличался от тела */
+    box-shadow: 0 1px 0 var(--tui-border-normal);
+  }
+
+  thead th {
+    padding: 0.5rem 0.625rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+
+    &:first-child {
+      inline-size: 3rem;
+    }
+  }
+
+  tbody td {
+    overflow: hidden;
+    padding: 0.4rem 0.625rem;
+    border-bottom: 1px dashed var(--tui-border-normal);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tbody tr:nth-child(odd) td {
+    background: color-mix(
+      in oklab,
+      var(--tui-background-base),
+      var(--tui-background-neutral-1) 20%
+    );
+  }
+
+  tbody tr.is-active td {
+    font-weight: 600;
+    background: var(--tui-background-neutral-2);
+    outline: 2px solid var(--tui-border-accent);
+    outline-offset: -2px;
+  }
+
+  tbody td:first-child {
+    color: var(--tui-text-tertiary);
+    text-align: center;
+  }
+}
+
+.game-controls {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+
+  tui-icon {
+    justify-content: center;
+    min-inline-size: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--tui-text-primary);
+  }
 }
