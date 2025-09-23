@@ -19,6 +19,7 @@ import { GameService } from '@/app/services/game.service';
 import type { Square } from 'chess.js';
 import { GameSupabaseService } from '@/app/services/game-supabase.service';
 import { loadGame } from '@/app/store/actions/game.actions';
+import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 
 @Component({
   selector: 'app-game-page',
@@ -40,6 +41,7 @@ export class GamePage {
   );
   protected readonly gameSupabaseService = inject(GameSupabaseService);
   protected readonly game = inject(GameService);
+  protected readonly opponent = inject(OpponentRunnerService);
 
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,
