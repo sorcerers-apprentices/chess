@@ -16,14 +16,21 @@
 .game-controls {
   min-inline-size: 0;
   padding: 0.75rem;
-  border: 2px solid var(--tui-background-accent-2);
 
   button {
     cursor: pointer;
   }
 }
 
-/* 1) таймер — фикс */
+.game-timer {
+  border-bottom: 2px solid var(--tui-background-accent-2);
+}
+
+.game-pairs-users {
+  border-top: 2px solid var(--tui-background-accent-2);
+  border-bottom: 2px solid var(--tui-background-accent-2);
+}
+
 .game-timer {
   display: grid;
   flex: 0 0 auto;
@@ -39,7 +46,6 @@
   }
 }
 
-/* 2) навигация по ходам — фикс */
 .game-nav {
   display: flex;
   flex: 0 0 auto;
@@ -56,16 +62,14 @@
   }
 }
 
-/* 3) список ходов — растягивается и скроллится */
 .game-pairs-users {
-  overflow: hidden; /* внешний скролл не нужен */
-  display: flex; /* внутренняя обёртка тоже флексом */
-  flex: 1 1 0; /* занимает остаток высоты */
-  min-block-size: 0; /* ключ к сжатию во флексе */
+  overflow: hidden;
+  display: flex;
+  flex: 1 1 0;
+  min-block-size: 0;
   background-color: var(--tui-background-neutral-1-pressed);
 }
 
-/* taiga scrollbar должен занять всю доступную высоту */
 .game-pairs-users {
   tui-scrollbar {
     flex: 1 1 auto;
@@ -73,7 +77,6 @@
   }
 }
 
-/* внутренности taiga: не даём раздувать контейнер */
 .game-pairs-users tui-scrollbar div.t-content {
   overflow: hidden;
   display: flex;
@@ -81,7 +84,6 @@
   min-block-size: 0;
 }
 
-/* реальный скролл — на этом блоке */
 .moves-scroll {
   overflow: auto;
   display: block;
@@ -90,7 +92,6 @@
   min-block-size: 0;
 }
 
-/* таблица остаётся обычной, sticky-заголовок работает внутри .moves-scroll */
 table[role="table"] {
   table-layout: fixed;
   border-spacing: 0;
@@ -100,11 +101,9 @@ table[role="table"] {
 
   thead {
     position: sticky;
-    z-index: 2; /* выше строк */
+    z-index: 2;
     top: 0;
     background: var(--tui-background-base);
-
-    /* опционально: тонкая тень, чтобы отличался от тела */
     box-shadow: 0 1px 0 var(--tui-border-normal);
   }
 
