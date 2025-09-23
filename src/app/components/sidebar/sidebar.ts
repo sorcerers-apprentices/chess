@@ -62,11 +62,12 @@ export class Sidebar {
 
   protected readonly sidebarMenu = signal<SidebarMapType>({
     'sidebar.game': [
-      { nameKey: 'sidebar.newGame', route: RoutePath.game },
+      { nameKey: 'sidebar.newGame', route: RoutePath.home },
       { nameKey: 'sidebar.playVsEngine', route: RoutePath.game },
     ],
     'sidebar.analysis': [
       { nameKey: 'sidebar.analysisBoard', route: RoutePath.main },
+      { nameKey: 'sidebar.about', route: RoutePath.about },
     ],
     'sidebar.settings': [
       { nameKey: 'sidebar.logout', route: RoutePath.signin },
