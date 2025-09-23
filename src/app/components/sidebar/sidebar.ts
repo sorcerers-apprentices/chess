@@ -67,6 +67,7 @@ export class Sidebar {
     ],
     'sidebar.analysis': [
       { nameKey: 'sidebar.analysisBoard', route: RoutePath.main },
+      { nameKey: 'sidebar.rating', route: RoutePath.rating },
       { nameKey: 'sidebar.about', route: RoutePath.about },
     ],
     'sidebar.settings': [

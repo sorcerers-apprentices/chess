@@ -10,7 +10,8 @@
     "logout": "Logout",
     "darkMode": "Dark mode",
     "language": "English",
-    "about": "About us"
+    "about": "About us",
+    "rating": "Rating"
   },
   "signin": {
     "title": "Sign In to Our Game Service",
