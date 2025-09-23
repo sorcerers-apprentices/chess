@@ -17,6 +17,8 @@ import { Store } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
 import { GameService } from '@/app/services/game.service';
 import type { Square } from 'chess.js';
+import { GameSupabaseService } from '@/app/services/game-supabase.service';
+import { loadGame } from '@/app/store/actions/game.actions';
 
 @Component({
   selector: 'app-game-page',
@@ -36,7 +38,7 @@ export class GamePage {
   protected readonly store: Store<{ game: GameStateType }> = inject(
     Store<{ game: GameStateType }>,
   );
-
+  protected readonly gameSupabaseService = inject(GameSupabaseService);
   protected readonly game = inject(GameService);
 
   protected readonly orientation = this.store.selectSignal(
@@ -103,5 +105,10 @@ export class GamePage {
     this.dragFrom.set(null);
     this.allowedTargets.set(null);
     // здесь позже дергать движок/сервис, таймеры, историю и т.д.
+  }
+
+  protected ngOnInit(): void {
+    const gameId = this.gameSupabaseService.getGameId();
+    this.store.dispatch(loadGame({ gameId }));
   }
 }

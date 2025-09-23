@@ -6,9 +6,10 @@ import {
   newGame,
   playMove,
   setGameId,
+  undoMove,
+  undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
 import { from, map, switchMap } from 'rxjs';
-import { DEFAULT_WHITE_POSITION } from '@/app/constants/chess-game.constants';
 import { AuthService } from '@/app/services/auth.service';
 import type { BoardCell, MoveModel } from '@/app/types/supabase-game.type';
 
@@ -19,28 +20,47 @@ export class GameEffects {
   private readonly api = inject(GameSupabaseService);
   private readonly AuthService = inject(AuthService);
   private readonly actions$ = inject(Actions);
-  private readonly UserId = this.AuthService.getUserData().user.id;
+  private readonly userId = this.AuthService.getUserData().user.id;
 
   private startGame$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(newGame),
-      switchMap(({ initialFen }) => {
-        if (initialFen === DEFAULT_WHITE_POSITION) {
-          const whitePlayerId = this.UserId;
-          const blackPlayerId = '';
-          return from(this.api.createGame(whitePlayerId, blackPlayerId)).pipe(
-            map((id) => setGameId({ gameId: id ?? '' })),
-          );
-        } else {
-          const whitePlayerId = '';
-          const blackPlayerId = this.UserId;
-          return from(this.api.createGame(whitePlayerId, blackPlayerId)).pipe(
-            map((id) => setGameId({ gameId: id ?? '' })),
-          );
-        }
+      switchMap(({ orientation }) => {
+        return from(this.api.createGame(this.userId, orientation)).pipe(
+          map((id) => setGameId({ gameId: id ?? '' })),
+        );
       }),
     );
   });
+
+  // private loadGame$ = createEffect(() => {
+  //   return this.actions$.pipe(
+  //     ofType(loadGame),
+  //     switchMap(({ gameId }) => {
+  //       return from(this.api.fetchGame(gameId)).pipe(
+  //         filter((game) => game !== null),
+  //         map((game) => {
+  //           const moves = await this.api.fetchMoves(gameId)
+  //           const gameModel: GameStateType = {
+  //             fen: game.fen,
+  //             id: gameId,
+  //             moves: moves.map((move) => {
+  //
+  //             }),
+  //             undoneMoves: MoveRecordType[];
+  //             lastMove: game.lastMoveFrom ? { from: game.lastMoveFrom; to: game.lastMoveTo } : null,
+  //             orientation: game.playerColor,
+  //             clocks?: { white: number; black: number } | null;
+  //             finished: game.finished,
+  //             result: GameResultType | null;
+  //             finalFen?: game.finalFen
+  //           }
+  //           loadGameSuccess({ game })
+  //         }),
+  //       );
+  //     }),
+  //   );
+  // });
 
   private move$ = createEffect(() => {
     return this.actions$.pipe(
@@ -69,6 +89,17 @@ export class GameEffects {
         };
         await this.api.move(move);
         return moveSuccess({ fen, moveRecord });
+      }),
+    );
+  });
+
+  private undoMove$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(undoMove),
+      switchMap(async () => {
+        const gameId = this.api.getGameId();
+        await this.api.undoMove(gameId);
+        return undoMoveSuccess();
       }),
     );
   });

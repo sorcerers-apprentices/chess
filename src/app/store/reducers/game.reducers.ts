@@ -1,5 +1,6 @@
 import {
   gameOver,
+  loadGameSuccess,
   newGame,
   playMove,
   redoMove,
@@ -23,6 +24,10 @@ export const gameReducers = createReducer(
     finished: false,
     result: null,
     finalFen: null,
+  })),
+
+  on(loadGameSuccess, (_state, { game }) => ({
+    ...game,
   })),
 
   on(playMove, (state, { fen, moveRecord }) => ({
