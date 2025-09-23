@@ -46,3 +46,13 @@ export const selectOrientation = createSelector(
   selectGameState,
   (state) => state.orientation,
 );
+
+export const selectGameId = createSelector(
+  selectGameState,
+  (state) => state.id,
+);
+
+export const selectIsGameOver = createSelector(
+  selectGameState,
+  (state) => state.finished,
+);
