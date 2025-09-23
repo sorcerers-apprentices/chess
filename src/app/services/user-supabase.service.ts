@@ -48,7 +48,7 @@ export class UserSupabaseService {
     const { count, error } = await this.supabase
       .from('game')
       .select('*', { count: 'exact', head: true })
-      .or(`white_player_id.eq.${userId},black_player_id.eq.${userId}`);
+      .or(`player_id.eq.${userId}`);
 
     if (error || count === null) {
       console.error('Error fetching data:', error?.message);
@@ -62,12 +62,14 @@ export class UserSupabaseService {
     const { count: countW, error: errorW } = await this.supabase
       .from('game')
       .select('*', { count: 'exact', head: true })
-      .eq('white_player_id', userId)
+      .eq('player_id', userId)
+      .eq('player_color', 'white')
       .eq('result', 'WHITE_WINS');
     const { count: countB, error: errorB } = await this.supabase
       .from('game')
       .select('*', { count: 'exact', head: true })
-      .eq('black_player_id', userId)
+      .eq('player_id', userId)
+      .eq('player_color', 'black')
       .eq('result', 'BLACK_WINS');
 
     if (errorW || errorB || countW === null || countB === null) {

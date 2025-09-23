@@ -35,7 +35,7 @@ export class GameService {
   private readonly game = computed(() => new Chess(this.fen()));
   private readonly orientation = this.store.selectSignal(selectOrientation);
 
-  public newGame(fen: string, orientation?: 'white' | 'black'): void {
+  public newGame(fen: string, orientation: 'white' | 'black'): void {
     this.store.dispatch(newGame({ initialFen: fen, orientation }));
   }
 

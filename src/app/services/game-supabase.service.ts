@@ -17,14 +17,14 @@ export class GameSupabaseService {
   );
 
   public async createGame(
-    whitePlayerId: string,
-    blackPlayerId: string,
+    playerId: string,
+    playerColor: 'white' | 'black',
   ): Promise<string | null> {
     const { data, error } = await this.supabase
       .from('game')
       .insert({
-        white_player_id: whitePlayerId,
-        black_player_id: blackPlayerId,
+        player_id: playerId,
+        player_color: playerColor,
       })
       .select('id')
       .single();
@@ -52,6 +52,20 @@ export class GameSupabaseService {
     return data[0];
   }
 
+  public async fetchMoves(gameId: string): Promise<Array<MoveModel>> {
+    const { data, error } = await this.supabase
+      .from('move')
+      .select('*')
+      .eq('game_id', gameId);
+
+    if (error) {
+      console.error('Error fetching data:', error.message);
+      return [];
+    }
+
+    return data;
+  }
+
   public async move(move: MoveModel): Promise<void> {
     const { error } = await this.supabase.from('move').insert({
       game_id: move.gameId,
@@ -74,7 +88,7 @@ export class GameSupabaseService {
   }
 
   public async undoMove(gameId: string): Promise<void> {
-    const { error } = await this.supabase.rpc('create_profile_for_new_user', {
+    const { error } = await this.supabase.rpc('undo_last_move', {
       game_id: gameId,
     });
 
