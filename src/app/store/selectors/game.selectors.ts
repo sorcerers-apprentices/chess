@@ -7,9 +7,9 @@ import type { AppStateType } from '@/app/store/states/app.state';
 
 const selectGameState = (state: AppStateType): GameStateType => state.game;
 
-export const selectChessFen = createSelector(
+export const selectChess = createSelector(
   selectGameState,
-  (state) => state.fen,
+  (state) => state.pgn,
 );
 
 export const selectMoves = createSelector(

@@ -19,6 +19,7 @@ import { filter, from, map, switchMap } from 'rxjs';
 import { AuthService } from '@/app/services/auth.service';
 import type { GameStateType } from '@/app/store/states/game.state';
 import { Chess } from 'chess.js';
+import { load } from '@/app/utilities/chess-piece';
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,7 @@ export class GameEffects {
             const moves = chess.history({ verbose: true });
             const lastMove = chess.history({ verbose: true }).at(-1);
             const gameModel: GameStateType = {
+              pgn: chess.pgn(),
               fen: game.fen,
               id: game.id,
               moves: moves.map((move) => {
@@ -89,8 +91,8 @@ export class GameEffects {
   private move$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(playMove),
-      switchMap(async ({ moveRecord, pgn }) => {
-        await this.api.move(moveRecord, pgn);
+      switchMap(async ({ pgn }) => {
+        await this.api.move(load(pgn));
         return moveSuccess();
       }),
     );

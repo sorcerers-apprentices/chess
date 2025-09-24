@@ -5,8 +5,8 @@ import { environment } from '@/environments/environment.development';
 import { GAME_ID } from '@/app/constants/auth.constants';
 import type { GameModel } from '@/app/types/supabase-game.type';
 import { Chess } from 'chess.js';
-import type { MoveRecordType } from '@/app/store/states/game.state';
 import type { GameResultType } from '@/app/services/game.service';
+import { clone } from '@/app/utilities/chess-piece';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +28,7 @@ export class GameSupabaseService {
       .from('game')
       .insert({
         fen: initialFen,
+        pgn: new Chess(initialFen).pgn(),
         player_id: playerId,
         player_color: playerColor,
         finished: false,
@@ -50,21 +51,18 @@ export class GameSupabaseService {
     return await this.fetchGame(gameId);
   }
 
-  public async move(moveRecord: MoveRecordType, pgn: string): Promise<void> {
+  public async move(chess: Chess): Promise<void> {
     const gameId = this.getGameId();
     const game = await this.fetchGame(gameId);
     const oldPgn = game?.pgn;
-    const chess = new Chess();
-    chess.loadPgn(pgn);
-    const fen = chess.fen();
     const { error } = await this.supabase
       .from('game')
       .update({
-        fen: fen,
-        pgn: pgn,
+        fen: clone(chess).fen(),
+        pgn: clone(chess).pgn(),
         pgn_last: oldPgn,
       })
-      .eq('game_id', gameId);
+      .eq('id', gameId);
 
     if (error) {
       console.error('Error moving piece:', error.message);
@@ -91,7 +89,7 @@ export class GameSupabaseService {
         pgn: pgnOld,
         pgn_last: pgnCurrent,
       })
-      .eq('game_id', gameId);
+      .eq('id', gameId);
 
     if (error) {
       console.error('Error undoing move:', error?.message);
@@ -117,7 +115,7 @@ export class GameSupabaseService {
         result: result,
         finished: true,
       })
-      .eq('game_id', gameId);
+      .eq('id', gameId);
 
     if (error) {
       console.error('Error undoing move:', error?.message);

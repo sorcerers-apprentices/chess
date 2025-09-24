@@ -30,8 +30,9 @@ export const gameReducers = createReducer(
     ...game,
   })),
 
-  on(playMove, (state, { fen, moveRecord }) => ({
+  on(playMove, (state, { fen, moveRecord, pgn }) => ({
     ...state,
+    pgn,
     fen,
     moves: [...state.moves, moveRecord],
     undoneMoves: [],
