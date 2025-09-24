@@ -79,4 +79,5 @@ export class UserSupabaseService {
 
     return countW + countB;
   }
+  public fetchUsersData(): void {}
 }
