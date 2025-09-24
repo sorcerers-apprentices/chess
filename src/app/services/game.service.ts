@@ -68,8 +68,9 @@ export class GameService {
         fenAfter: chess.fen(),
         timestamp: Date.now(),
       };
+      const pgn = chess.pgn();
 
-      this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+      this.store.dispatch(playMove({ fen: chess.fen(), moveRecord, pgn }));
       this.handleGameEnd(chess);
 
       return true;
@@ -130,6 +131,7 @@ export class GameService {
 
   public playOpponentMove(): MoveRecordType | null {
     const chess = new Chess(this.fen());
+    const pgn = chess.pgn();
 
     const possibleMoves = chess.moves({ verbose: true }) ?? [];
 
@@ -158,7 +160,7 @@ export class GameService {
       timestamp: Date.now(),
     };
 
-    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord, pgn }));
     this.handleGameEnd(chess);
     return moveRecord;
   }

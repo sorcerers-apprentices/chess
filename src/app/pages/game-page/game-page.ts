@@ -108,7 +108,6 @@ export class GamePage {
   }
 
   protected ngOnInit(): void {
-    const gameId = this.gameSupabaseService.getGameId();
-    this.store.dispatch(loadGame({ gameId }));
+    this.store.dispatch(loadGame());
   }
 }
