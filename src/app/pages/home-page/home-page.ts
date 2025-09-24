@@ -84,6 +84,5 @@ export class HomePage {
         orientation: this.chosenColor(),
       }),
     );
-    this.router.navigate(['/game']).then();
   }
 }

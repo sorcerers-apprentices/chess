@@ -14,7 +14,10 @@ export const setGameId = createAction(
   props<{ gameId: string }>(),
 );
 
-export const loadGame = createAction('[Chess] Load Game');
+export const loadGame = createAction(
+  '[Chess] Load Game',
+  props<{ gameId: string }>(),
+);
 export const loadGameSuccess = createAction(
   '[Chess] Load Game Success',
   props<{ game: GameStateType }>(),

@@ -46,8 +46,7 @@ export class GameSupabaseService {
     return data.id;
   }
 
-  public async loadGame(): Promise<GameModel | null> {
-    const gameId = this.getGameId();
+  public async loadGame(gameId: string): Promise<GameModel | null> {
     return await this.fetchGame(gameId);
   }
 

@@ -5,10 +5,10 @@ export type GameModel = {
   pgn: string;
   pgn_last: string;
   fen: string;
-  playerId: string;
+  player_id: string;
   created_at: Date;
   finished: boolean;
-  playerColor: 'white' | 'black';
+  player_color: 'white' | 'black';
   result: GameResult;
-  finalFen: string;
+  fen_final: string;
 };
