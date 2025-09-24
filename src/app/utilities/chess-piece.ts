@@ -8,6 +8,7 @@ import type {
   DragDataType,
   DropDataType,
 } from '@/app/types/drag-drop-data.type';
+import { Chess } from 'chess.js';
 import type { Color } from 'chess.js';
 
 const FILES_SET: ReadonlySet<string> = new Set(FILES);
@@ -41,6 +42,23 @@ export function isDropData(candidate: unknown): candidate is DropDataType {
 
   return typeof candidate['square'] === 'string';
 }
+
+export const clone = (prev: Chess): Chess => {
+  const curr = new Chess();
+
+  curr.loadPgn(prev.pgn());
+
+  // const moves = prev.history({ verbose: true });
+  // moves.forEach((move) => curr.move(move));
+
+  return curr;
+};
+
+export const load = (pgn: string): Chess => {
+  const game = new Chess();
+  game.loadPgn(pgn);
+  return game;
+};
 
 export function parseActiveColor(fen: string): Color {
   const token = fen.split(' ')[1];

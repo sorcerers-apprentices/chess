@@ -6,17 +6,18 @@ import {
   undoMove,
 } from '@/app/store/actions/game.actions';
 import {
-  selectChessFen,
+  selectChess,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
-import { Chess } from 'chess.js';
+import type { Chess } from 'chess.js';
 import { Store } from '@ngrx/store';
 
-import type { Square, Piece, Move, Color } from 'chess.js';
+import type { Square, Piece, Color } from 'chess.js';
 import { EloService } from '@/app/services/elo.service';
 
 import { computed, inject, Injectable } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
+import { clone, load } from '@/app/utilities/chess-piece';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -31,8 +32,9 @@ export type BoardMatrix = (Piece | null)[][];
 export class GameService {
   private readonly store = inject(Store);
   private readonly elo = inject(EloService);
-  private readonly fen = this.store.selectSignal(selectChessFen);
-  private readonly game = computed(() => new Chess(this.fen()));
+  private readonly pgn = this.store.selectSignal(selectChess);
+  private readonly game = computed(() => load(this.pgn()));
+  private readonly fen = computed(() => this.game().fen());
   private readonly orientation = this.store.selectSignal(selectOrientation);
 
   public newGame(fen: string, orientation: 'white' | 'black'): void {
@@ -40,7 +42,7 @@ export class GameService {
   }
 
   public getBoard(): BoardMatrix {
-    return this.game().board();
+    return clone(this.game()).board();
   }
 
   public drawAscii(): void {
@@ -48,16 +50,16 @@ export class GameService {
   }
 
   public getAvailableMoves(square: Square): string[] {
-    return this.game().moves({ square }) ?? [];
+    return clone(this.game()).moves({ square }) ?? [];
   }
 
   public getAllAvailableMoves(): string[] {
-    return this.game().moves() ?? [];
+    return clone(this.game()).moves() ?? [];
   }
 
   public playMove(from: Square, to: Square): boolean {
     try {
-      const chess = new Chess(this.fen());
+      const chess = clone(this.game());
       const move = chess.move({ from, to });
       if (move === null) return false;
 
@@ -69,7 +71,9 @@ export class GameService {
         timestamp: Date.now(),
       };
 
-      this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+      this.store.dispatch(
+        playMove({ fen: chess.fen(), moveRecord, pgn: chess.pgn() }),
+      );
       this.handleGameEnd(chess);
 
       return true;
@@ -87,7 +91,7 @@ export class GameService {
   }
 
   public getTargets(square: Square): readonly Square[] {
-    const moves: Move[] = this.game().moves({ square, verbose: true });
+    const moves = clone(this.game()).moves({ square, verbose: true });
     return moves.map((move) => move.to);
   }
 
@@ -111,25 +115,12 @@ export class GameService {
     return this.game().get(square);
   }
 
-  // возвращает всю доску матрицей 8×8 (Piece | null в каждой клетке).
-  public getBoardFromFen(fen: string): (Piece | null)[][] {
-    const chess = new Chess(fen);
-    return chess.board();
-  }
-
-  // возвращает только одну фигуру на клетке
-  public getPieceAtFromFen(fen: string, square: Square): Piece | undefined {
-    const chess = new Chess(fen);
-    return chess.get(square);
-  }
-
   public getGameResult(): GameResultType {
-    const chess = new Chess(this.fen());
-    return this.evaluateResultFromInstance(chess);
+    return this.evaluateResultFromInstance(this.game());
   }
 
   public playOpponentMove(): MoveRecordType | null {
-    const chess = new Chess(this.fen());
+    const chess = clone(this.game());
 
     const possibleMoves = chess.moves({ verbose: true }) ?? [];
 
@@ -158,7 +149,9 @@ export class GameService {
       timestamp: Date.now(),
     };
 
-    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord }));
+    this.store.dispatch(
+      playMove({ fen: chess.fen(), moveRecord, pgn: chess.pgn() }),
+    );
     this.handleGameEnd(chess);
     return moveRecord;
   }
