@@ -59,37 +59,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>e2 → e4</td>
-            <td>e2 → e4</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>d4</td>
-            <td>Nf6</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>e2 → e4</td>
-            <td>e2 → e4</td>
-          </tr>
+          @for (row of movesRows(); track row.num) {
+            <tr>
+              <td>{{ row.num }}</td>
+              <td class="player">{{ row.playerText }}</td>
+              <td class="opponent">{{ row.opponentText }}</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
   </tui-scrollbar>
-  <!--
-   @for (row of movesRows; track row.num) {
-    <tr>
-      <td>{{ row.num }}</td>
-      <td class="player">
-          {{ row.player?.from }} → {{ row.player?.to }}
-      </td>
-      <td class="opponent">
-        {{ row.opponent?.from }} → {{ row.opponent?.to }}
-      </td>
-    </tr>
-  -->
 </div>
 <div class="game-controls">
   <button
