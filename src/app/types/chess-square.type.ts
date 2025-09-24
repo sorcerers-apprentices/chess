@@ -56,6 +56,7 @@ export type RankType = (typeof RANKS)[number];
 
 export type SquareUiStateType = SquareStateType & {
   isFrom: boolean;
+  isAllowed: boolean;
   isOverAllowed: boolean;
   isOverDenied: boolean;
 };

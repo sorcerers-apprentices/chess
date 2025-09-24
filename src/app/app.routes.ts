@@ -8,7 +8,7 @@ import { type Route } from '@angular/router';
 export const AppRoutes = {
   MAIN: 'main',
   HOME: 'home',
-  GAME: 'game',
+  GAME: 'game/:id',
   SIGN_UP: 'signup',
   SIGN_IN: 'signin',
   NOT_FOUND: 'not_found',
@@ -20,7 +20,7 @@ export type RoutePathValue = (typeof RoutePath)[keyof typeof RoutePath];
 export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.MAIN]: '',
   [AppRoutes.HOME]: 'home',
-  [AppRoutes.GAME]: 'game',
+  [AppRoutes.GAME]: 'game/:id',
   [AppRoutes.SIGN_UP]: 'signup',
   [AppRoutes.SIGN_IN]: 'signin',
   [AppRoutes.NOT_FOUND]: '**',
@@ -40,7 +40,7 @@ export const appRoutes: Route[] = [
       import('./pages/home-page/home-page').then((m) => m.HomePage),
   },
   {
-    path: RoutePath.game,
+    path: RoutePath['game/:id'],
     title: 'Chess Game',
     canActivate: [authenticatedGuardFunction],
     canDeactivate: [canDeactivatePopup],

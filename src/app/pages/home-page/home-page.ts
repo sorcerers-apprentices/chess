@@ -2,7 +2,6 @@ import { Header } from '../../components/header/header';
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -50,29 +49,6 @@ export class HomePage {
   protected lastSignInData =
     this.authService.getUserData().user.last_sign_in_at;
 
-  protected setOrientation = effect(() => {
-    const color = this.chosenColor();
-    switch (color) {
-      case 'black':
-        this.store.dispatch(
-          newGame({
-            initialFen: START_FEN,
-            orientation: 'black', // чёрные снизу, но ход белых
-          }),
-        );
-        break;
-
-      case 'white':
-        this.store.dispatch(
-          newGame({
-            initialFen: START_FEN,
-            orientation: 'white', // белые снизу, и тоже ход белых
-          }),
-        );
-        break;
-    }
-  });
-
   protected userName = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
@@ -101,7 +77,12 @@ export class HomePage {
     }
   }
 
-  protected goToGamePage(): void {
-    this.router.navigate(['/game']).then();
+  protected playGame(): void {
+    this.store.dispatch(
+      newGame({
+        initialFen: START_FEN,
+        orientation: this.chosenColor(),
+      }),
+    );
   }
 }

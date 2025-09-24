@@ -3,6 +3,7 @@
 
 html,
 body {
+  overflow: auto;
   height: 100%;
   background-color: vars.$color-black;
 }
@@ -17,7 +18,8 @@ tui-root[tuiTheme="dark"] .sign-up {
   @include mix.background("/assets/img/signup-dark.jpg");
 
   height: 100vh;
-  margin: 0 -2rem;
+
+  // margin: 0 -2rem;
   background-position: center;
 }
 
@@ -25,6 +27,12 @@ tui-root[tuiTheme="dark"] .sign-in {
   @include mix.background("/assets/img/signin-dark.jpg");
 
   height: 100vh;
-  margin: 0 -2rem;
+
+  // margin: 0 -2rem;
   background-position: center;
+}
+
+main[tuinavigationmain] {
+  padding-top: 48px;
+  border: 0;
 }

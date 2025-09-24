@@ -50,7 +50,7 @@ export class AuthService {
   }
 
   public getUserData(): SavedUserData {
-    const token = localStorage.getItem(LOCAL_STORAGE_KEY) ?? '';
-    return JSON.parse(token) ?? {};
+    const userData = localStorage.getItem(LOCAL_STORAGE_KEY) ?? '{}';
+    return JSON.parse(userData);
   }
 }
