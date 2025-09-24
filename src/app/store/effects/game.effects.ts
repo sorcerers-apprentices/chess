@@ -27,17 +27,20 @@ import { Router } from '@angular/router';
 })
 export class GameEffects {
   private readonly api = inject(GameSupabaseService);
-  private readonly AuthService = inject(AuthService);
+  private readonly authService = inject(AuthService);
   private readonly actions$ = inject(Actions);
   private readonly router = inject(Router);
-  private readonly userId = this.AuthService.getUserData().user.id;
 
   private startGame$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(newGame),
       switchMap(({ initialFen, orientation }) => {
         return from(
-          this.api.createGame(this.userId, orientation, initialFen),
+          this.api.createGame(
+            this.authService.getUserData().user.id,
+            orientation,
+            initialFen,
+          ),
         ).pipe(
           map((id) => setGameId({ gameId: id ?? '' })),
           tap((game) => {

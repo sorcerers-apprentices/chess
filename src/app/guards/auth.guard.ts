@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 export const authenticatedGuardFunction: CanActivateFn = () => {
   const router = inject(Router);
   const token = localStorage.getItem(LOCAL_STORAGE_KEY);
-  console.log('token', token);
   return token !== null ? true : router.parseUrl('signin');
 };
 
