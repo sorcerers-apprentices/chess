@@ -8,13 +8,14 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  selectChessFen,
+  selectChess,
   selectIsGameOver,
   selectMoves,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
 import type { Color } from 'chess.js';
-import { parseActiveColor } from '@/app/utilities/chess-piece';
+import { load, parseActiveColor } from '@/app/utilities/chess-piece';
+import { GameService } from '@/app/services/game.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,9 +25,12 @@ export class PlayerTimerService {
 
   private readonly store = inject(Store);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly gameService = inject(GameService);
 
   // сигналы из стора
-  private readonly fen = this.store.selectSignal(selectChessFen);
+  private readonly pgn = this.store.selectSignal(selectChess);
+  private readonly game = computed(() => load(this.pgn()));
+  private readonly fen = computed(() => this.game().fen());
   private readonly moves = this.store.selectSignal(selectMoves);
   private readonly orientation = this.store.selectSignal(selectOrientation);
   private readonly isGameOver = this.store.selectSignal(selectIsGameOver);
