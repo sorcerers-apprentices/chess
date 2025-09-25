@@ -1,23 +1,14 @@
-type GameResult = 'PENDING' | 'DRAW' | 'WHITE_WINS' | 'BLACK_WINS';
-export type BoardCell = { file: string; rank: number };
+export type GameResult = 'PENDING' | 'DRAW' | 'WHITE_WINS' | 'BLACK_WINS';
 
 export type GameModel = {
   id: string;
+  pgn: string;
+  pgn_last: string;
+  fen: string;
+  player_id: string;
   created_at: Date;
-  whitePlayerId: string;
-  blackPlayerId: string;
+  finished: boolean;
+  player_color: 'white' | 'black';
   result: GameResult;
-};
-
-export type MoveModel = {
-  gameId: string;
-  from: BoardCell;
-  to: BoardCell;
-  uci: string;
-  san: string;
-  fenAfter: string;
-  timestamp?: number;
-  piece: string;
-  captured: string;
-  promotion: string;
+  fen_final: string;
 };

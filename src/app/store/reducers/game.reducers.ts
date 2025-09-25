@@ -1,8 +1,10 @@
 import {
   gameOver,
+  loadGameSuccess,
   newGame,
   playMove,
   redoMove,
+  setGameId,
   undoMove,
 } from '@/app/store/actions/game.actions';
 import { DEFAULT_POSITION } from 'chess.js';
@@ -15,6 +17,7 @@ export const gameReducers = createReducer(
   on(newGame, (state, { initialFen, orientation }) => ({
     ...state,
     fen: initialFen ?? state.fen,
+    id: '',
     moves: [],
     undoneMoves: [],
     lastMove: null,
@@ -25,8 +28,18 @@ export const gameReducers = createReducer(
     finalFen: null,
   })),
 
-  on(playMove, (state, { fen, moveRecord }) => ({
+  on(setGameId, (state, { gameId }) => ({
     ...state,
+    id: gameId,
+  })),
+
+  on(loadGameSuccess, (_state, { game }) => ({
+    ...game,
+  })),
+
+  on(playMove, (state, { fen, moveRecord, pgn }) => ({
+    ...state,
+    pgn,
     fen,
     moves: [...state.moves, moveRecord],
     undoneMoves: [],

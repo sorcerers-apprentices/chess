@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { TuiNavigation } from '@taiga-ui/layout';
@@ -17,6 +19,10 @@ import { Store } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
 import { GameService } from '@/app/services/game.service';
 import type { Square } from 'chess.js';
+import { GameSupabaseService } from '@/app/services/game-supabase.service';
+import { loadGame } from '@/app/store/actions/game.actions';
+import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
+import { load } from '@/app/utilities/chess-piece';
 
 @Component({
   selector: 'app-game-page',
@@ -33,12 +39,21 @@ import type { Square } from 'chess.js';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GamePage {
+  public readonly id = input.required<string>();
   protected readonly store: Store<{ game: GameStateType }> = inject(
     Store<{ game: GameStateType }>,
   );
+  protected readonly gameSupabaseService = inject(GameSupabaseService);
+  protected readonly gameService = inject(GameService);
+  protected readonly opponent = inject(OpponentRunnerService);
 
-  protected readonly game = inject(GameService);
+  protected loadGameEffect = effect(() =>
+    this.store.dispatch(loadGame({ gameId: this.id() })),
+  );
 
+  protected readonly pgn = this.store.selectSignal((state) => state.game.pgn);
+  protected readonly game = computed(() => load(this.pgn()));
+  protected readonly fen = computed(() => this.game().fen());
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,
   );
@@ -66,8 +81,8 @@ export class GamePage {
 
   public onBoardDragStart(from: Square): void {
     // чей ход
-    const turnPiece = this.game.turn();
-    const colorPieceSquare = this.game.pieceColorAt(from);
+    const turnPiece = this.gameService.turn();
+    const colorPieceSquare = this.gameService.pieceColorAt(from);
 
     if (!colorPieceSquare || colorPieceSquare !== turnPiece) {
       this.dragFrom.set(null);
@@ -75,10 +90,10 @@ export class GamePage {
       return;
     }
 
-    const targets = this.game.getTargetsSet(from);
+    const targets = this.gameService.getTargetsSet(from);
 
     this.dragFrom.set(from);
-    this.allowedTargets.set(this.game.getTargetsSet(from));
+    this.allowedTargets.set(this.gameService.getTargetsSet(from));
     this.allowedTargets.set(targets);
   }
 
@@ -96,7 +111,7 @@ export class GamePage {
       return;
     }
 
-    const isMoveApplied = this.game.playMove(move.from, move.to);
+    const isMoveApplied = this.gameService.playMove(move.from, move.to);
 
     if (isMoveApplied) this.lastMove.set(move);
 

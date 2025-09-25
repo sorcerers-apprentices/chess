@@ -1,3 +1,117 @@
-<div class="game-setting-wrapper">
-  <p>game-settings works!</p>
+<div aria-label="Timer" class="game-timer">
+  <div class="tui-text_body-xl">{{ text() }}</div>
+</div>
+<nav class="game-nav">
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="true"
+    aria-label="Go to start"
+    title="Go to start"
+  >
+    <tui-icon icon="@tui.chevrons-left" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="true"
+    aria-label="Previous move"
+    title="Previous move"
+  >
+    <tui-icon icon="@tui.chevron-left" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="true"
+    aria-label="Next move"
+    title="Next move"
+  >
+    <tui-icon icon="@tui.chevron-right" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="true"
+    aria-label="Go to end"
+    title="Go to end"
+  >
+    <tui-icon icon="@tui.chevrons-right" />
+  </button>
+</nav>
+<div class="game-pairs-users">
+  <tui-scrollbar>
+    <div class="moves-scroll">
+      <table role="table" aria-label="Moves">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Player</th>
+            <th>Opponent</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of movesRows(); track row.num) {
+            <tr>
+              <td>{{ row.num }}</td>
+              <td class="player">{{ row.playerText }}</td>
+              <td class="opponent">{{ row.opponentText }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </tui-scrollbar>
+</div>
+<div class="game-controls">
+  <button
+    type="button"
+    tuiButton
+    size="m"
+    appearance="secondary"
+    [disabled]="true"
+    aria-label="Undo move"
+    title="Undo move"
+  >
+    <tui-icon icon="@tui.undo" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="m"
+    appearance="secondary"
+    [disabled]="true"
+    aria-label="Redo move"
+    title="Redo move"
+  >
+    <tui-icon icon="@tui.redo" />
+  </button>
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="flat"
+    aria-label="Flip board"
+    title="Flip board"
+  >
+    <tui-icon icon="@tui.refresh-ccw" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="m"
+    appearance="primary"
+    aria-label="Resign"
+    title="Resign"
+  >
+    <tui-icon icon="@tui.flag" />
+  </button>
 </div>

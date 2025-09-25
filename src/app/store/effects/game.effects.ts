@@ -2,42 +2,98 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { GameSupabaseService } from '@/app/services/game-supabase.service';
 import {
+  gameOver,
+  gameOverSuccess,
+  loadGame,
+  loadGameSuccess,
   moveSuccess,
   newGame,
   playMove,
+  redoMove,
+  redoMoveSuccess,
   setGameId,
+  undoMove,
+  undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { from, map, switchMap } from 'rxjs';
-import { DEFAULT_WHITE_POSITION } from '@/app/constants/chess-game.constants';
+import { filter, from, map, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/auth.service';
-import type { BoardCell, MoveModel } from '@/app/types/supabase-game.type';
+import type { GameStateType } from '@/app/store/states/game.state';
+import { Chess } from 'chess.js';
+import { load } from '@/app/utilities/chess-piece';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameEffects {
   private readonly api = inject(GameSupabaseService);
-  private readonly AuthService = inject(AuthService);
+  private readonly authService = inject(AuthService);
   private readonly actions$ = inject(Actions);
-  private readonly UserId = this.AuthService.getUserData().user.id;
+  private readonly router = inject(Router);
 
   private startGame$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(newGame),
-      switchMap(({ initialFen }) => {
-        if (initialFen === DEFAULT_WHITE_POSITION) {
-          const whitePlayerId = this.UserId;
-          const blackPlayerId = '';
-          return from(this.api.createGame(whitePlayerId, blackPlayerId)).pipe(
-            map((id) => setGameId({ gameId: id ?? '' })),
-          );
-        } else {
-          const whitePlayerId = '';
-          const blackPlayerId = this.UserId;
-          return from(this.api.createGame(whitePlayerId, blackPlayerId)).pipe(
-            map((id) => setGameId({ gameId: id ?? '' })),
-          );
-        }
+      switchMap(({ initialFen, orientation }) => {
+        return from(
+          this.api.createGame(
+            this.authService.getUserData().user.id,
+            orientation,
+            initialFen,
+          ),
+        ).pipe(
+          map((id) => setGameId({ gameId: id ?? '' })),
+          tap((game) => {
+            this.router.navigate([`/game/${game.gameId}`]).then();
+          }),
+        );
+      }),
+    );
+  });
+
+  private loadGame$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loadGame),
+      switchMap(({ gameId }) => {
+        return from(this.api.loadGame(gameId)).pipe(
+          filter((game) => game !== null),
+          map((game) => {
+            const chess = new Chess();
+            const pgn = game.pgn;
+            chess.loadPgn(pgn);
+            const moves = chess.history({ verbose: true });
+            const lastMove = chess.history({ verbose: true }).at(-1);
+            const gameModel: GameStateType = {
+              pgn: chess.pgn(),
+              fen: game.fen,
+              id: game.id,
+              moves: moves.map((move) => {
+                return {
+                  uci: `${move.from}${move.to}${move.promotion ?? ''}`,
+                  san: move.san,
+                  move: move,
+                  fenAfter: move.after,
+                };
+              }),
+              undoneMoves: [],
+              lastMove: lastMove
+                ? { from: lastMove.from, to: lastMove.to }
+                : null,
+              orientation: game.player_color,
+              finished: game.finished,
+              result:
+                game.result === 'DRAW'
+                  ? { winner: null, draw: true }
+                  : game.result === 'WHITE_WINS'
+                    ? { winner: 'white', draw: false }
+                    : game.result === 'BLACK_WINS'
+                      ? { winner: 'black', draw: false }
+                      : { winner: null, draw: false },
+              finalFen: game.fen_final,
+            };
+            return loadGameSuccess({ game: gameModel });
+          }),
+        );
       }),
     );
   });
@@ -45,30 +101,39 @@ export class GameEffects {
   private move$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(playMove),
-      switchMap(async ({ fen, moveRecord }) => {
-        const gameId = this.api.getGameId();
-        const from: BoardCell = {
-          file: moveRecord.move.from[0],
-          rank: +moveRecord.move.from[1],
-        };
-        const to: BoardCell = {
-          file: moveRecord.move.to[0],
-          rank: +moveRecord.move.to[1],
-        };
-        const move: MoveModel = {
-          gameId: gameId,
-          from: from,
-          to: to,
-          uci: moveRecord.uci,
-          san: moveRecord.san,
-          fenAfter: moveRecord.fenAfter,
-          timestamp: moveRecord.timestamp,
-          piece: moveRecord.move.piece,
-          captured: moveRecord.move.captured ?? '',
-          promotion: moveRecord.move.promotion ?? '',
-        };
-        await this.api.move(move);
-        return moveSuccess({ fen, moveRecord });
+      switchMap(async ({ pgn }) => {
+        await this.api.move(load(pgn));
+        return moveSuccess();
+      }),
+    );
+  });
+
+  private undoMove$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(undoMove),
+      switchMap(async () => {
+        await this.api.undoMove();
+        return undoMoveSuccess();
+      }),
+    );
+  });
+
+  private redoMove$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(redoMove),
+      switchMap(async () => {
+        await this.api.undoMove();
+        return redoMoveSuccess();
+      }),
+    );
+  });
+
+  private GameOver$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(gameOver),
+      switchMap(async ({ result, finalFen }) => {
+        await this.api.gameOver(result, finalFen);
+        return gameOverSuccess();
       }),
     );
   });

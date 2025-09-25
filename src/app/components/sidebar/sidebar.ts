@@ -26,6 +26,11 @@ import { LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
 import { FormsModule } from '@angular/forms';
 import { logoutUser } from '@/app/store/actions/user.actions';
 import { Store } from '@ngrx/store';
+import {
+  CHOSEN_COLOR_TOKEN,
+  START_FEN,
+} from '@/app/constants/chess-game.constants';
+import { newGame } from '@/app/store/actions/game.actions';
 
 type SidebarItemType = {
   nameKey: string;
@@ -50,6 +55,7 @@ type SidebarMapType = Record<string, SidebarItemType[]>;
 })
 export class Sidebar {
   protected readonly language = inject(LANGUAGE_TOKEN);
+  protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
   protected readonly darkMode = inject(TUI_DARK_MODE);
   protected readonly translate = inject(LanguageService);
   protected readonly store = inject(Store);
@@ -62,8 +68,8 @@ export class Sidebar {
 
   protected readonly sidebarMenu = signal<SidebarMapType>({
     'sidebar.game': [
-      { nameKey: 'sidebar.newGame', route: RoutePath.home },
-      { nameKey: 'sidebar.playVsEngine', route: RoutePath.game },
+      { nameKey: 'sidebar.newGame', route: RoutePath['game/:id'] },
+      { nameKey: 'sidebar.homePage', route: RoutePath['home'] },
     ],
     'sidebar.analysis': [
       { nameKey: 'sidebar.analysisBoard', route: RoutePath.main },
@@ -90,5 +96,14 @@ export class Sidebar {
 
   protected onClick(item: SidebarItemType): void {
     this.router.navigate([item.route]);
+  }
+
+  protected playGame(): void {
+    this.store.dispatch(
+      newGame({
+        initialFen: START_FEN,
+        orientation: this.chosenColor(),
+      }),
+    );
   }
 }

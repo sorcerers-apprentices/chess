@@ -1,4 +1,5 @@
-import type { Move } from 'chess.js';
+import { type Move } from 'chess.js';
+import { Chess } from 'chess.js';
 import { DEFAULT_POSITION } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
 
@@ -11,8 +12,9 @@ export type MoveRecordType = {
 };
 
 export type GameStateType = {
-  fen: string;
   id: string;
+  pgn: string;
+  fen: string;
   moves: MoveRecordType[];
   undoneMoves: MoveRecordType[];
   lastMove?: { from: string; to: string } | null;
@@ -24,6 +26,7 @@ export type GameStateType = {
 };
 
 export const initialGameState: GameStateType = {
+  pgn: new Chess(DEFAULT_POSITION).pgn(),
   fen: DEFAULT_POSITION,
   id: '',
   moves: [],
