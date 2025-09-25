@@ -12,6 +12,7 @@ import {
 } from '@/app/store/selectors/game.selectors';
 import type { MoveRow } from '@/app/types/chess-piece.type';
 import { PlayerTimerService } from '@/app/services/player-timer.service';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 @Component({
   selector: 'app-game-settings',
@@ -54,7 +55,7 @@ export class GameSettings {
     return `${hh} : ${mm} : ${ss}`;
   });
 
-  private readonly store = inject(Store);
+  protected readonly store = inject<Store<AppStateType>>(Store);
   private readonly timer = inject(PlayerTimerService);
 
   private readonly moves = this.store.selectSignal(selectMoves);

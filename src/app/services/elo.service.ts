@@ -16,6 +16,7 @@ import {
 } from '@/app/constants/elo.constants';
 import { Store } from '@ngrx/store';
 import { inject, Injectable } from '@angular/core';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 type EloResult = {
   oldRating: number;
@@ -28,7 +29,7 @@ type EloResult = {
   providedIn: 'any',
 })
 export class EloService {
-  private readonly store = inject(Store);
+  private readonly store = inject<Store<AppStateType>>(Store);
   private readonly elo = this.store.selectSignal(selectElo);
   private readonly gamesPlayed = this.store.selectSignal(selectGamesPlayed);
 

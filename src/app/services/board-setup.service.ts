@@ -16,7 +16,7 @@ import { GameService } from '@/app/services/game.service';
 import { type Piece, type Square } from 'chess.js';
 import { Store } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
-import { clone, load } from '@/app/utilities/chess-piece';
+import { load } from '@/app/utilities/chess-piece';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class BoardSetupService {
   // выдает текущее состояние board
 
   public readonly squaresBoard = computed<readonly SquareStateType[]>(() => {
-    const matrix = clone(this.game()).board();
+    const matrix = this.game().board();
     return this.createInitialSquaresPieces(matrix);
   });
 

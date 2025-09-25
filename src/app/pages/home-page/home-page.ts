@@ -18,8 +18,8 @@ import { DatePipe } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { from } from 'rxjs';
 import { START_FEN } from '@/app/constants/chess-game.constants';
-import { newGame } from '@/app/store/actions/game.actions';
 import { Router } from '@angular/router';
+import { GameService } from '@/app/services/game.service';
 
 @Component({
   selector: 'app-game-page',
@@ -42,6 +42,7 @@ export class HomePage {
   protected readonly router = inject(Router);
   protected readonly store = inject(Store);
   protected readonly authService = inject(AuthService);
+  protected readonly gameService = inject(GameService);
   protected readonly userSupabaseService = inject(UserSupabaseService);
   protected readonly userId = this.authService.getUserData().user.id;
   protected phoneNumber =
@@ -78,11 +79,6 @@ export class HomePage {
   }
 
   protected playGame(): void {
-    this.store.dispatch(
-      newGame({
-        initialFen: START_FEN,
-        orientation: this.chosenColor(),
-      }),
-    );
+    this.gameService.newGame(START_FEN, this.chosenColor());
   }
 }

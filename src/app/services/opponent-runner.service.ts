@@ -8,18 +8,21 @@ import {
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
 import { load, parseActiveColor } from '@/app/utilities/chess-piece';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OpponentRunnerService {
-  private readonly store = inject(Store);
+  protected readonly store = inject<Store<AppStateType>>(Store);
   private readonly gameService = inject(GameService);
 
   // сигналы из стора
   private readonly pgn = this.store.selectSignal(selectChess);
+
   private readonly game = computed(() => load(this.pgn()));
   private readonly fen = computed(() => this.game().fen());
+
   private readonly gameId = this.store.selectSignal(selectGameId);
   private readonly orientation = this.store.selectSignal(selectOrientation); // 'white' | 'black'
   private readonly isGameOver = this.store.selectSignal(selectIsGameOver);
