@@ -19,6 +19,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { LANGUAGE_TOKEN } from '@/app/services/language.service';
+import { CHOSEN_COLOR_TOKEN } from '@/app/constants/chess-game.constants';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,6 +43,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: LANGUAGE_TOKEN,
       useValue: signal('en'),
+    },
+    {
+      provide: CHOSEN_COLOR_TOKEN,
+      useValue: signal('black'),
     },
   ],
 };

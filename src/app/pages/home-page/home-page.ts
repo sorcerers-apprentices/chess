@@ -1,23 +1,20 @@
 import { Header } from '../../components/header/header';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TuiButton, TuiLoader } from '@taiga-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import type { PieceColorType } from '@/app/types/chess-square.type';
 import { Store } from '@ngrx/store';
 import { UserSupabaseService } from '@/app/services/user-supabase.service';
 import { AuthService } from '@/app/services/auth.service';
 import { DatePipe } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { from } from 'rxjs';
-import { START_FEN } from '@/app/constants/chess-game.constants';
+import { from, map } from 'rxjs';
+import {
+  CHOSEN_COLOR_TOKEN,
+  START_FEN,
+} from '@/app/constants/chess-game.constants';
 import { newGame } from '@/app/store/actions/game.actions';
 import { Router } from '@angular/router';
 
@@ -38,7 +35,7 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
-  public chosenColor = signal<PieceColorType>('black');
+  protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
   protected readonly router = inject(Router);
   protected readonly store = inject(Store);
   protected readonly authService = inject(AuthService);
@@ -52,7 +49,17 @@ export class HomePage {
   protected userName = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
-      from(this.userSupabaseService.fetchUserData(params)),
+      from(this.userSupabaseService.fetchUserData(params)).pipe(
+        map((user) => user?.display_name),
+      ),
+  });
+
+  protected userElo = rxResource({
+    params: () => this.userId,
+    stream: ({ params }) =>
+      from(this.userSupabaseService.fetchUserData(params)).pipe(
+        map((user) => user?.elo),
+      ),
   });
 
   protected playedGamesCount = rxResource({

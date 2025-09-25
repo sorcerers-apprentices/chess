@@ -9,11 +9,19 @@
       <div class="user_info">
         @if (userName.value(); as value) {
           <h3 class="user_info__name">
-            {{ value.display_name }}
+            {{ value }}
           </h3>
         }
         @if (userName.isLoading()) {
           <tui-loader size="s"></tui-loader>
+        }
+        @if (userElo.value(); as count) {
+          <h4 class="user_info__game">
+            {{ "home.elo" | translate }}{{ count }}
+          </h4>
+        }
+        @if (!userElo.value()) {
+          <h4 class="user_info__game">{{ "home.elo" | translate }}{{ 0 }}</h4>
         }
         @if (winedGamesCount.value(); as count) {
           <h4 class="user_info__game">
