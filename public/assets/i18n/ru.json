@@ -8,7 +8,8 @@
     "analysisBoard": "Доска анализа",
     "logout": "Выход",
     "darkMode": "Темная тема",
-    "language": "Русский"
+    "language": "Русский",
+    "homePage": "Домашняя страницы"
   },
   "signin": {
     "title": "Вход в игровой сервис",
