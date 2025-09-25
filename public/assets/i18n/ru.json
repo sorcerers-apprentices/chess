@@ -56,7 +56,8 @@
     "playedGames": "Сыгранные игры: ",
     "phone": "Телефон: ",
     "lastSignIn": "Последний вход: ",
-    "choseColor": "Выберете цвет:"
+    "choseColor": "Выберете цвет:",
+    "elo": "ELO: "
   },
   "game": {
     "notification": "Вы уверены, что хотите выйти из игры?",

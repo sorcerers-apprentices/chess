@@ -16,7 +16,7 @@ import { UserSupabaseService } from '@/app/services/user-supabase.service';
 import { AuthService } from '@/app/services/auth.service';
 import { DatePipe } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { from } from 'rxjs';
+import { from, map } from 'rxjs';
 import { START_FEN } from '@/app/constants/chess-game.constants';
 import { newGame } from '@/app/store/actions/game.actions';
 import { Router } from '@angular/router';
@@ -52,7 +52,17 @@ export class HomePage {
   protected userName = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
-      from(this.userSupabaseService.fetchUserData(params)),
+      from(this.userSupabaseService.fetchUserData(params)).pipe(
+        map((user) => user?.display_name),
+      ),
+  });
+
+  protected userElo = rxResource({
+    params: () => this.userId,
+    stream: ({ params }) =>
+      from(this.userSupabaseService.fetchUserData(params)).pipe(
+        map((user) => user?.elo),
+      ),
   });
 
   protected playedGamesCount = rxResource({

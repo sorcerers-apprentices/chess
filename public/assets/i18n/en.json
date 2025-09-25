@@ -57,7 +57,8 @@
     "playedGames": "Played Games: ",
     "phone": "Phone: ",
     "lastSignIn": "Last sign in: ",
-    "choseColor": "Chose color:"
+    "choseColor": "Chose color:",
+    "elo": "ELO: "
   },
   "game": {
     "notification": "Are you sure you want to leave your game?",
