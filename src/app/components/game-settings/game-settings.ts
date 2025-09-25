@@ -11,6 +11,7 @@ import {
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
 import type { MoveRow } from '@/app/types/chess-piece.type';
+import { PlayerTimerService } from '@/app/services/player-timer.service';
 
 @Component({
   selector: 'app-game-settings',
@@ -39,7 +40,22 @@ export class GameSettings {
     });
   });
 
+  protected readonly text = computed(() => {
+    const totalSec = Math.floor(this.timer.totalMs() / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+
+    // сразу форматируем с ведущими нулями
+    const hh = h.toString().padStart(2, '0');
+    const mm = m.toString().padStart(2, '0');
+    const ss = s.toString().padStart(2, '0');
+
+    return `${hh} : ${mm} : ${ss}`;
+  });
+
   private readonly store = inject(Store);
+  private readonly timer = inject(PlayerTimerService);
 
   private readonly moves = this.store.selectSignal(selectMoves);
 
