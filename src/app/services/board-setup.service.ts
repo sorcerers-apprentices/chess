@@ -13,9 +13,10 @@ import {
 } from '@/app/constants/chess-square.constans';
 import type { BoardMatrix } from '@/app/services/game.service';
 import { GameService } from '@/app/services/game.service';
-import type { Piece, Square } from 'chess.js';
+import { type Piece, type Square } from 'chess.js';
 import { Store } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
+import { clone, load } from '@/app/utilities/chess-piece';
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +25,7 @@ export class BoardSetupService {
   // выдает текущее состояние board
 
   public readonly squaresBoard = computed<readonly SquareStateType[]>(() => {
-    const fen = this.fen();
-    const matrix = this.game.getBoardFromFen(fen);
+    const matrix = clone(this.game()).board();
     return this.createInitialSquaresPieces(matrix);
   });
 
@@ -33,12 +33,14 @@ export class BoardSetupService {
     Store<{ game: GameStateType }>,
   );
 
-  protected readonly fen = this.store.selectSignal((state) => state.game.fen);
+  protected readonly pgn = this.store.selectSignal((state) => state.game.pgn);
+  protected readonly game = computed(() => load(this.pgn()));
+  protected readonly fen = computed(() => this.game().fen());
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,
   );
 
-  private readonly game = inject(GameService);
+  private readonly gameService = inject(GameService);
 
   public createInitialSquaresPieces(board: BoardMatrix): SquareStateType[] {
     const ranksOrder = this.orientation() === 'white' ? RANKS_TOP_DOWN : RANKS;
@@ -72,6 +74,6 @@ export class BoardSetupService {
 
   /** Узнать фигуру на клетке для подсветки допустимых ходов, правила шахматной логики */
   public pieceAt(square: Square): Piece | undefined {
-    return this.game.getPieceAtFromFen(this.fen(), square);
+    return this.game().get(square);
   }
 }

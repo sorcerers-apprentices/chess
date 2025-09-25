@@ -1,23 +1,25 @@
-import { effect, inject, Injectable } from '@angular/core';
+import { computed, effect, inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { GameService } from '@/app/services/game.service';
 import {
-  selectChessFen,
+  selectChess,
   selectGameId,
   selectIsGameOver,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
-import { parseActiveColor } from '@/app/utilities/chess-piece';
+import { load, parseActiveColor } from '@/app/utilities/chess-piece';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OpponentRunnerService {
   private readonly store = inject(Store);
-  private readonly game = inject(GameService);
+  private readonly gameService = inject(GameService);
 
   // сигналы из стора
-  private readonly fen = this.store.selectSignal(selectChessFen);
+  private readonly pgn = this.store.selectSignal(selectChess);
+  private readonly game = computed(() => load(this.pgn()));
+  private readonly fen = computed(() => this.game().fen());
   private readonly gameId = this.store.selectSignal(selectGameId);
   private readonly orientation = this.store.selectSignal(selectOrientation); // 'white' | 'black'
   private readonly isGameOver = this.store.selectSignal(selectIsGameOver);
@@ -45,7 +47,7 @@ export class OpponentRunnerService {
     setTimeout(() => {
       try {
         // локальный бот на chess.js — сам диспатчит playMove и завершает партию при необходимости
-        this.game.playOpponentMove();
+        this.gameService.playOpponentMove();
       } finally {
         this.busy = false;
       }
