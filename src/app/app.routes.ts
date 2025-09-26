@@ -31,6 +31,7 @@ export const appRoutes: Route[] = [
     path: RoutePath.main,
     redirectTo: RoutePath.home,
     pathMatch: 'full',
+    data: { preload: true },
   },
   {
     path: RoutePath.home,
@@ -38,6 +39,7 @@ export const appRoutes: Route[] = [
     canActivate: [authenticatedGuardFunction],
     loadComponent: () =>
       import('./pages/home-page/home-page').then((m) => m.HomePage),
+    data: { preload: true },
   },
   {
     path: RoutePath['game/:id'],
@@ -46,6 +48,7 @@ export const appRoutes: Route[] = [
     canDeactivate: [canDeactivatePopup],
     loadComponent: () =>
       import('./pages/game-page/game-page').then((m) => m.GamePage),
+    data: { preload: true },
   },
   {
     path: RoutePath.signup,
@@ -53,6 +56,7 @@ export const appRoutes: Route[] = [
     canActivate: [anonymousGuardFunction],
     loadComponent: () =>
       import('./pages/sign-up-page/sign-up-page').then((m) => m.SignUpPage),
+    data: { preload: false },
   },
   {
     path: RoutePath.signin,
@@ -60,6 +64,7 @@ export const appRoutes: Route[] = [
     canActivate: [anonymousGuardFunction],
     loadComponent: () =>
       import('./pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
+    data: { preload: true },
   },
   {
     path: RoutePath.not_found,
@@ -68,5 +73,6 @@ export const appRoutes: Route[] = [
       import('./pages/not-found-page/not-found-page').then(
         (m) => m.NotFoundPage,
       ),
+    data: { preload: false },
   },
 ];
