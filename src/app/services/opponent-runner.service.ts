@@ -36,7 +36,7 @@ export class OpponentRunnerService {
 
   // локальный флаг занятости (чтобы не стреляло повторно)
   private busy = false;
-  private readonly delayMs = 1000;
+  private readonly delayMs = 3000;
 
   private readonly autorun = effect(() => {
     const id = this.gameId();

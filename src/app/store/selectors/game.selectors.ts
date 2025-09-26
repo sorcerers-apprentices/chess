@@ -23,11 +23,6 @@ export const selectUndoneMoves = createSelector(
   (state): MoveRecordType[] => state.undoneMoves,
 );
 
-export const selectLastMove = createSelector(
-  selectGameState,
-  (state) => state.lastMove,
-);
-
 export const selectMoveCount = createSelector(
   selectMoves,
   (moves) => moves.length,
@@ -53,18 +48,17 @@ export const selectOrientation = createSelector(
   (state) => state.orientation,
 );
 
-// 1) FEN и active color
-export const selectFen = createSelector(selectGameState, (s) => s.fen);
+// логика возврата ходов user
+//---------------
 
-// ВАЖНО: импортни свой util
-// import { parseActiveColor } from '.../utils/chess-fen'; // путь как у тебя
+export const selectFen = createSelector(selectGameState, (state) => state.fen);
 
 export const selectActiveColor = createSelector(
   selectFen,
   (fen) => parseActiveColor(fen), // 'w' | 'b'
 );
 
-// 2) Чей сейчас ход с точки зрения игрока
+// Чей сейчас ход
 export const selectIsPlayersTurn = createSelector(
   selectActiveColor,
   selectOrientation, // 'white' | 'black'
@@ -75,13 +69,24 @@ export const selectIsPlayersTurn = createSelector(
 export const selectCanUndo = createSelector(
   selectMoveCount,
   selectIsGameOver,
-  (moveCount, finished) => moveCount > 0 && !finished,
+  selectIsPlayersTurn,
+  (moveCount, finished, isPlayersTurn) =>
+    moveCount > 0 && !finished && !isPlayersTurn,
 );
 
 export const selectCanRedo = createSelector(
   selectUndoneCount,
   selectIsGameOver,
-  (undoneCount, finished) => undoneCount > 0 && !finished,
+  selectIsPlayersTurn,
+  (undoneCount, finished, isPlayersTurn) =>
+    undoneCount > 0 && !finished && isPlayersTurn,
+);
+
+//---------------
+
+export const selectLastMove = createSelector(
+  selectGameState,
+  (state) => state.lastMove,
 );
 
 export const selectGameId = createSelector(
