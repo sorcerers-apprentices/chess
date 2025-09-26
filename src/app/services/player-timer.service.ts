@@ -16,6 +16,7 @@ import {
 import type { Color } from 'chess.js';
 import { load, parseActiveColor } from '@/app/utilities/chess-piece';
 import { GameService } from '@/app/services/game.service';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ import { GameService } from '@/app/services/game.service';
 export class PlayerTimerService {
   public readonly totalMs = computed(() => this.elapsedMs());
 
-  private readonly store = inject(Store);
+  protected readonly store = inject<Store<AppStateType>>(Store);
   private readonly destroyRef = inject(DestroyRef);
   private readonly gameService = inject(GameService);
 
@@ -31,6 +32,7 @@ export class PlayerTimerService {
   private readonly pgn = this.store.selectSignal(selectChess);
   private readonly game = computed(() => load(this.pgn()));
   private readonly fen = computed(() => this.game().fen());
+
   private readonly moves = this.store.selectSignal(selectMoves);
   private readonly orientation = this.store.selectSignal(selectOrientation);
   private readonly isGameOver = this.store.selectSignal(selectIsGameOver);

@@ -77,9 +77,10 @@
     tuiButton
     size="m"
     appearance="secondary"
-    [disabled]="true"
+    [disabled]="undoDisabled()"
     aria-label="Undo move"
     title="Undo move"
+    (click)="onUndoClick()"
   >
     <tui-icon icon="@tui.undo" />
   </button>
@@ -88,9 +89,10 @@
     tuiButton
     size="m"
     appearance="secondary"
-    [disabled]="true"
+    [disabled]="redoDisabled()"
     aria-label="Redo move"
     title="Redo move"
+    (click)="onRedoClick()"
   >
     <tui-icon icon="@tui.redo" />
   </button>
@@ -111,6 +113,8 @@
     appearance="primary"
     aria-label="Resign"
     title="Resign"
+    [disabled]="resignDisabled()"
+    (click)="onResignClick()"
   >
     <tui-icon icon="@tui.flag" />
   </button>

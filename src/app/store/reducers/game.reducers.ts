@@ -4,29 +4,41 @@ import {
   newGame,
   playMove,
   redoMove,
+  redoMoveSuccess,
   setGameId,
   undoMove,
+  undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { DEFAULT_POSITION } from 'chess.js';
+import { Chess, DEFAULT_POSITION } from 'chess.js';
 import { createReducer, on } from '@ngrx/store';
 import { initialGameState } from '@/app/store/states/game.state';
 
 export const gameReducers = createReducer(
   initialGameState,
 
-  on(newGame, (state, { initialFen, orientation }) => ({
-    ...state,
-    fen: initialFen ?? state.fen,
-    id: '',
-    moves: [],
-    undoneMoves: [],
-    lastMove: null,
-    orientation: orientation ?? state.orientation, // ← берём из payload или оставляем как было
-    clocks: null,
-    finished: false,
-    result: null,
-    finalFen: null,
-  })),
+  on(newGame, (state, { initialFen, orientation }) => {
+    const chess = new Chess();
+    if (initialFen) {
+      chess.load(initialFen);
+    } else {
+      chess.load(DEFAULT_POSITION);
+    }
+    return {
+      ...state,
+      fen: chess.fen(),
+      pgnLast: null,
+      pgn: chess.pgn(),
+      id: '',
+      moves: [],
+      undoneMoves: [],
+      lastMove: null,
+      orientation: orientation ?? state.orientation,
+      clocks: null,
+      finished: false,
+      result: null,
+      finalFen: null,
+    };
+  }),
 
   on(setGameId, (state, { gameId }) => ({
     ...state,
@@ -35,16 +47,20 @@ export const gameReducers = createReducer(
 
   on(loadGameSuccess, (_state, { game }) => ({
     ...game,
+    pgnLast: game.pgnLast ?? null,
   })),
 
-  on(playMove, (state, { fen, moveRecord, pgn }) => ({
-    ...state,
-    pgn,
-    fen,
-    moves: [...state.moves, moveRecord],
-    undoneMoves: [],
-    lastMove: { from: moveRecord.move.from, to: moveRecord.move.to },
-  })),
+  on(playMove, (state, { fen, moveRecord, pgn }) => {
+    return {
+      ...state,
+      pgn,
+      pgnLast: null,
+      fen,
+      moves: [...state.moves, moveRecord],
+      undoneMoves: [],
+      lastMove: { from: moveRecord.move.from, to: moveRecord.move.to },
+    };
+  }),
 
   on(undoMove, (state) => {
     if (state.moves.length === 0) return state;
@@ -85,6 +101,20 @@ export const gameReducers = createReducer(
       },
     };
   }),
+
+  on(undoMoveSuccess, (state, { fen, pgn, pgn_last }) => ({
+    ...state,
+    fen,
+    pgn,
+    pgnLast: pgn_last,
+  })),
+
+  on(redoMoveSuccess, (state, { fen, pgn, pgn_last }) => ({
+    ...state,
+    fen,
+    pgn,
+    pgnLast: pgn_last,
+  })),
 
   on(gameOver, (state, { result, finalFen }) => ({
     ...state,

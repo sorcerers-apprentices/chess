@@ -12,3 +12,9 @@ export type GameModel = {
   result: GameResult;
   fen_final: string;
 };
+
+export type GameProjection = {
+  fen: string;
+  pgn: string;
+  pgn_last: string | null;
+};

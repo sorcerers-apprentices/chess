@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import { environment } from '@/environments/environment.development';
 import { GAME_ID } from '@/app/constants/auth.constants';
-import type { GameModel } from '@/app/types/supabase-game.type';
+import type { GameModel, GameProjection } from '@/app/types/supabase-game.type';
 import { Chess } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
 import { clone } from '@/app/utilities/chess-piece';
@@ -68,11 +68,11 @@ export class GameSupabaseService {
     }
   }
 
-  public async undoMove(): Promise<void> {
+  public async undoMove(): Promise<GameProjection> {
     const gameId = this.getGameId();
     const game = await this.fetchGame(gameId);
     if (!game) {
-      return;
+      throw new Error('Game not found');
     }
 
     const pgnOld = game.pgn_last;
@@ -81,18 +81,25 @@ export class GameSupabaseService {
     chess.loadPgn(pgnOld);
     const fen = chess.fen();
 
-    const { error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('game')
       .update({
         fen: fen,
         pgn: pgnOld,
         pgn_last: pgnCurrent,
       })
-      .eq('id', gameId);
+      .eq('id', gameId)
+      .select('fen,pgn,pgn_last')
+      .single();
 
     if (error) {
       console.error('Error undoing move:', error?.message);
     }
+    if (data == null) {
+      throw new Error('Row not found after update');
+    }
+
+    return data;
   }
 
   public async gameOver(

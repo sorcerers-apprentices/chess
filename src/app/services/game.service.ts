@@ -18,6 +18,7 @@ import { EloService } from '@/app/services/elo.service';
 import { computed, inject, Injectable } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { clone, load } from '@/app/utilities/chess-piece';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -30,11 +31,12 @@ export type BoardMatrix = (Piece | null)[][];
   providedIn: 'root',
 })
 export class GameService {
-  private readonly store = inject(Store);
+  private readonly store = inject<Store<AppStateType>>(Store);
   private readonly elo = inject(EloService);
+
   private readonly pgn = this.store.selectSignal(selectChess);
   private readonly game = computed(() => load(this.pgn()));
-  private readonly fen = computed(() => this.game().fen());
+
   private readonly orientation = this.store.selectSignal(selectOrientation);
 
   public newGame(fen: string, orientation: 'white' | 'black'): void {
@@ -60,20 +62,21 @@ export class GameService {
   public playMove(from: Square, to: Square): boolean {
     try {
       const chess = clone(this.game());
-      const move = chess.move({ from, to });
+      const move = chess.move({ from, to, promotion: 'q' });
       if (move === null) return false;
+
+      const newFen = chess.fen();
+      const newPgn = chess.pgn();
 
       const moveRecord: MoveRecordType = {
         uci: `${move.from}${move.to}${move.promotion ?? ''}`,
         san: move.san,
         move,
-        fenAfter: chess.fen(),
+        fenAfter: newFen,
         timestamp: Date.now(),
       };
 
-      this.store.dispatch(
-        playMove({ fen: chess.fen(), moveRecord, pgn: chess.pgn() }),
-      );
+      this.store.dispatch(playMove({ fen: newFen, moveRecord, pgn: newPgn }));
       this.handleGameEnd(chess);
 
       return true;
@@ -120,7 +123,7 @@ export class GameService {
   }
 
   public playOpponentMove(): MoveRecordType | null {
-    const chess = clone(this.game());
+    const chess = load(this.pgn());
 
     const possibleMoves = chess.moves({ verbose: true }) ?? [];
 
@@ -156,8 +159,8 @@ export class GameService {
     return moveRecord;
   }
 
-  private handleGameEnd(chess: Chess): void {
-    const result = this.evaluateResultFromInstance(chess);
+  public handleGameEnd(chess: Chess, manual?: GameResultType): void {
+    const result = manual ?? this.evaluateResultFromInstance(chess);
     if (result.draw || result.winner !== null) {
       this.store.dispatch(gameOver({ result, finalFen: chess.fen() }));
 
@@ -172,7 +175,7 @@ export class GameService {
     }
   }
 
-  private evaluateResultFromInstance(chess: Chess): GameResultType {
+  public evaluateResultFromInstance(chess: Chess): GameResultType {
     if (chess.isCheckmate()) {
       const winner = chess.turn() === 'w' ? 'black' : 'white';
       return { winner, draw: false };
@@ -188,5 +191,13 @@ export class GameService {
     }
 
     return { winner: null, draw: false };
+  }
+
+  public resign(): void {
+    const me: 'white' | 'black' = this.orientation();
+    const winner: 'white' | 'black' = me === 'white' ? 'black' : 'white';
+    const chess = load(this.pgn());
+
+    this.handleGameEnd(chess, { winner, draw: false });
   }
 }
