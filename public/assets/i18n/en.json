@@ -9,7 +9,8 @@
     "analysisBoard": "Analysis board",
     "logout": "Logout",
     "darkMode": "Dark mode",
-    "language": "English"
+    "language": "English",
+    "homePage": "Home page"
   },
   "signin": {
     "title": "Sign In to Our Game Service",
@@ -57,7 +58,8 @@
     "playedGames": "Played Games: ",
     "phone": "Phone: ",
     "lastSignIn": "Last sign in: ",
-    "choseColor": "Chose color:"
+    "choseColor": "Chose color:",
+    "elo": "ELO: "
   },
   "game": {
     "notification": "Are you sure you want to leave your game?",

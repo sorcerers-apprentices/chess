@@ -8,7 +8,8 @@
     "analysisBoard": "Доска анализа",
     "logout": "Выход",
     "darkMode": "Темная тема",
-    "language": "Русский"
+    "language": "Русский",
+    "homePage": "Домашняя страницы"
   },
   "signin": {
     "title": "Вход в игровой сервис",
@@ -56,7 +57,8 @@
     "playedGames": "Сыгранные игры: ",
     "phone": "Телефон: ",
     "lastSignIn": "Последний вход: ",
-    "choseColor": "Выберете цвет:"
+    "choseColor": "Выберете цвет:",
+    "elo": "ELO: "
   },
   "game": {
     "notification": "Вы уверены, что хотите выйти из игры?",
