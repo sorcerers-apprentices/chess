@@ -159,8 +159,8 @@ export class GameService {
     return moveRecord;
   }
 
-  private handleGameEnd(chess: Chess): void {
-    const result = this.evaluateResultFromInstance(chess);
+  public handleGameEnd(chess: Chess, manual?: GameResultType): void {
+    const result = manual ?? this.evaluateResultFromInstance(chess);
     if (result.draw || result.winner !== null) {
       this.store.dispatch(gameOver({ result, finalFen: chess.fen() }));
 
@@ -175,7 +175,7 @@ export class GameService {
     }
   }
 
-  private evaluateResultFromInstance(chess: Chess): GameResultType {
+  public evaluateResultFromInstance(chess: Chess): GameResultType {
     if (chess.isCheckmate()) {
       const winner = chess.turn() === 'w' ? 'black' : 'white';
       return { winner, draw: false };
@@ -191,5 +191,13 @@ export class GameService {
     }
 
     return { winner: null, draw: false };
+  }
+
+  public resign(): void {
+    const me: 'white' | 'black' = this.orientation();
+    const winner: 'white' | 'black' = me === 'white' ? 'black' : 'white';
+    const chess = load(this.pgn());
+
+    this.handleGameEnd(chess, { winner, draw: false });
   }
 }

@@ -113,6 +113,8 @@
     appearance="primary"
     aria-label="Resign"
     title="Resign"
+    [disabled]="resignDisabled()"
+    (click)="onResignClick()"
   >
     <tui-icon icon="@tui.flag" />
   </button>

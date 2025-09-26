@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import {
   selectCanRedo,
   selectCanUndo,
+  selectIsGameOver,
   selectMoves,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
@@ -44,6 +45,8 @@ export class GameSettings {
     });
   });
 
+  public readonly resignDisabled = computed(() => this.isFinished());
+
   protected readonly text = computed(() => {
     const totalSec = Math.floor(this.timer.totalMs() / 1000);
     const h = Math.floor(totalSec / 3600);
@@ -66,6 +69,7 @@ export class GameSettings {
   private readonly timer = inject(PlayerTimerService);
   private readonly canUndo = this.store.selectSignal(selectCanUndo);
   private readonly canRedo = this.store.selectSignal(selectCanRedo);
+  private readonly isFinished = this.store.selectSignal(selectIsGameOver);
 
   private readonly moves = this.store.selectSignal(selectMoves);
 
@@ -77,5 +81,10 @@ export class GameSettings {
 
   public onRedoClick(): void {
     if (this.canRedo()) this.gameService.redoMove();
+  }
+
+  public onResignClick(): void {
+    if (this.resignDisabled()) return;
+    this.gameService.resign();
   }
 }
