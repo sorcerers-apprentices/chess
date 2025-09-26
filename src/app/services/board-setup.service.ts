@@ -34,7 +34,10 @@ export class BoardSetupService {
   );
 
   protected readonly pgn = this.store.selectSignal((state) => state.game.pgn);
-  protected readonly game = computed(() => load(this.pgn()));
+  protected readonly game = computed(() => {
+    const value = this.pgn();
+    return load(value);
+  });
   protected readonly fen = computed(() => this.game().fen());
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,

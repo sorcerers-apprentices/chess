@@ -9,6 +9,7 @@ import {
 } from '@/app/store/selectors/game.selectors';
 import { load, parseActiveColor } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
+import { Chess } from 'chess.js';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,13 @@ export class OpponentRunnerService {
   // сигналы из стора
   private readonly pgn = this.store.selectSignal(selectChess);
 
-  private readonly game = computed(() => load(this.pgn()));
+  private readonly game = computed(() => {
+    const pgn = this.pgn();
+    if (!pgn) {
+      return new Chess();
+    }
+    return load(pgn);
+  });
   private readonly fen = computed(() => this.game().fen());
 
   private readonly gameId = this.store.selectSignal(selectGameId);

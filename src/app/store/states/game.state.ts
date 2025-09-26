@@ -14,6 +14,7 @@ export type MoveRecordType = {
 export type GameStateType = {
   id: string;
   pgn: string;
+  pgnLast: string | null;
   fen: string;
   moves: MoveRecordType[];
   undoneMoves: MoveRecordType[];
@@ -27,6 +28,7 @@ export type GameStateType = {
 
 export const initialGameState: GameStateType = {
   pgn: new Chess(DEFAULT_POSITION).pgn(),
+  pgnLast: null,
   fen: DEFAULT_POSITION,
   id: '',
   moves: [],

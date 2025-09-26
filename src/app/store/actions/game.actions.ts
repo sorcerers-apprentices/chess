@@ -27,13 +27,20 @@ export const playMove = createAction(
   '[Game] Play Move',
   props<{ fen: string; moveRecord: MoveRecordType; pgn: string }>(),
 );
+
 export const moveSuccess = createAction('[Game] Move Success');
 
 export const undoMove = createAction('[Game] Undo Move');
-export const undoMoveSuccess = createAction('[Game] Move Success');
+export const undoMoveSuccess = createAction(
+  '[Game] Undo Success',
+  props<{ fen: string; pgn: string; pgn_last: string | null }>(),
+);
 
 export const redoMove = createAction('[Game] Redo Move');
-export const redoMoveSuccess = createAction('[Game] Redo Success');
+export const redoMoveSuccess = createAction(
+  '[Game] Redo Success',
+  props<{ fen: string; pgn: string; pgn_last: string | null }>(),
+);
 
 export const gameOver = createAction(
   '[Game] Game Over',

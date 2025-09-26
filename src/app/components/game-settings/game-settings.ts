@@ -7,12 +7,15 @@ import {
 import { TuiButton, TuiIcon, TuiScrollbar } from '@taiga-ui/core';
 import { Store } from '@ngrx/store';
 import {
+  selectCanRedo,
+  selectCanUndo,
   selectMoves,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
 import type { MoveRow } from '@/app/types/chess-piece.type';
 import { PlayerTimerService } from '@/app/services/player-timer.service';
 import type { AppStateType } from '@/app/store/states/app.state';
+import { GameService } from '@/app/services/game.service';
 
 @Component({
   selector: 'app-game-settings',
@@ -56,9 +59,23 @@ export class GameSettings {
   });
 
   protected readonly store = inject<Store<AppStateType>>(Store);
+  protected readonly gameService = inject(GameService);
+  protected readonly undoDisabled = computed(() => !this.canUndo());
+  protected readonly redoDisabled = computed(() => !this.canRedo());
+
   private readonly timer = inject(PlayerTimerService);
+  private readonly canUndo = this.store.selectSignal(selectCanUndo);
+  private readonly canRedo = this.store.selectSignal(selectCanRedo);
 
   private readonly moves = this.store.selectSignal(selectMoves);
 
   private readonly orientation = this.store.selectSignal(selectOrientation);
+
+  public onUndoClick(): void {
+    if (this.canUndo()) this.gameService.undoMove();
+  }
+
+  public onRedoClick(): void {
+    if (this.canRedo()) this.gameService.redoMove();
+  }
 }

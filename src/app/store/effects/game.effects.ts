@@ -65,6 +65,7 @@ export class GameEffects {
             const lastMove = chess.history({ verbose: true }).at(-1);
             const gameModel: GameStateType = {
               pgn: chess.pgn(),
+              pgnLast: game.pgn_last,
               fen: game.fen,
               id: game.id,
               moves: moves.map((move) => {
@@ -112,8 +113,8 @@ export class GameEffects {
     return this.actions$.pipe(
       ofType(undoMove),
       switchMap(async () => {
-        await this.api.undoMove();
-        return undoMoveSuccess();
+        const result = await this.api.undoMove();
+        return undoMoveSuccess(result);
       }),
     );
   });
@@ -122,8 +123,8 @@ export class GameEffects {
     return this.actions$.pipe(
       ofType(redoMove),
       switchMap(async () => {
-        await this.api.undoMove();
-        return redoMoveSuccess();
+        const result = await this.api.undoMove();
+        return redoMoveSuccess(result);
       }),
     );
   });
