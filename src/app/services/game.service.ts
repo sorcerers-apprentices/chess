@@ -7,6 +7,7 @@ import {
 } from '@/app/store/actions/game.actions';
 import {
   selectChess,
+  selectIsGameOver,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
 import type { Chess } from 'chess.js';
@@ -38,6 +39,7 @@ export class GameService {
   private readonly game = computed(() => load(this.pgn()));
 
   private readonly orientation = this.store.selectSignal(selectOrientation);
+  private readonly isFinished = this.store.selectSignal(selectIsGameOver);
 
   public newGame(fen: string, orientation: 'white' | 'black'): void {
     this.store.dispatch(newGame({ initialFen: fen, orientation }));
@@ -123,6 +125,8 @@ export class GameService {
   }
 
   public playOpponentMove(): MoveRecordType | null {
+    if (this.isFinished()) return null;
+
     const chess = load(this.pgn());
 
     const possibleMoves = chess.moves({ verbose: true }) ?? [];
@@ -151,6 +155,9 @@ export class GameService {
       fenAfter: chess.fen(),
       timestamp: Date.now(),
     };
+
+    // ещё раз проверим прямо перед диспатчем
+    if (this.isFinished()) return null;
 
     this.store.dispatch(
       playMove({ fen: chess.fen(), moveRecord, pgn: chess.pgn() }),

@@ -51,6 +51,7 @@ export const gameReducers = createReducer(
   })),
 
   on(playMove, (state, { fen, moveRecord, pgn }) => {
+    if (state.finished) return state; // игра закончена — ходы игнорируем
     return {
       ...state,
       pgn,
