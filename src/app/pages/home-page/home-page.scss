@@ -1,3 +1,8 @@
+main[tuinavigationmain] {
+  padding-top: 48px;
+  border: 0;
+}
+
 .home-wrapper {
   display: flex;
   flex-direction: column;
@@ -68,6 +73,7 @@
 .user_info {
   display: flex;
   flex-flow: column;
+  gap: 1rem;
   justify-content: space-around;
   min-height: 100%;
 
@@ -81,5 +87,41 @@
 
   &__text {
     font-size: 1rem;
+  }
+}
+
+@media (width <= 1024px) {
+  .home-wrapper {
+    padding: 3rem 8rem;
+  }
+}
+
+@media (width <= 768px) {
+  .home-wrapper {
+    padding: 3rem 4rem;
+  }
+}
+
+@media (width <= 550px) {
+  .home-wrapper {
+    gap: 3rem;
+    padding: 3rem;
+  }
+
+  .avatar {
+    display: none;
+  }
+
+  .user_info {
+    gap: 1rem;
+  }
+
+  .radio-label {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .button {
+    width: 7rem;
   }
 }

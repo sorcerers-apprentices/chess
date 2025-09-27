@@ -49,7 +49,7 @@
 .game-nav {
   display: flex;
   flex: 0 0 auto;
-  gap: 3rem;
+  gap: 2rem;
   align-items: center;
   justify-content: center;
 
@@ -159,8 +159,21 @@ table[role="table"] {
   tui-icon {
     justify-content: center;
     min-inline-size: 2rem;
+    margin-bottom: 0;
     font-size: 2rem;
     font-weight: bold;
     color: var(--tui-text-primary);
+  }
+}
+
+@media (width <= 1200px) {
+  .game-nav {
+    gap: 1rem;
+  }
+}
+
+@media (width <= 768px) {
+  .game-nav {
+    gap: 2rem;
   }
 }

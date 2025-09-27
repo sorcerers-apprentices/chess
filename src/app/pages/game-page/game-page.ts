@@ -1,4 +1,6 @@
 import { Header } from '../../components/header/header';
+import type { TemplateRef } from '@angular/core';
+import { ViewChild } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,13 +18,17 @@ import type { SquareType } from '@/app/types/chess-square.type';
 import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
-import type { GameStateType } from '@/app/store/states/game.state';
 import { GameService } from '@/app/services/game.service';
 import type { Square } from 'chess.js';
 import { GameSupabaseService } from '@/app/services/game-supabase.service';
 import { loadGame } from '@/app/store/actions/game.actions';
 import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 import { load } from '@/app/utilities/chess-piece';
+import { selectIsGameOver } from '@/app/store/selectors/game.selectors';
+import type { AppStateType } from '@/app/store/states/app.state';
+import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
+import type { TuiDialogContext } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-game-page',
@@ -33,16 +39,18 @@ import { load } from '@/app/utilities/chess-piece';
     ChessBoard,
     PlayerPanel,
     GameSettings,
+    TuiButton,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GamePage {
+  @ViewChild('gameOverTpl', { static: true })
+  protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
+
   public readonly id = input.required<string>();
-  protected readonly store: Store<{ game: GameStateType }> = inject(
-    Store<{ game: GameStateType }>,
-  );
+  protected readonly store = inject<Store<AppStateType>>(Store);
   protected readonly gameSupabaseService = inject(GameSupabaseService);
   protected readonly gameService = inject(GameService);
   protected readonly opponent = inject(OpponentRunnerService);
@@ -57,6 +65,8 @@ export class GamePage {
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,
   );
+  protected readonly isGameOver = this.store.selectSignal(selectIsGameOver);
+  protected readonly dialogs = inject(TuiResponsiveDialogService);
 
   protected boardOrientation = computed(() =>
     this.orientation() === 'white' ? 'whiteBottom' : 'whiteTop',
@@ -78,6 +88,20 @@ export class GamePage {
 
   // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
+
+  private readonly showGameOverEffect = effect(() => {
+    const over = this.isGameOver();
+    const hasTpl = this.gameOverTpl != null;
+
+    if (over && hasTpl) {
+      this.dialogs
+        .open<void>(this.gameOverTpl, {
+          size: 's',
+          closeable: false, // если нужно убрать крестик/ESC/клик по фону
+        })
+        .subscribe();
+    }
+  });
 
   public onBoardDragStart(from: Square): void {
     // чей ход

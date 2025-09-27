@@ -24,3 +24,12 @@
     <section class="game-extra-right"><!-- справа --></section>
   </section>
 </main>
+
+<ng-template #gameOverTpl let-observer>
+  <section class="p-6 text-center">
+    <h2 class="text-2xl font-bold mb-4">GAME OVER</h2>
+    <button tuiButton appearance="primary" (click)="observer.complete()">
+      OK
+    </button>
+  </section>
+</ng-template>
