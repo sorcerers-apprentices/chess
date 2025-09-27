@@ -50,6 +50,19 @@ export class GameSupabaseService {
     return await this.fetchGame(gameId);
   }
 
+  public async setElo(elo: number, userId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('profile')
+      .update({
+        elo: elo,
+      })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error creating game:', error.message);
+    }
+  }
+
   public async move(chess: Chess): Promise<void> {
     const gameId = this.getGameId();
     const game = await this.fetchGame(gameId);

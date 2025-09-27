@@ -12,6 +12,8 @@ export const updateElo = createAction(
   '[User] Update Elo',
   props<{ elo: number }>(),
 );
+export const updateEloSuccess = createAction('[User] Update Elo Success');
+
 export const incrementGamesPlayed = createAction(
   '[User] Increment Games Played',
   props<{ by?: number }>(),

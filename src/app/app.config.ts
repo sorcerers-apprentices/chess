@@ -1,13 +1,13 @@
+import type { ApplicationConfig } from '@angular/core';
 import {
   isDevMode,
-  provideZonelessChangeDetection,
   provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
   signal,
 } from '@angular/core';
 import { appRoutes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import type { ApplicationConfig } from '@angular/core';
 import { provideRouterStore } from '@ngrx/router-store';
 import { appEffects } from './store/effects/app.effects';
 import { provideHttpClient } from '@angular/common/http';
@@ -17,16 +17,25 @@ import { appReducers } from './store/reducers/app.reducers';
 import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withPreloading,
+} from '@angular/router';
 import { LANGUAGE_TOKEN } from '@/app/services/language.service';
 import { CHOSEN_COLOR_TOKEN } from '@/app/constants/chess-game.constants';
+import { CustomPreloadingStrategy } from '@/app/services/custom-preloading-strategy';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes, withComponentInputBinding()),
+    provideRouter(
+      appRoutes,
+      withComponentInputBinding(),
+      withPreloading(CustomPreloadingStrategy),
+    ),
     provideEventPlugins(),
     provideStore(appReducers, { initialState: getInitialState }),
     provideRouterStore(),
