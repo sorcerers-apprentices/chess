@@ -1,0 +1,29 @@
+<ng-template #tableTemplate>
+  <table tuiTable class="table">
+    <thead>
+      <tr tuiThGroup>
+        <th tuiTh>№</th>
+        <th tuiTh [resizable]="true" class="player-column">
+          {{ "rating.player" | translate }}
+        </th>
+        <th tuiTh class="elo-column">ELO</th>
+      </tr>
+    </thead>
+
+    <tbody tuiTbody [data]="users()">
+      @for (user of usersWithRanks(); track user.display_name) {
+        <tr tuiTr>
+          <td tuiTd>{{ user.rank }}</td>
+          <td tuiTd>{{ user.display_name }}</td>
+          <td tuiTd>{{ user.elo }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>
+
+@if (loading()) {
+  <tui-loader size="xl"></tui-loader>
+} @else {
+  <ng-container [ngTemplateOutlet]="tableTemplate"></ng-container>
+}

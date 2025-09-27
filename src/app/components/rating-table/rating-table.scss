@@ -1,0 +1,27 @@
+:host {
+  margin-top: 1.4rem;
+}
+
+.player-column {
+  min-width: 40rem;
+
+  @media (width <= 1024px) {
+    min-width: 30rem;
+  }
+
+  @media (width <= 768px) {
+    min-width: 18rem;
+  }
+
+  @media (width <= 550px) {
+    min-width: 9rem;
+  }
+}
+
+.elo-column {
+  min-width: 7rem;
+
+  @media (width <= 480px) {
+    min-width: 4rem;
+  }
+}
