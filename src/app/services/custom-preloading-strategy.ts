@@ -9,7 +9,6 @@ export class CustomPreloadingStrategy implements PreloadingStrategy {
     route: Route,
     load: () => Observable<unknown>,
   ): Observable<unknown> {
-    console.log('Preloading route:', route.path);
     return Boolean(route?.data?.['preload']) ? load() : of(null);
   }
 }
