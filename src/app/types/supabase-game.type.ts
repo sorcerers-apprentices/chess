@@ -11,6 +11,7 @@ export type GameModel = {
   player_color: 'white' | 'black';
   result: GameResult;
   fen_final: string;
+  timestamp: number;
 };
 
 export type GameProjection = {

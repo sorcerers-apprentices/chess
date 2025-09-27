@@ -74,6 +74,7 @@ export class GameEffects {
                   san: move.san,
                   move: move,
                   fenAfter: move.after,
+                  timestamp: game.timestamp,
                 };
               }),
               undoneMoves: [],
@@ -102,8 +103,8 @@ export class GameEffects {
   private move$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(playMove),
-      switchMap(async ({ pgn }) => {
-        await this.api.move(load(pgn));
+      switchMap(async ({ moveRecord, pgn }) => {
+        await this.api.move(load(pgn), moveRecord);
         return moveSuccess();
       }),
     );
