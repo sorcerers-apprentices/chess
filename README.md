@@ -144,8 +144,6 @@ app.ts
 The backend foundation is provided by Supabase (PostgreSQL + Auth + Realtime), but all the application-specific logic and integration code was written manually in the project.
 The Angular client does not just call Supabase directly; instead, we created a dedicated set of services and state management layers that encapsulate backend communication.
 
-
-
 <details>
   <summary>Custom integration code</summary>
 
@@ -173,10 +171,10 @@ The Angular client does not just call Supabase directly; instead, we created a d
 <details>
   <summary>Other screenshots</summary>
 
-  ![4444.png](/public/assets/img/docs/4444.png)
-  ![img_3.png](/public/assets/img/docs/img_3.png)
-  ![img_4.png](/public/assets/img/docs/img_4.png)
-  ![img_5.png](/public/assets/img/docs/img_5.png)
+![4444.png](/public/assets/img/docs/4444.png)
+![img_3.png](/public/assets/img/docs/img_3.png)
+![img_4.png](/public/assets/img/docs/img_4.png)
+![img_5.png](/public/assets/img/docs/img_5.png)
 
 </details>
 
@@ -194,8 +192,8 @@ The Angular client does not just call Supabase directly; instead, we created a d
 <details>
   <summary>Screenshots</summary>
 
-  ![img_1.png](/public/assets/img/docs/img_1.png)
-  ![img_2.png](/public/assets/img/docs/img_2.png)
+![img_1.png](/public/assets/img/docs/img_1.png)
+![img_2.png](/public/assets/img/docs/img_2.png)
 
 </details>
 
