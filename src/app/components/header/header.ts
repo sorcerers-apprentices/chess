@@ -25,8 +25,8 @@ import { TuiHeaderComponent, TuiNavigation } from '@taiga-ui/layout';
   standalone: true,
 })
 export class Header {
+  public readonly darkMode = inject(TUI_DARK_MODE);
   protected open = false;
-  protected readonly darkMode = inject(TUI_DARK_MODE);
   protected readonly icon = computed(() =>
     this.darkMode() ? '@tui.sun' : '@tui.moon',
   );

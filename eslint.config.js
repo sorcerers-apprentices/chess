@@ -84,11 +84,24 @@ export default [
     },
   },
   {
-    files: ["**/*.spec.ts"],
+    files: ["**/*.spec.ts", "setup-jest.ts", "jest.config.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ["./tsconfig.spec.json"],
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+    },
     rules: {
       "@typescript-eslint/consistent-type-assertions": "off",
       "@typescript-eslint/no-magic-numbers": "off",
       "no-undef": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
     },
   },
   {
