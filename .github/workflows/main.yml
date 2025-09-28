@@ -32,6 +32,3 @@ jobs:
       - name: check format with prettier
         run: npm run format:check
         if: always()
-#      - name: unit testing
-#        run: npm run test
-#        if: always()
