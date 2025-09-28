@@ -29,8 +29,8 @@ describe('ChessSquare (standalone, Angular 20)', () => {
   const ALL_SQUARES = [A1, A2, H8] as readonly SquareType[];
 
   const whiteQueen: Piece = {
-    type: 'queen' as Piece['type'],
-    color: 'white' as Piece['color'],
+    type: 'q',
+    color: 'w',
   };
 
   const blackPawn: Piece = {
@@ -73,7 +73,7 @@ describe('ChessSquare (standalone, Angular 20)', () => {
       fixture.detectChanges();
 
       expect(component['hasPiece']()).toBe(true);
-      expect(component['altText']()).toBe('white queen');
+      expect(component['altText']()).toBe('w q');
 
       const expectedUrl = PIECE_ICON_URL[whiteQueen.type][whiteQueen.color];
       expect(component['icon']()).toBe(expectedUrl);
@@ -134,7 +134,7 @@ describe('ChessSquare (standalone, Angular 20)', () => {
 
       component.handleDragEnd();
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith();
+      expect(spy).toHaveBeenCalledWith(undefined);
     });
   });
 
