@@ -50,7 +50,6 @@ Use `node 21.x` or higher.
 
 ### To test the application:
 
-> [!INFO]
 > You don't need env variables to run the project.
 
 1. You can create a new user by registering via email.
