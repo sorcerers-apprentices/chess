@@ -1,0 +1,112 @@
+<div tuiAppearance="floating" tuiCardLarge class="card">
+  <header tuiHeader>
+    <h2 tuiTitle>{{ "about.darya" | translate }}</h2>
+  </header>
+  <aside>
+    <tui-avatar-labeled label="Darya Kalenchanka">
+      <tui-avatar
+        size="xxl"
+        [src]="githubDaryaAvatar | tuiFallbackSrc: '@tui.user' | async"
+      />
+    </tui-avatar-labeled>
+  </aside>
+  <div class="chips">
+    @for (chip of chips.darya; track chip) {
+      <tui-chip
+        appearance="custom"
+        [style.background-color]="chip | tuiAutoColor"
+      >
+        {{ chip }}
+      </tui-chip>
+    }
+  </div>
+
+  <a
+    tuiButton
+    appearance="outline"
+    [href]="githubDaryaLink"
+    target="_blank"
+    rel="noopener"
+    >GitHub</a
+  >
+</div>
+
+<div tuiAppearance="floating" tuiCardLarge class="card">
+  <header tuiHeader>
+    <h2 tuiTitle>{{ "about.anna" | translate }}</h2>
+  </header>
+  <a
+    tuiLink
+    appearance="action-grayscale"
+    [href]="githubAnnaLink"
+    target="_blank"
+    rel="noopener"
+  >
+    <aside>
+      <tui-avatar-labeled label="Anna Golosova">
+        <tui-avatar
+          size="xxl"
+          [src]="githubAnnaAvatar | tuiFallbackSrc: '@tui.user' | async"
+        />
+      </tui-avatar-labeled>
+    </aside>
+  </a>
+  <div class="chips">
+    @for (chip of chips.anna; track chip) {
+      <tui-chip
+        appearance="custom"
+        [style.background-color]="chip | tuiAutoColor"
+      >
+        {{ chip }}
+      </tui-chip>
+    }
+  </div>
+  <a
+    tuiButton
+    appearance="outline"
+    [href]="githubAnnaLink"
+    target="_blank"
+    rel="noopener"
+    >GitHub</a
+  >
+</div>
+
+<div tuiAppearance="floating" tuiCardLarge class="card">
+  <header tuiHeader>
+    <h2 tuiTitle>{{ "about.artem" | translate }}</h2>
+  </header>
+  <a
+    tuiLink
+    appearance="action-grayscale"
+    [href]="githubArtemLink"
+    target="_blank"
+    rel="noopener"
+  >
+    <aside>
+      <tui-avatar-labeled label="Artem Gassan">
+        <tui-avatar
+          size="xxl"
+          [src]="githubArtemAvatar | tuiFallbackSrc: '@tui.user' | async"
+        />
+      </tui-avatar-labeled>
+    </aside>
+  </a>
+  <div class="chips">
+    @for (chip of chips.artem; track chip) {
+      <tui-chip
+        appearance="custom"
+        [style.background-color]="chip | tuiAutoColor"
+      >
+        {{ chip }}
+      </tui-chip>
+    }
+  </div>
+  <a
+    tuiButton
+    appearance="outline"
+    [href]="githubArtemLink"
+    target="_blank"
+    rel="noopener"
+    >GitHub</a
+  >
+</div>

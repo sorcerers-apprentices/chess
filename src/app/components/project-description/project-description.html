@@ -1,0 +1,32 @@
+<div tuiAppearance="floating" tuiCardLarge class="card">
+  <header tuiHeader>
+    <h2 tuiTitle>{{ "about.creatingProject" | translate }}</h2>
+  </header>
+
+  <p class="description">
+    {{ "about.projectDeveloped" | translate }}
+    <a tuiLink [href]="angularCourseLink" target="_blank" rel="noopener">{{
+      "about.angularCourse" | translate
+    }}</a>
+    {{ "about.from" | translate }}
+    <a tuiLink [href]="rssLink" target="_blank" rel="noopener"
+      >Rolling Scopes School</a
+    >
+    {{ "about.mentoringSupport" | translate }}
+  </p>
+  <p class="description">
+    {{ "about.publicStand" | translate }}
+  </p>
+
+  <div class="lower-container">
+    <p>© 2025</p>
+    <a [href]="rssLink" target="_blank" rel="noopener">
+      <img
+        src="./assets/img/rss-logo.svg"
+        alt="rss-logo"
+        width="80"
+        height="80"
+      />
+    </a>
+  </div>
+</div>

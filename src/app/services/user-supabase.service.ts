@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import { environment } from '@/environments/environment.development';
 
-type UserData = {
+export type UserData = {
   display_name: string;
   elo: number;
 };
@@ -47,15 +47,20 @@ export class UserSupabaseService {
     return data[0];
   }
 
-  public async fetchUsers(): Promise<UserData[] | void> {
-    const { data, error } = await this.supabase.from('profile').select('*');
+  public async fetchUsers(): Promise<UserData[]> {
+    try {
+      const { data, error } = await this.supabase.from('profile').select('*');
 
-    if (error) {
-      console.error('Error fetching data:', error.message);
-      return;
+      if (error) {
+        console.error('Error fetching data:', error.message);
+        return [];
+      }
+
+      return data ?? [];
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      return [];
     }
-
-    return data;
   }
 
   public async fetchGamesCount(userId: string): Promise<number> {

@@ -11,6 +11,8 @@ export const AppRoutes = {
   GAME: 'game/:id',
   SIGN_UP: 'signup',
   SIGN_IN: 'signin',
+  ABOUT: 'about',
+  RATING: 'rating',
   NOT_FOUND: 'not_found',
 } as const;
 
@@ -23,6 +25,8 @@ export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.GAME]: 'game/:id',
   [AppRoutes.SIGN_UP]: 'signup',
   [AppRoutes.SIGN_IN]: 'signin',
+  [AppRoutes.ABOUT]: 'about',
+  [AppRoutes.RATING]: 'rating',
   [AppRoutes.NOT_FOUND]: '**',
 };
 
@@ -65,6 +69,18 @@ export const appRoutes: Route[] = [
     loadComponent: () =>
       import('./pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
     data: { preload: true },
+  },
+  {
+    path: RoutePath.about,
+    title: 'About | Chess Game',
+    loadComponent: () =>
+      import('./pages/about-page/about-page').then((m) => m.AboutPage),
+  },
+  {
+    path: RoutePath.rating,
+    title: 'Rating | Chess Game',
+    loadComponent: () =>
+      import('./pages/rating-page/rating-page').then((m) => m.RatingPage),
   },
   {
     path: RoutePath.not_found,
