@@ -61,7 +61,15 @@
     "phone": "Phone: ",
     "lastSignIn": "Last sign in: ",
     "choseColor": "Chose color:",
-    "elo": "ELO: "
+    "elo": "ELO: ",
+    "date": "Date",
+    "result": "Result",
+    "action": "Action",
+    "DRAW": "Draw",
+    "PENDING": "Pending",
+    "BLACK_WINS": "Black wins",
+    "WHITE_WINS": "White wins",
+    "replay": "Replay"
   },
   "game": {
     "notification": "Are you sure you want to leave your game?",

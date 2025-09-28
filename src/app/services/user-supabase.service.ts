@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { Injectable } from '@angular/core';
 import { environment } from '@/environments/environment.development';
+import type { GameModel } from '@/app/types/supabase-game.type';
 
 export type UserData = {
   display_name: string;
@@ -75,6 +76,36 @@ export class UserSupabaseService {
     }
 
     return +count;
+  }
+
+  public async fetchGames({
+    userId,
+    size,
+    offset,
+  }: {
+    userId: string;
+    size: number;
+    offset: number;
+  }): Promise<{ games: GameModel[]; count: number }> {
+    const { data, error } = await this.supabase
+      .from('game')
+      .select('*')
+      .range(offset, offset + size - 1)
+      .eq('player_id', userId);
+    const { count, error: countError } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .eq('player_id', userId);
+
+    if (error || countError) {
+      console.error(
+        'Error fetching data:',
+        error?.message,
+        countError?.message,
+      );
+    }
+
+    return { games: data ?? [], count: +(count ?? 0) };
   }
 
   public async fetchWinedGamesCount(userId: string): Promise<number> {
