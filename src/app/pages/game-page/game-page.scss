@@ -65,3 +65,11 @@
     align-self: stretch;
   }
 }
+
+.p-6.text-center {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+}
