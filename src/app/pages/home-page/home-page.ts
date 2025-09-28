@@ -34,6 +34,7 @@ import {
   TuiTableThGroup,
   TuiTableTr,
 } from '@taiga-ui/addon-table';
+import { loadGame } from '@/app/store/actions/game.actions';
 
 @Component({
   selector: 'app-game-page',
@@ -139,6 +140,7 @@ export class HomePage {
 
   protected replyGame(id: string): void {
     this.router.navigate(['game', id]);
+    this.store.dispatch(loadGame({ gameId: id }));
   }
 
   protected setColor(event: Event): void {
