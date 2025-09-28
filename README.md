@@ -74,6 +74,9 @@ Use `node 21.x` or higher.
 - `$ npm run lint:scss` — Lints all `.scss` and `.css` files using Stylelint.
 - `$ npm run lint:scss:fix` — Automatically fixes correctable Stylelint issues in `.scss` and `.css` files.
 - `$ npm run prepare` — Initializes Husky and sets up Git hooks.
+- `$ npm run test` — Runs all unit tests once using Jest.
+- `$ npm run test:watch` — Runs Jest in watch mode, re-executing tests when files change.
+- `$ npm run test:ci` — Runs Jest in continuous integration (CI) mode with the `--runInBand` flag to execute tests sequentially. Also uses `--passWithNoTests` so the pipeline doesn’t fail if no tests are found.
 
 ## Project structure (high-level)
 
