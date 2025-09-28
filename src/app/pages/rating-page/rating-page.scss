@@ -1,0 +1,40 @@
+main[tuiNavigationMain] {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  padding-top: 6rem;
+}
+
+div[tuiCardLarge] {
+  max-width: 52rem;
+}
+
+.description {
+  text-align: justify;
+  text-indent: 2rem;
+}
+
+.enter-animation {
+  animation: slide-fade 1s;
+}
+
+@keyframes slide-fade {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.leaving {
+  transform: translateY(20px);
+  opacity: 0;
+  transition:
+    opacity 500ms ease-out,
+    transform 500ms ease-out;
+}
