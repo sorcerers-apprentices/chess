@@ -8,7 +8,7 @@ export type MoveRecordType = {
   san: string;
   move: Move;
   fenAfter: string;
-  timestamp?: number;
+  timestamp: number;
 };
 
 export type GameStateType = {
