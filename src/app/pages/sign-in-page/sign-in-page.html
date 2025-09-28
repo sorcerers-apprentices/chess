@@ -40,7 +40,13 @@
         <button size="m" tuiButton type="submit">
           {{ "signin.signIn" | translate }}
         </button>
-        <button size="m" tuiButton type="button" (click)="goToSignUpPage()">
+        <button
+          size="m"
+          tuiButton
+          type="button"
+          (click)="goToSignUpPage()"
+          appearance="textfield"
+        >
           {{ "signin.signUp" | translate }}
         </button>
       </div>

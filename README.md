@@ -48,6 +48,18 @@ Use `node 21.x` or higher.
 - Start server: `$ npm run start`
 - Now you can open the client side to the address: `http://localhost:4200/` (if this port will be used by another application, the builder will automatically select another port and show it in the console)
 
+### To test the application:
+
+> You don't need env variables to run the project.
+
+1. You can create a new user by registering via email.
+
+2. Use the test user data:
+
+- Email:`angular-chess-test@mailinator.com`
+- Username: `test-user`
+- Password `Pasword123`
+
 ## Available scripts
 
 - `$ npm run start` — Starts the development server and automatically opens the project in the browser.
@@ -61,6 +73,9 @@ Use `node 21.x` or higher.
 - `$ npm run lint:scss` — Lints all `.scss` and `.css` files using Stylelint.
 - `$ npm run lint:scss:fix` — Automatically fixes correctable Stylelint issues in `.scss` and `.css` files.
 - `$ npm run prepare` — Initializes Husky and sets up Git hooks.
+- `$ npm run test` — Runs all unit tests once using Jest.
+- `$ npm run test:watch` — Runs Jest in watch mode, re-executing tests when files change.
+- `$ npm run test:ci` — Runs Jest in continuous integration (CI) mode with the `--runInBand` flag to execute tests sequentially. Also uses `--passWithNoTests` so the pipeline doesn’t fail if no tests are found.
 
 ## Project structure (high-level)
 
