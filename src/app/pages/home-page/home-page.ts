@@ -10,12 +10,12 @@ import {
 import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe } from '@ngx-translate/core';
-import { TuiButton, TuiLoader } from '@taiga-ui/core';
+import { TuiButton, TuiFormatDatePipe, TuiLoader } from '@taiga-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { UserSupabaseService } from '@/app/services/user-supabase.service';
 import { AuthService } from '@/app/services/auth.service';
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { from, map } from 'rxjs';
 import {
@@ -53,6 +53,8 @@ import {
     TuiTableTr,
     TuiTableTd,
     TuiTable,
+    TuiFormatDatePipe,
+    AsyncPipe,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
@@ -133,6 +135,10 @@ export class HomePage {
       queryParams: { page, size },
       queryParamsHandling: 'merge',
     });
+  }
+
+  protected replyGame(id: string): void {
+    this.router.navigate(['game', id]);
   }
 
   protected setColor(event: Event): void {

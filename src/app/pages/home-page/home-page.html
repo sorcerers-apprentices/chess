@@ -109,21 +109,33 @@
         {{ "home.play" | translate }}
       </button>
     </div>
-    <tui-loader [overlay]="true" [showLoader]="!!loading()">
+    <tui-loader [overlay]="true" [showLoader]="loading()" class="table">
       <table tuiTable>
         <thead>
           <tr tuiThGroup>
-            <th tuiTh [sticky]="true" [requiredSort]="true">Date</th>
-            <th tuiTh [sticky]="true">Result</th>
-            <th tuiTh [sticky]="true">Action</th>
+            <th tuiTh>{{ "home.date" | translate }}</th>
+            <th tuiTh>{{ "home.result" | translate }}</th>
+            <th tuiTh>{{ "home.action" | translate }}</th>
           </tr>
         </thead>
         <tbody tuiTbody [data]="usersGames.value()?.games ?? []">
           @for (game of usersGames.value()?.games; track game.id) {
             <tr tuiTr>
-              <td tuiTd>{{ game.created_at }}</td>
-              <td tuiTd>{{ game.result }}</td>
-              <td tuiTd>Replay</td>
+              <td tuiTd>
+                {{ game.created_at | date }}
+                {{ game.created_at | tuiFormatDate | async }}
+              </td>
+              <td tuiTd>{{ `home.${game.result}` | translate }}</td>
+              <td tuiTd>
+                <button
+                  size="m"
+                  tuiButton
+                  type="button"
+                  (click)="replyGame(game.id)"
+                >
+                  {{ "home.replay" | translate }}
+                </button>
+              </td>
             </tr>
           }
         </tbody>
