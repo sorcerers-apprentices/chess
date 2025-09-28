@@ -13,5 +13,11 @@ export default {
     "selector-class-pattern": null,
     "no-empty-source": null,
   },
-  ignoreFiles: ["dist/**/*", "node_modules/**/*", ".angular/**/*"],
+  ignoreFiles: [
+    "dist/**/*",
+    "node_modules/**/*",
+    ".angular/**/*",
+    "**/coverage/**",
+    "**/lcov-report/**",
+  ],
 };

@@ -19,6 +19,7 @@ import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { BoardSetupService } from '@/app/services/board-setup.service';
 import { Store } from '@ngrx/store';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 @Component({
   selector: 'app-chess-board',
@@ -48,7 +49,7 @@ export class ChessBoard {
     this.orientation() === 'white' ? FILES : [...FILES].reverse(),
   );
 
-  protected readonly store = inject(Store);
+  protected readonly store = inject<Store<AppStateType>>(Store);
 
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,

@@ -29,6 +29,7 @@ import type { AppStateType } from '@/app/store/states/app.state';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game-page',
@@ -40,6 +41,7 @@ import { TuiButton } from '@taiga-ui/core';
     PlayerPanel,
     GameSettings,
     TuiButton,
+    TranslatePipe,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',

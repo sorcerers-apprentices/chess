@@ -54,8 +54,8 @@
         <thead>
           <tr>
             <th>№</th>
-            <th>Player</th>
-            <th>Opponent</th>
+            <th>{{ "game.player" | translate }}</th>
+            <th>{{ "game.opponent" | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -95,16 +95,6 @@
     (click)="onRedoClick()"
   >
     <tui-icon icon="@tui.redo" />
-  </button>
-  <button
-    tuiButton
-    type="button"
-    size="m"
-    appearance="flat"
-    aria-label="Flip board"
-    title="Flip board"
-  >
-    <tui-icon icon="@tui.refresh-ccw" />
   </button>
   <button
     type="button"
