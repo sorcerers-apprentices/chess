@@ -139,6 +139,47 @@ app.ts
   - Realtime (listen & broadcast game sessions)
 ```
 
+## Backend implementation
+
+The backend foundation is provided by Supabase (PostgreSQL + Auth + Realtime), but all the application-specific logic and integration code was written manually in the project.
+The Angular client does not just call Supabase directly; instead, we created a dedicated set of services and state management layers that encapsulate backend communication.
+
+
+
+<details>
+  <summary>Custom integration code</summary>
+
+- `auth.service.ts` — wraps Supabase Auth for signup, signin, and session management. Exposes user data via typed objects and handles profile fields and email redirects.
+
+- `user-supabase.service.ts` — typed methods for fetching/updating user profiles, ratings, and game statistics. Handles errors and ensures consistent data.
+
+- `game-supabase.service.ts` — manages game creation, moves, undo, and game-over logic. Persists FEN/PGN states, updates results, and tracks gameId in localStorage.
+
+</details>
+
+<details>
+  <summary>Database schema</summary>
+
+- Profile: linked to Supabase Auth, extended with rating and profile fields.
+
+- Game: active and completed sessions, storing participants and status.
+
+- Move: normalized history table, enabling replay and analytics.
+
+  ![img_1.png](/public/assets/img/docs/img.png)
+
+</details>
+
+<details>
+  <summary>Other screenshots</summary>
+
+  ![4444.png](/public/assets/img/docs/4444.png)
+  ![img_3.png](/public/assets/img/docs/img_3.png)
+  ![img_4.png](/public/assets/img/docs/img_4.png)
+  ![img_5.png](/public/assets/img/docs/img_5.png)
+
+</details>
+
 ## Performance Budget & Metrics
 
 ### Lighthouse (measured on Chrome, mid-tier laptop)
