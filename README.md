@@ -48,6 +48,19 @@ Use `node 21.x` or higher.
 - Start server: `$ npm run start`
 - Now you can open the client side to the address: `http://localhost:4200/` (if this port will be used by another application, the builder will automatically select another port and show it in the console)
 
+### To test the application:
+
+> [!INFO]
+> You don't need env variables to run the project.
+
+1. You can create a new user by registering via email.
+
+2. Use the test user data:
+
+- Email:`angular-chess-test@mailinator.com`
+- Username: `test-user`
+- Password `Pasword123`
+
 ## Available scripts
 
 - `$ npm run start` — Starts the development server and automatically opens the project in the browser.
