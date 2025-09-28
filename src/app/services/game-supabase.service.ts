@@ -49,6 +49,7 @@ export class GameSupabaseService {
   }
 
   public async loadGame(gameId: string): Promise<GameModel | null> {
+    this.setGameId(gameId);
     return await this.fetchGame(gameId);
   }
 
