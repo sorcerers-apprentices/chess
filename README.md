@@ -56,9 +56,9 @@ Use `node 21.x` or higher.
 
 2. Use the test user data:
 
-- Email:`angular-chess-test@mailinator.com`
+- Email: `angular-chess-test@mailinator.com`
 - Username: `test-user`
-- Password `Pasword123`
+- Password: `Pasword123`
 
 ## Available scripts
 
@@ -141,20 +141,22 @@ app.ts
 
 ## Performance Budget & Metrics
 
-To ensure a smooth user experience, we defined the following **performance budget**:
-
-- **Largest Contentful Paint (LCP):** ≤ 2.5s
-- **First Input Delay (FID):** ≤ 100ms
-- **Cumulative Layout Shift (CLS):** ≤ 0.1
-- **Bundle size (initial):** ≤ 250KB gzipped
-- **JavaScript execution time:** ≤ 2s on mid-tier devices
-
 ### Lighthouse (measured on Chrome, mid-tier laptop)
 
-- **Performance score:** +20 points improvement after optimizations
-- LCP reduced from ~3.1s → 2.2s
-- CLS improved from 0.15 → 0.08
+- **Performance score:** 98 (+10 points improvement after optimizations)
+- FCP reduced from ~2.2s → 0.6s
+- LCP reduced from ~2.9s → 0.8s
+- TBT reduced from ~220ms → 0ms
+- Speed Index reduced from ~3.3s → 1.4s
 - Bundle size reduced by ~18% through code-splitting and tree-shaking
+
+<details>
+  <summary>Screenshots</summary>
+
+  ![img_1.png](/public/assets/img/docs/img_1.png)
+  ![img_2.png](/public/assets/img/docs/img_2.png)
+
+</details>
 
 These gains were achieved by:
 
