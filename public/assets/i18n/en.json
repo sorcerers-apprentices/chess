@@ -66,7 +66,13 @@
   "game": {
     "notification": "Are you sure you want to leave your game?",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "Black": "Black",
+    "White": "White",
+    "player": "Player",
+    "opponent": "Opponent",
+    "gameOver": "GAME OVER",
+    "ok": "OK"
   },
   "rating": {
     "title": "Player Ratings \uD83C\uDFC6",

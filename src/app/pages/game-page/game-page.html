@@ -27,9 +27,9 @@
 
 <ng-template #gameOverTpl let-observer>
   <section class="p-6 text-center">
-    <h2 class="text-2xl font-bold mb-4">GAME OVER</h2>
+    <h2 class="text-2xl font-bold mb-4">{{ "game.gameOver" | translate }}</h2>
     <button tuiButton appearance="primary" (click)="observer.complete()">
-      OK
+      {{ "game.ok" | translate }}
     </button>
   </section>
 </ng-template>

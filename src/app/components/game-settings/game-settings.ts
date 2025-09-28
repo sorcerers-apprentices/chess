@@ -17,10 +17,11 @@ import type { MoveRow } from '@/app/types/chess-piece.type';
 import { PlayerTimerService } from '@/app/services/player-timer.service';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { GameService } from '@/app/services/game.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-game-settings',
-  imports: [TuiButton, TuiIcon, TuiScrollbar],
+  imports: [TuiButton, TuiIcon, TuiScrollbar, TranslatePipe],
   templateUrl: './game-settings.html',
   styleUrl: './game-settings.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
