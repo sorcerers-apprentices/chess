@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -15,17 +16,16 @@ import { Store } from '@ngrx/store';
 import { UserSupabaseService } from '@/app/services/user-supabase.service';
 import { AuthService } from '@/app/services/auth.service';
 import { DatePipe } from '@angular/common';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { from, map } from 'rxjs';
 import {
   CHOSEN_COLOR_TOKEN,
   START_FEN,
 } from '@/app/constants/chess-game.constants';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from '@/app/services/game.service';
 import {
   TuiTable,
-  TuiTableHead,
   TuiTablePagination,
   type TuiTablePaginationEvent,
   TuiTableTbody,
@@ -47,7 +47,6 @@ import {
     DatePipe,
     TuiLoader,
     TuiTableThGroup,
-    TuiTableHead,
     TuiTableTh,
     TuiTablePagination,
     TuiTableTbody,
@@ -62,6 +61,7 @@ import {
 export class HomePage {
   protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
   protected readonly router = inject(Router);
+  protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly store = inject(Store);
   protected readonly authService = inject(AuthService);
   protected readonly gameService = inject(GameService);
@@ -73,6 +73,14 @@ export class HomePage {
     this.authService.getUserData().user.last_sign_in_at;
   protected readonly size = signal(10);
   protected readonly page = signal(0);
+
+  protected readonly routerParams = toSignal(this.activatedRoute.queryParams, {
+    initialValue: this.activatedRoute.snapshot.queryParams,
+  });
+  protected readonly pageParamEffect = effect(() => {
+    this.page.set(this.routerParams()['page'] ?? 0);
+    this.size.set(this.routerParams()['size'] ?? 10);
+  });
 
   protected userName = rxResource({
     params: () => this.userId,
@@ -120,8 +128,11 @@ export class HomePage {
   );
 
   protected onPagination({ page, size }: TuiTablePaginationEvent): void {
-    this.page.set(page);
-    this.size.set(size);
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { page, size },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected setColor(event: Event): void {
