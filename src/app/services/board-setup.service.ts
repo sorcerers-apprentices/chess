@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, type Signal } from '@angular/core';
 import type {
   SquareColorType,
   SquareStateType,
@@ -12,38 +12,41 @@ import {
   RANKS_TOP_DOWN,
 } from '@/app/constants/chess-square.constans';
 import type { BoardMatrix } from '@/app/services/game.service';
-import { GameService } from '@/app/services/game.service';
-import { type Piece, type Square } from 'chess.js';
+import { Chess, type Piece, type Square } from 'chess.js';
 import { Store } from '@ngrx/store';
-import type { GameStateType } from '@/app/store/states/game.state';
 import { load } from '@/app/utilities/chess-piece';
+import type { AppStateType } from '@/app/store/states/app.state';
+import { GameViewerService } from '@/app/services/game-viewer.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoardSetupService {
-  // выдает текущее состояние board
-
   public readonly squaresBoard = computed<readonly SquareStateType[]>(() => {
     const matrix = this.game().board();
     return this.createInitialSquaresPieces(matrix);
   });
 
-  protected readonly store: Store<{ game: GameStateType }> = inject(
-    Store<{ game: GameStateType }>,
-  );
+  protected readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
+  protected readonly viewer: GameViewerService = inject(GameViewerService);
 
-  protected readonly pgn = this.store.selectSignal((state) => state.game.pgn);
-  protected readonly game = computed(() => {
-    const value = this.pgn();
+  protected readonly pgn: Signal<string> = this.store.selectSignal(
+    (state: AppStateType): string => state.game.pgn,
+  );
+  protected readonly game: Signal<Chess> = computed((): Chess => {
+    const value: string = this.pgn();
+    if (this.viewer.isViewing()) {
+      return new Chess(this.viewer.viewFen());
+    }
     return load(value);
   });
-  protected readonly fen = computed(() => this.game().fen());
-  protected readonly orientation = this.store.selectSignal(
-    (state) => state.game.orientation,
+  protected readonly fen: Signal<string> = computed((): string =>
+    this.game().fen(),
   );
-
-  private readonly gameService = inject(GameService);
+  protected readonly orientation = this.store.selectSignal(
+    (state: AppStateType) => state.game.orientation,
+  );
 
   public createInitialSquaresPieces(board: BoardMatrix): SquareStateType[] {
     const ranksOrder = this.orientation() === 'white' ? RANKS_TOP_DOWN : RANKS;
@@ -53,16 +56,16 @@ export class BoardSetupService {
     const acc: SquareStateType[] = [];
 
     for (const rank of ranksOrder) {
-      const rowIndex = RANK_8 - Number(rank);
+      const rowIndex: number = RANK_8 - Number(rank);
       const row = board[rowIndex];
 
       for (const file of filesOrder) {
-        const colIndex = FILES.indexOf(file);
+        const colIndex: number = FILES.indexOf(file);
         const enginePiece = row[colIndex];
 
         const square: SquareType = `${file}${rank}`;
 
-        const even = (Number(rank) - 1 + colIndex) % 2 === 0;
+        const even: boolean = (Number(rank) - 1 + colIndex) % 2 === 0;
         const squareColor: SquareColorType = even ? LIGHT : DARK;
 
         acc.push({

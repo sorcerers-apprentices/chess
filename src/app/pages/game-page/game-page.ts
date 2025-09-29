@@ -30,6 +30,7 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { GameViewerService } from '@/app/services/game-viewer.service';
 
 @Component({
   selector: 'app-game-page',
@@ -56,6 +57,7 @@ export class GamePage {
   protected readonly gameSupabaseService = inject(GameSupabaseService);
   protected readonly gameService = inject(GameService);
   protected readonly opponent = inject(OpponentRunnerService);
+  protected readonly viewer = inject(GameViewerService);
 
   protected loadGameEffect = effect(() =>
     this.store.dispatch(loadGame({ gameId: this.id() })),
@@ -126,6 +128,11 @@ export class GamePage {
   public onBoardDragEnd(): void {}
 
   public onBoardMove(move: ChessMovePayloadType): void {
+    // запретить ходы
+    if (this.viewer.isViewing()) {
+      return;
+    }
+
     const allowed = this.allowedTargets();
     // true только если есть сет разрешённых ходов, источник совпадает с текущим началом перетаскивания, и целевая клетка входит в этот сет
     const isAllowed =

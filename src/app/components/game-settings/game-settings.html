@@ -7,9 +7,10 @@
     tuiButton
     size="s"
     appearance="flat"
-    [disabled]="true"
     aria-label="Go to start"
     title="Go to start"
+    [disabled]="atStart()"
+    (click)="goStart()"
   >
     <tui-icon icon="@tui.chevrons-left" />
   </button>
@@ -18,9 +19,10 @@
     tuiButton
     size="s"
     appearance="flat"
-    [disabled]="true"
+    [disabled]="atStart()"
     aria-label="Previous move"
     title="Previous move"
+    (click)="goPrev()"
   >
     <tui-icon icon="@tui.chevron-left" />
   </button>
@@ -29,9 +31,10 @@
     tuiButton
     size="s"
     appearance="flat"
-    [disabled]="true"
+    [disabled]="atEnd()"
     aria-label="Next move"
     title="Next move"
+    (click)="goNext()"
   >
     <tui-icon icon="@tui.chevron-right" />
   </button>
@@ -40,9 +43,10 @@
     tuiButton
     size="s"
     appearance="flat"
-    [disabled]="true"
+    [disabled]="atEnd()"
     aria-label="Go to end"
     title="Go to end"
+    (click)="goEnd()"
   >
     <tui-icon icon="@tui.chevrons-right" />
   </button>

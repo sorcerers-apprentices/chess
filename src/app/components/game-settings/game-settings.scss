@@ -2,10 +2,9 @@
   /* Вертикальный флекс-каркас из 4 блоков */
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
   inline-size: 100%;
   block-size: 100%;
-  min-block-size: 0; /* важно для сжатия третьего блока */
+  min-block-size: 0;
   padding: 0;
 }
 
@@ -14,7 +13,6 @@
 .game-nav,
 .game-pairs-users,
 .game-controls {
-  min-inline-size: 0;
   padding: 0.75rem;
 
   button {
@@ -22,19 +20,13 @@
   }
 }
 
-.game-timer {
-  border-bottom: 2px solid var(--tui-background-accent-2);
-}
-
-.game-pairs-users {
-  border-top: 2px solid var(--tui-background-accent-2);
-  border-bottom: 2px solid var(--tui-background-accent-2);
-}
+// 4 блока
 
 .game-timer {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
+  border-bottom: 2px solid var(--tui-background-accent-2);
   text-align: center;
 
   .tui-text_body-xl {
@@ -67,30 +59,39 @@
   display: flex;
   flex: 1 1 0;
   min-block-size: 0;
+  border-top: 2px solid var(--tui-background-accent-2);
+  border-bottom: 2px solid var(--tui-background-accent-2);
   background-color: var(--tui-background-neutral-1-pressed);
-}
 
-.game-pairs-users {
   tui-scrollbar {
+    display: block;
     flex: 1 1 auto;
     min-block-size: 0;
   }
 }
 
-.game-pairs-users tui-scrollbar div.t-content {
-  overflow: hidden;
+.game-controls {
   display: flex;
-  flex: 1 1 auto;
-  min-block-size: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+
+  button {
+    width: 60px;
+    height: 50px;
+
+    tui-icon {
+      justify-content: center;
+      min-inline-size: 2rem;
+      margin-bottom: 0;
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--tui-text-primary);
+    }
+  }
 }
 
-.moves-scroll {
-  overflow: auto;
-  display: block;
-  flex: 1 1 auto;
-  block-size: 100%;
-  min-block-size: 0;
-}
+// 4 блока
 
 table[role="table"] {
   table-layout: fixed;
@@ -148,24 +149,6 @@ table[role="table"] {
   }
 }
 
-.game-controls {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: space-between;
-
-  tui-icon {
-    justify-content: center;
-    min-inline-size: 2rem;
-    margin-bottom: 0;
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--tui-text-primary);
-  }
-}
-
 @media (width <= 1200px) {
   .game-nav {
     gap: 1rem;
@@ -173,7 +156,30 @@ table[role="table"] {
 }
 
 @media (width <= 768px) {
+  .game-timer,
+  .game-nav,
+  .game-pairs-users,
+  .game-controls {
+    padding: 0.45rem;
+  }
+
   .game-nav {
     gap: 2rem;
+  }
+
+  .game-pairs-users {
+    flex: 1 1 auto;
+  }
+
+  .game-controls {
+    button {
+      width: 50px;
+      height: 40px;
+
+      tui-icon {
+        min-inline-size: 1.5rem;
+        font-size: 1.5rem;
+      }
+    }
   }
 }

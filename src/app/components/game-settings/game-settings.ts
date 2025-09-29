@@ -1,3 +1,4 @@
+import type { Signal } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,6 +19,7 @@ import { PlayerTimerService } from '@/app/services/player-timer.service';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { GameService } from '@/app/services/game.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { GameViewerService } from '@/app/services/game-viewer.service';
 
 @Component({
   selector: 'app-game-settings',
@@ -66,6 +68,10 @@ export class GameSettings {
   protected readonly gameService = inject(GameService);
   protected readonly undoDisabled = computed(() => !this.canUndo());
   protected readonly redoDisabled = computed(() => !this.canRedo());
+  protected readonly viewer: GameViewerService = inject(GameViewerService);
+
+  protected readonly atStart: Signal<boolean> = this.viewer.atStart;
+  protected readonly atEnd: Signal<boolean> = this.viewer.atEnd;
 
   private readonly timer = inject(PlayerTimerService);
   private readonly canUndo = this.store.selectSignal(selectCanUndo);
@@ -88,4 +94,9 @@ export class GameSettings {
     if (this.resignDisabled()) return;
     this.gameService.resign();
   }
+
+  public goStart = (): void => this.viewer.goStart();
+  public goPrev = (): void => this.viewer.goPrev();
+  public goNext = (): void => this.viewer.goNext();
+  public goEnd = (): void => this.viewer.goEnd();
 }
