@@ -49,42 +49,71 @@ export class GameViewerService {
   // Локальный указатель просмотра (иниц. на конце)
   protected readonly viewPlySignal: WritableSignal<number> = signal<number>(0);
 
+  protected readonly followTail: WritableSignal<boolean> =
+    signal<boolean>(true); // авто-следование за хвостом
+
   protected readonly moves: Signal<readonly MoveRecordType[]> =
     this.store.selectSignal(selectMoves);
+
+  // 1) Инициал : если появились ходы и ещё на 0 — прыгнуть в конец один раз
+  protected readonly initToEnd: EffectRef = effect((): void => {
+    const total: number = this.totalPly();
+    const current: number = this.viewPlySignal();
+    const follow: boolean = this.followTail();
+
+    if (follow && total > 0 && current === 0) {
+      this.viewPlySignal.set(total);
+    }
+  });
 
   // при появлении нового хода "прыгаем" в конец
   protected readonly syncToEnd: EffectRef = effect((): void => {
     const total: number = this.totalPly();
     const current: number = untracked((): number => this.viewPlySignal());
+    const follow: boolean = untracked((): boolean => this.followTail());
 
-    console.log('[syncToEnd] triggered');
-    console.log('  totalPly =', total, 'viewPlySignal =', current);
+    // clamp в диапазон
+    const clamped: number = Math.max(0, Math.min(current, total));
+    if (clamped !== current) {
+      this.viewPlySignal.set(clamped);
+      return;
+    }
 
-    if (current < total) {
-      console.log('  → updating viewPlySignal to', total);
+    if (follow && current < total) {
       this.viewPlySignal.set(total);
-    } else {
-      console.log('  → already at end, nothing to do');
     }
   });
 
   public goStart(): void {
-    if (!this.atStart()) this.viewPlySignal.set(0);
+    if (!this.atStart()) {
+      this.followTail.set(false);
+      this.viewPlySignal.set(0);
+    }
   }
 
   public goPrev(): void {
     const current: number = this.viewPlySignal();
-    if (current > 0) this.viewPlySignal.set(current - 1);
+    if (current > 0) {
+      this.followTail.set(false);
+      this.viewPlySignal.set(current - 1);
+    }
   }
 
   public goNext(): void {
     const current: number = this.viewPlySignal();
     const end: number = this.totalPly();
-    if (current < end) this.viewPlySignal.set(current + 1);
+    if (current < end) {
+      const next: number = current + 1;
+      this.viewPlySignal.set(next);
+      this.followTail.set(next === end);
+    }
   }
 
   public goEnd(): void {
     const end: number = this.totalPly();
-    if (!this.atEnd()) this.viewPlySignal.set(end);
+    if (!this.atEnd()) {
+      this.viewPlySignal.set(end);
+      this.followTail.set(true);
+    }
   }
 }
