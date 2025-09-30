@@ -59,7 +59,13 @@
 .p-6.text-center {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 4rem;
   align-items: center;
   justify-content: center;
+
+  .modal-controls {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
 }

@@ -31,6 +31,12 @@ import type { TuiDialogContext } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameViewerService } from '@/app/services/game-viewer.service';
+import { Router } from '@angular/router';
+import {
+  CHOSEN_COLOR_TOKEN,
+  START_FEN,
+} from '@/app/constants/chess-game.constants';
+import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 
 @Component({
   selector: 'app-game-page',
@@ -58,6 +64,7 @@ export class GamePage {
   protected readonly gameService = inject(GameService);
   protected readonly opponent = inject(OpponentRunnerService);
   protected readonly viewer = inject(GameViewerService);
+  protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
 
   protected loadGameEffect = effect(() =>
     this.store.dispatch(loadGame({ gameId: this.id() })),
@@ -71,6 +78,7 @@ export class GamePage {
   );
   protected readonly isGameOver = this.store.selectSignal(selectIsGameOver);
   protected readonly dialogs = inject(TuiResponsiveDialogService);
+  protected readonly leaveBypass = inject(LeaveBypassService);
 
   protected boardOrientation = computed(() =>
     this.orientation() === 'white' ? 'whiteBottom' : 'whiteTop',
@@ -92,6 +100,8 @@ export class GamePage {
 
   // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
+
+  private readonly router = inject(Router);
 
   private readonly showGameOverEffect = effect(() => {
     const over = this.isGameOver();
@@ -150,6 +160,15 @@ export class GamePage {
 
     this.dragFrom.set(null);
     this.allowedTargets.set(null);
-    // здесь позже дергать движок/сервис, таймеры, историю и т.д.
+  }
+
+  public newGame(): void {
+    this.leaveBypass.bypassOnce();
+    this.gameService.newGame(START_FEN, this.chosenColor());
+  }
+
+  public goHome(): void {
+    this.leaveBypass.bypassOnce();
+    this.router.navigate(['/home']);
   }
 }
