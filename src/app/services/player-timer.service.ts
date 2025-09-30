@@ -1,3 +1,4 @@
+import type { EffectRef, Signal, WritableSignal } from '@angular/core';
 import {
   computed,
   DestroyRef,
@@ -16,6 +17,8 @@ import {
 } from '@/app/store/selectors/game.selectors';
 import { load, parseActiveColor } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
+import type { Chess } from 'chess.js';
+import type { MoveRecordType } from '@/app/store/states/game.state';
 
 type PersistShape = { elapsedMs: number; since: number | null };
 
@@ -24,49 +27,57 @@ type PersistShape = { elapsedMs: number; since: number | null };
 })
 @Injectable({ providedIn: 'root' })
 export class PlayerTimerService {
-  public readonly totalMs = computed(() => {
-    const s = this.state();
-    if (s.since === null) return s.elapsedMs;
-    return s.elapsedMs + Math.max(0, this.now() - s.since);
+  public readonly totalMs: Signal<number> = computed((): number => {
+    const state: PersistShape = this.state();
+    if (state.since === null) return state.elapsedMs;
+    return state.elapsedMs + Math.max(0, this.now() - state.since);
   });
 
-  protected readonly store = inject<Store<AppStateType>>(Store);
+  protected readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
 
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  private readonly pgn = this.store.selectSignal(selectChess);
-  private readonly game = computed(() => load(this.pgn()));
-  private readonly fen = computed(() => this.game().fen());
+  private readonly pgn: Signal<string> = this.store.selectSignal(selectChess);
+  private readonly game: Signal<Chess> = computed(() => load(this.pgn()));
+  private readonly fen: Signal<string> = computed(() => this.game().fen());
 
-  private readonly moves = this.store.selectSignal(selectMoves);
+  private readonly moves: Signal<MoveRecordType[]> =
+    this.store.selectSignal(selectMoves);
   private readonly orientation = this.store.selectSignal(selectOrientation);
-  private readonly isGameOver = this.store.selectSignal(selectIsGameOver);
-  private readonly gameId = this.store.selectSignal(selectGameId);
+  private readonly isGameOver: Signal<boolean> =
+    this.store.selectSignal(selectIsGameOver);
+  private readonly gameId: Signal<string> =
+    this.store.selectSignal(selectGameId);
 
-  private readonly state = signal<PersistShape>({ elapsedMs: 0, since: null });
-  private readonly now = signal<number>(Date.now());
+  private readonly state: WritableSignal<PersistShape> = signal<PersistShape>({
+    elapsedMs: 0,
+    since: null,
+  });
+  private readonly now: WritableSignal<number> = signal<number>(Date.now());
 
   private readonly me = computed<'w' | 'b'>(() =>
     this.orientation() === 'white' ? 'w' : 'b',
   );
 
-  private readonly myMovesCount = computed(() => {
-    const list = this.moves();
+  private readonly myMovesCount: Signal<number> = computed((): number => {
+    const list: MoveRecordType[] = this.moves();
     const myColor = this.me();
-    let count = 0;
-    for (let i = 0; i < list.length; i++) {
+    let count: number = 0;
+    for (let i: number = 0; i < list.length; i++) {
       if (list[i].move.color === myColor) count++;
     }
     return count;
   });
 
-  private readonly myTurn = computed(
-    () => parseActiveColor(this.fen()) === this.me(),
+  private readonly myTurn: Signal<boolean> = computed(
+    (): boolean => parseActiveColor(this.fen()) === this.me(),
   );
 
   // считаем только когда мой ход, уже был ≥1 мой ход и партия не окончена
-  private readonly shouldRun = computed(
-    () => this.myTurn() && this.myMovesCount() > 0 && !this.isGameOver(),
+  private readonly shouldRun: Signal<boolean> = computed(
+    (): boolean =>
+      this.myTurn() && this.myMovesCount() > 0 && !this.isGameOver(),
   );
 
   constructor() {
@@ -74,9 +85,9 @@ export class PlayerTimerService {
     const tickId = setInterval(() => this.now.set(Date.now()), 1000);
 
     // сброс при смене партии/цвета/начала игры
-    const hydrateEffect = effect(() => {
-      const base = this.storageBase();
-      const hasMoves = this.moves().length > 0;
+    const hydrateEffect: EffectRef = effect((): void => {
+      const base: string = this.storageBase();
+      const hasMoves: boolean = this.moves().length > 0;
 
       // новая игра: нет ходов — очищаем всё
       if (!hasMoves) {
@@ -86,15 +97,15 @@ export class PlayerTimerService {
       }
 
       // читаем из localStorage
-      const saved = this.readFromStorage(base);
+      const saved: PersistShape | null = this.readFromStorage(base);
 
-      const nowMs = Date.now();
-      const canRun = this.shouldRun();
+      const nowMs: number = Date.now();
+      const canRun: boolean = this.shouldRun();
 
       if (saved === null) {
         this.state.set({ elapsedMs: 0, since: canRun ? nowMs : null });
       } else {
-        const carried =
+        const carried: number =
           saved.since !== null
             ? saved.elapsedMs + Math.max(0, nowMs - saved.since)
             : saved.elapsedMs;
@@ -105,47 +116,47 @@ export class PlayerTimerService {
     });
 
     // старт/стоп текущей «сессии»
-    const runEffect = effect(() => {
-      const canRun = this.shouldRun();
-      const cur = this.state();
-      const base = this.storageBase();
+    const runEffect: EffectRef = effect((): void => {
+      const canRun: boolean = this.shouldRun();
+      const current: PersistShape = this.state();
+      const base: string = this.storageBase();
 
-      if (canRun && cur.since === null) {
-        this.state.set({ elapsedMs: cur.elapsedMs, since: Date.now() });
+      if (canRun && current.since === null) {
+        this.state.set({ elapsedMs: current.elapsedMs, since: Date.now() });
         this.writeToStorage(base, this.state());
-      } else if (!canRun && cur.since !== null) {
-        const nowMs = Date.now();
-        const added = Math.max(0, nowMs - cur.since);
-        this.state.set({ elapsedMs: cur.elapsedMs + added, since: null });
+      } else if (!canRun && current.since !== null) {
+        const nowMs: number = Date.now();
+        const added: number = Math.max(0, nowMs - current.since);
+        this.state.set({ elapsedMs: current.elapsedMs + added, since: null });
         this.writeToStorage(base, this.state());
       }
     });
 
     // очистка при конце игры
-    const finishEffect = effect(() => {
-      const over = this.isGameOver();
+    const finishEffect: EffectRef = effect((): void => {
+      const over: boolean = this.isGameOver();
       if (!over) return;
 
-      const base = this.storageBase();
-      const cur = this.state();
+      const base: string = this.storageBase();
+      const current: PersistShape = this.state();
 
-      if (cur.since !== null) {
-        const nowMs = Date.now();
-        const added = Math.max(0, nowMs - cur.since);
-        this.state.set({ elapsedMs: cur.elapsedMs + added, since: null });
+      if (current.since !== null) {
+        const nowMs: number = Date.now();
+        const added: number = Math.max(0, nowMs - current.since);
+        this.state.set({ elapsedMs: current.elapsedMs + added, since: null });
       }
       this.clearStorage(base);
     });
 
-    this.destroyRef.onDestroy(() => {
+    this.destroyRef.onDestroy((): void => {
       clearInterval(tickId);
 
-      const base = this.storageBase();
-      const cur = this.state();
-      if (cur.since !== null) {
-        const nowMs = Date.now();
-        const added = Math.max(0, nowMs - cur.since);
-        this.state.set({ elapsedMs: cur.elapsedMs + added, since: nowMs });
+      const base: string = this.storageBase();
+      const current: PersistShape = this.state();
+      if (current.since !== null) {
+        const nowMs: number = Date.now();
+        const added: number = Math.max(0, nowMs - current.since);
+        this.state.set({ elapsedMs: current.elapsedMs + added, since: nowMs });
       }
       this.writeToStorage(base, this.state());
 
@@ -155,28 +166,33 @@ export class PlayerTimerService {
     });
   }
 
+  public reset(): void {
+    this.clearStorage(this.storageBase());
+    this.state.set({ elapsedMs: 0, since: null });
+  }
+
   private storageBase(): string {
-    const id = this.gameId();
+    const id: string = this.gameId();
     const color = this.orientation();
     return `chess:timer:${id}:${color}`;
   }
 
   private readFromStorage(base: string): PersistShape | null {
-    const elapsedMsStorage = localStorage.getItem(`${base}:e`);
-    const sinceStorage = localStorage.getItem(`${base}:s`);
+    const elapsedMsStorage: string | null = localStorage.getItem(`${base}:e`);
+    const sinceStorage: string | null = localStorage.getItem(`${base}:s`);
 
     if (elapsedMsStorage === null && sinceStorage === null) return null;
 
-    let elapsedMs = 0;
+    let elapsedMs: number = 0;
     let since: number | null = null;
 
     if (elapsedMsStorage !== null) {
-      const n = Number(elapsedMsStorage);
+      const n: number = Number(elapsedMsStorage);
       if (!Number.isNaN(n) && n >= 0) elapsedMs = n;
     }
 
     if (sinceStorage !== null) {
-      const n = Number(sinceStorage);
+      const n: number = Number(sinceStorage);
       if (!Number.isNaN(n) && n > 0) since = n;
     }
 

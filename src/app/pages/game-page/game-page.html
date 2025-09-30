@@ -27,7 +27,10 @@
 
 <ng-template #gameOverTpl let-observer>
   <section class="p-6 text-center">
-    <h2 class="text-2xl font-bold mb-4">{{ "game.gameOver" | translate }}</h2>
+    <h2 class="text-2xl font-bold mb-2">
+      {{ resultText() }}
+    </h2>
+    <div class="tui-text_body-m mb-4">{{ "game.gameOver" | translate }}</div>
     <div class="modal-controls">
       <button
         tuiButton

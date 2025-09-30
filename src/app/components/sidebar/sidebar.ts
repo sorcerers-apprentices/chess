@@ -31,6 +31,7 @@ import {
   START_FEN,
 } from '@/app/constants/chess-game.constants';
 import { newGame } from '@/app/store/actions/game.actions';
+import type { AppStateType } from '@/app/store/states/app.state';
 
 type SidebarItemType = {
   nameKey: string;
@@ -58,7 +59,8 @@ export class Sidebar {
   protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
   protected readonly darkMode = inject(TUI_DARK_MODE);
   protected readonly translate = inject(LanguageService);
-  protected readonly store = inject(Store);
+  protected readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
   protected token = localStorage.getItem(LOCAL_STORAGE_KEY);
 
   protected langEn = linkedSignal(() => this.language() === 'en');

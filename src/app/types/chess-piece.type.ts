@@ -1,7 +1,5 @@
 import type { Square } from 'chess.js';
 
-export type BoardOrientationType = 'whiteBottom' | 'whiteTop';
-
 export type MoveRow = {
   num: number;
   player?: { from: Square; to: Square };
@@ -9,3 +7,5 @@ export type MoveRow = {
   playerText: string;
   opponentText: string;
 };
+
+export type ResultVariant = 'win' | 'loss' | 'draw';

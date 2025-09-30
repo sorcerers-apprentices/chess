@@ -1,5 +1,11 @@
 import { Header } from '../../components/header/header';
-import type { TemplateRef } from '@angular/core';
+import type {
+  EffectRef,
+  InputSignal,
+  Signal,
+  TemplateRef,
+  WritableSignal,
+} from '@angular/core';
 import { ViewChild } from '@angular/core';
 import {
   ChangeDetectionStrategy,
@@ -14,17 +20,20 @@ import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { ChessBoard } from '@/app/components/chess-board/chess-board';
 import { PlayerPanel } from '@/app/components/player-panel/player-panel';
-import type { SquareType } from '@/app/types/chess-square.type';
+import type { PieceColorType, SquareType } from '@/app/types/chess-square.type';
 import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
 import { GameService } from '@/app/services/game.service';
-import type { Square } from 'chess.js';
+import type { Chess, Color, Square } from 'chess.js';
 import { GameSupabaseService } from '@/app/services/game-supabase.service';
 import { loadGame } from '@/app/store/actions/game.actions';
 import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 import { load } from '@/app/utilities/chess-piece';
-import { selectIsGameOver } from '@/app/store/selectors/game.selectors';
+import {
+  selectIsGameOver,
+  selectOrientation,
+} from '@/app/store/selectors/game.selectors';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
@@ -37,6 +46,7 @@ import {
   START_FEN,
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
+import type { ResultVariant } from '@/app/types/chess-piece.type';
 
 @Component({
   selector: 'app-game-page',
@@ -58,31 +68,38 @@ export class GamePage {
   @ViewChild('gameOverTpl', { static: true })
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
-  public readonly id = input.required<string>();
-  protected readonly store = inject<Store<AppStateType>>(Store);
-  protected readonly gameSupabaseService = inject(GameSupabaseService);
-  protected readonly gameService = inject(GameService);
-  protected readonly opponent = inject(OpponentRunnerService);
-  protected readonly viewer = inject(GameViewerService);
-  protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
+  public readonly id: InputSignal<string> = input.required<string>();
+  protected readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
+  protected readonly gameSupabaseService: GameSupabaseService =
+    inject(GameSupabaseService);
+  protected readonly gameService: GameService = inject(GameService);
+  protected readonly opponent: OpponentRunnerService = inject(
+    OpponentRunnerService,
+  );
+  protected readonly viewer: GameViewerService = inject(GameViewerService);
+  protected readonly chosenColor: WritableSignal<PieceColorType> =
+    inject(CHOSEN_COLOR_TOKEN);
 
-  protected loadGameEffect = effect(() =>
+  protected loadGameEffect: EffectRef = effect((): void =>
     this.store.dispatch(loadGame({ gameId: this.id() })),
   );
 
-  protected readonly pgn = this.store.selectSignal((state) => state.game.pgn);
-  protected readonly game = computed(() => load(this.pgn()));
-  protected readonly fen = computed(() => this.game().fen());
+  protected readonly pgn: Signal<string> = this.store.selectSignal(
+    (state) => state.game.pgn,
+  );
+  protected readonly game: Signal<Chess> = computed(() => load(this.pgn()));
+  protected readonly fen: Signal<string> = computed(() => this.game().fen());
   protected readonly orientation = this.store.selectSignal(
     (state) => state.game.orientation,
   );
-  protected readonly isGameOver = this.store.selectSignal(selectIsGameOver);
-  protected readonly dialogs = inject(TuiResponsiveDialogService);
-  protected readonly leaveBypass = inject(LeaveBypassService);
-
-  protected boardOrientation = computed(() =>
-    this.orientation() === 'white' ? 'whiteBottom' : 'whiteTop',
+  protected readonly isGameOver: Signal<boolean> =
+    this.store.selectSignal(selectIsGameOver);
+  protected readonly dialogs: TuiResponsiveDialogService = inject(
+    TuiResponsiveDialogService,
   );
+  protected readonly leaveBypass: LeaveBypassService =
+    inject(LeaveBypassService);
 
   protected readonly topPlayerColor = computed(() =>
     this.orientation() === 'white' ? 'black' : 'white',
@@ -91,6 +108,26 @@ export class GamePage {
   protected readonly bottomPlayerColor = computed(() =>
     this.orientation() === 'white' ? 'white' : 'black',
   );
+
+  protected readonly meColor = this.store.selectSignal(selectOrientation);
+
+  protected readonly resultVariant: Signal<ResultVariant> =
+    computed<ResultVariant>(() => {
+      const res = this.gameService.getGameResult();
+
+      if (res.draw) return 'draw';
+
+      const iAmWhite = this.meColor() === 'white';
+      const mySide: 'white' | 'black' = iAmWhite ? 'white' : 'black';
+      return res.winner === mySide ? 'win' : 'loss';
+    });
+
+  protected readonly resultText: Signal<string> = computed<string>(() => {
+    const v = this.resultVariant();
+    if (v === 'draw') return 'Game Drawn';
+    if (v === 'win') return 'You won';
+    return 'You lost';
+  });
 
   // куда можно поставить фигуру
   protected readonly allowedTargets = signal<ReadonlySet<Square> | null>(null);
@@ -101,17 +138,18 @@ export class GamePage {
   // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
-  private readonly router = inject(Router);
+  private readonly router: Router = inject(Router);
 
-  private readonly showGameOverEffect = effect(() => {
-    const over = this.isGameOver();
-    const hasTpl = this.gameOverTpl != null;
+  private readonly showGameOverEffect: EffectRef = effect((): void => {
+    const over: boolean = this.isGameOver();
+    const hasTpl: boolean = this.gameOverTpl != null;
 
     if (over && hasTpl) {
       this.dialogs
         .open<void>(this.gameOverTpl, {
           size: 's',
-          closeable: false, // если нужно убрать крестик/ESC/клик по фону
+          closeable: false,
+          dismissible: false,
         })
         .subscribe();
     }
@@ -119,8 +157,8 @@ export class GamePage {
 
   public onBoardDragStart(from: Square): void {
     // чей ход
-    const turnPiece = this.gameService.turn();
-    const colorPieceSquare = this.gameService.pieceColorAt(from);
+    const turnPiece: Color = this.gameService.turn();
+    const colorPieceSquare: Color | null = this.gameService.pieceColorAt(from);
 
     if (!colorPieceSquare || colorPieceSquare !== turnPiece) {
       this.dragFrom.set(null);
@@ -128,7 +166,7 @@ export class GamePage {
       return;
     }
 
-    const targets = this.gameService.getTargetsSet(from);
+    const targets: ReadonlySet<Square> = this.gameService.getTargetsSet(from);
 
     this.dragFrom.set(from);
     this.allowedTargets.set(this.gameService.getTargetsSet(from));
@@ -143,9 +181,9 @@ export class GamePage {
       return;
     }
 
-    const allowed = this.allowedTargets();
+    const allowed: ReadonlySet<Square> | null = this.allowedTargets();
     // true только если есть сет разрешённых ходов, источник совпадает с текущим началом перетаскивания, и целевая клетка входит в этот сет
-    const isAllowed =
+    const isAllowed: boolean =
       !!allowed && this.dragFrom() === move.from && allowed.has(move.to);
 
     if (!isAllowed) {
@@ -154,7 +192,10 @@ export class GamePage {
       return;
     }
 
-    const isMoveApplied = this.gameService.playMove(move.from, move.to);
+    const isMoveApplied: boolean = this.gameService.playMove(
+      move.from,
+      move.to,
+    );
 
     if (isMoveApplied) this.lastMove.set(move);
 
