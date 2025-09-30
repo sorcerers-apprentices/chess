@@ -9,7 +9,7 @@ import {
 
 type SupportedLanguageType = 'en' | 'ru';
 
-const LANGUAGE_KEY = 'language';
+export const LANGUAGE_KEY = 'language';
 
 export const LANGUAGE_TOKEN = new InjectionToken<WritableSignal<'en' | 'ru'>>(
   'LANGUAGE_TOKEN',
