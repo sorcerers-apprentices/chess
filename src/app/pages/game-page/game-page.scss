@@ -59,7 +59,18 @@
 .p-6.text-center {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 4rem;
   align-items: center;
   justify-content: center;
+
+  .tui-text_body-m.mb-4 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .modal-controls {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
 }
