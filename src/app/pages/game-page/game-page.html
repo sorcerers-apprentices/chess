@@ -28,7 +28,7 @@
 <ng-template #gameOverTpl let-observer>
   <section class="p-6 text-center">
     <h2 class="text-2xl font-bold mb-2">
-      {{ resultText() }}
+      {{ `game.${resultText()}` | translate }}
     </h2>
     <div class="tui-text_body-m mb-4">{{ "game.gameOver" | translate }}</div>
     <div class="modal-controls">
@@ -38,7 +38,7 @@
         (click)="newGame(); observer.complete()"
         class="mr-2"
       >
-        New Game
+        {{ "game.newGame" | translate }}
       </button>
       <button
         tuiButton
@@ -46,7 +46,7 @@
         (click)="goHome(); observer.complete()"
         class="mr-2"
       >
-        Go Home
+        {{ "game.goHome" | translate }}
       </button>
     </div>
   </section>
