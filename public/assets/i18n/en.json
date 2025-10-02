@@ -80,7 +80,12 @@
     "player": "Player",
     "opponent": "Opponent",
     "gameOver": "GAME OVER",
-    "ok": "OK"
+    "ok": "OK",
+    "Game Drawn": "Game Drawn",
+    "You won": "You won",
+    "You lost": "You lost",
+    "newGame": "New Game",
+    "goHome": "Go Home"
   },
   "rating": {
     "title": "Player Ratings \uD83C\uDFC6",
