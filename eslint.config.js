@@ -6,7 +6,16 @@ import angularTemplateParser from "@angular-eslint/template-parser";
 import angularTemplate from "@angular-eslint/eslint-plugin-template";
 
 export default [
-  { ignores: ["dist"] },
+  {
+    ignores: [
+      "dist",
+      "e2e/**",
+      "playwright.config.ts",
+      "playwright.*",
+      "public/**",
+      "node_modules/**",
+    ],
+  },
   {
     files: ["**/*.ts"],
     ignores: ["**/jest.config.ts", "**/test-setup.ts"],

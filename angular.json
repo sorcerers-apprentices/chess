@@ -10,13 +10,27 @@
           "style": "scss",
           "changeDetection": "OnPush"
         },
-        "@schematics/angular:directive": { "type": "directive" },
-        "@schematics/angular:service": { "type": "service" },
-        "@schematics/angular:guard": { "typeSeparator": "." },
-        "@schematics/angular:interceptor": { "typeSeparator": "." },
-        "@schematics/angular:module": { "typeSeparator": "." },
-        "@schematics/angular:pipe": { "typeSeparator": "." },
-        "@schematics/angular:resolver": { "typeSeparator": "." }
+        "@schematics/angular:directive": {
+          "type": "directive"
+        },
+        "@schematics/angular:service": {
+          "type": "service"
+        },
+        "@schematics/angular:guard": {
+          "typeSeparator": "."
+        },
+        "@schematics/angular:interceptor": {
+          "typeSeparator": "."
+        },
+        "@schematics/angular:module": {
+          "typeSeparator": "."
+        },
+        "@schematics/angular:pipe": {
+          "typeSeparator": "."
+        },
+        "@schematics/angular:resolver": {
+          "typeSeparator": "."
+        }
       },
       "root": "",
       "sourceRoot": "src",
@@ -102,6 +116,17 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
+        },
+        "e2e": {
+          "builder": "playwright-ng-schematics:playwright",
+          "options": {
+            "devServerTarget": "chess:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "chess:serve:production"
+            }
           }
         }
       }
