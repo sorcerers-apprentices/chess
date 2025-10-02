@@ -19,7 +19,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand --passWithNoTests",
-    "e2e": "ng e2e"
+    "e2e": "npx playwright test"
   },
   "private": true,
   "prettier": {

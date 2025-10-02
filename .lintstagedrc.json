@@ -1,5 +1,7 @@
 {
-  "*.ts": ["npm run format:check", "npm run lint:fix"],
-  "*.{css,scss}": ["npm run format", "npm run lint:scss:fix"],
-  "*.{test,spec}.ts": ["npm run format:check", "npm run e2e"]
+  "src/**/*.ts": ["prettier --check", "eslint --fix"],
+  "src/**/*.{test,spec}.ts": ["prettier --check", "eslint --fix"],
+  "*.{css,scss}": ["prettier --write", "stylelint --fix"],
+  "e2e/**/*.ts": ["prettier --check"],
+  "playwright.config.ts": ["prettier --check"]
 }
