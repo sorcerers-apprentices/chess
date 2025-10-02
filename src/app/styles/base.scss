@@ -3,9 +3,8 @@
 
 html,
 body {
+  overflow: auto;
   overflow-x: clip;
-
-  // overflow: auto;
   height: 100%;
   background-color: vars.$color-black;
 }
