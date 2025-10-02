@@ -6,10 +6,9 @@ import angularTemplateParser from "@angular-eslint/template-parser";
 import angularTemplate from "@angular-eslint/eslint-plugin-template";
 
 export default [
-  { ignores: ["dist"] },
   {
     files: ["**/*.ts"],
-    ignores: ["**/jest.config.ts", "**/test-setup.ts"],
+    ignores: ["**/jest.config.ts", "**/test-setup.ts", "e2e/**"],
     languageOptions: {
       globals: {
         fetch: true,
@@ -102,6 +101,19 @@ export default [
         "error",
         { argsIgnorePattern: "^_" },
       ],
+    },
+  },
+  {
+    files: ["e2e/**/*.ts", "playwright.config.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: undefined,
+      },
+    },
+    rules: {
+      "no-undef": "off",
+      "@typescript-eslint/no-unused-vars": "off",
     },
   },
   {

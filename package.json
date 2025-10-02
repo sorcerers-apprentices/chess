@@ -18,7 +18,8 @@
     "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand --passWithNoTests"
+    "test:ci": "jest --runInBand --passWithNoTests",
+    "e2e": "npx playwright test"
   },
   "private": true,
   "prettier": {
@@ -80,12 +81,13 @@
     "@commitlint/config-conventional": "^19.8.0",
     "@eslint/js": "^9.8.0",
     "@ngrx/eslint-plugin": "^20.0.1",
+    "@playwright/test": "1.55.1",
     "@schematics/angular": "~20.1.0",
     "@testing-library/angular": "^18.0.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/jasmine": "^5.1.9",
     "@types/jest": "^30.0.0",
-    "@types/node": "20.19.9",
+    "@types/node": "^20.19.9",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "@typescript-eslint/utils": "^8.29.0",
@@ -104,6 +106,7 @@
     "jest-preset-angular": "^15.0.1",
     "less": "^4.4.1",
     "lint-staged": "^15.5.2",
+    "playwright-ng-schematics": "^2.1.1",
     "prettier": "^3.5.3",
     "stylelint": "^16.21.1",
     "stylelint-config-clean-order": "^7.0.0",

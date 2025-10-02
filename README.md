@@ -25,6 +25,7 @@ The project uses the following technologies:
 #### Stack for testing:
 
 - Jest
+- Playwright
 
 #### State Management Rationale
 
@@ -76,6 +77,7 @@ Use `node 21.x` or higher.
 - `$ npm run test` — Runs all unit tests once using Jest.
 - `$ npm run test:watch` — Runs Jest in watch mode, re-executing tests when files change.
 - `$ npm run test:ci` — Runs Jest in continuous integration (CI) mode with the `--runInBand` flag to execute tests sequentially. Also uses `--passWithNoTests` so the pipeline doesn’t fail if no tests are found.
+- `$ npm run e2e` — Runs end-to-end tests via the Angular Playwright builder.
 
 ## Project structure (high-level)
 
