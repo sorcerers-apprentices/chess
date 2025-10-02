@@ -19,10 +19,11 @@ import type { RoutePathValue } from '../../app.routes';
 import { RoutePath } from '../../app.routes';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
+  LANGUAGE_KEY,
   LANGUAGE_TOKEN,
   LanguageService,
 } from '@/app/services/language.service';
-import { LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
+import { GAME_ID, LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
 import { FormsModule } from '@angular/forms';
 import { logoutUser } from '@/app/store/actions/user.actions';
 import { Store } from '@ngrx/store';
@@ -93,6 +94,8 @@ export class Sidebar {
     const logOutUser = logoutUser();
     this.store.dispatch(logOutUser);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
+    localStorage.removeItem(GAME_ID);
+    localStorage.removeItem(LANGUAGE_KEY);
     this.router.navigate(['/signin']);
   };
 
