@@ -31,8 +31,9 @@ import {
   CHOSEN_COLOR_TOKEN,
   START_FEN,
 } from '@/app/constants/chess-game.constants';
-import { newGame } from '@/app/store/actions/game.actions';
 import type { AppStateType } from '@/app/store/states/app.state';
+import { LeaveBypassService } from '@/app/services/leave-bypass.service';
+import { GameService } from '@/app/services/game.service';
 
 type SidebarItemType = {
   nameKey: string;
@@ -60,6 +61,7 @@ export class Sidebar {
   protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
   protected readonly darkMode = inject(TUI_DARK_MODE);
   protected readonly translate = inject(LanguageService);
+  protected readonly gameService = inject(GameService);
   protected readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
   protected token = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -89,8 +91,10 @@ export class Sidebar {
   );
 
   private readonly router = inject(Router);
+  private readonly leaveBypass = inject(LeaveBypassService);
 
   protected onLogout = (): void => {
+    if (this.isOnGamePage()) this.leaveBypass.bypassOnce();
     const logOutUser = logoutUser();
     this.store.dispatch(logOutUser);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
@@ -100,15 +104,22 @@ export class Sidebar {
   };
 
   protected onClick(item: SidebarItemType): void {
+    console.log('[SIDEBAR HOME] bypassOnce before navigate');
     this.router.navigate([item.route]);
   }
 
   protected playGame(): void {
-    this.store.dispatch(
-      newGame({
-        initialFen: START_FEN,
-        orientation: this.chosenColor(),
-      }),
-    );
+    console.log('[SIDEBAR NEW GAME] bypassOnce before navigate');
+    this.gameService.newGame(START_FEN, this.chosenColor());
+  }
+
+  private isOnGamePage(): boolean {
+    const tree = this.router.createUrlTree(['/game']);
+    return this.router.isActive(tree, {
+      paths: 'subset',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    });
   }
 }

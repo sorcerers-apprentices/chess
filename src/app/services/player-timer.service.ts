@@ -52,7 +52,9 @@ export class PlayerTimerService {
   private readonly baseKey: Signal<string> = computed(
     (): string => `chess:timer:${this.gameId()}:${this.orientation()}`,
   );
-  private readonly storageTimer = inject(TimerStorageService);
+  private readonly storageTimer: TimerStorageService =
+    inject(TimerStorageService);
+  private readonly skipPersistOnce = signal(false);
 
   private readonly state: WritableSignal<PersistShape> = signal<PersistShape>({
     elapsedMs: 0,
@@ -63,6 +65,22 @@ export class PlayerTimerService {
   private readonly me = computed<'w' | 'b'>(() =>
     this.orientation() === 'white' ? 'w' : 'b',
   );
+
+  private readonly suppressBase = signal<string | null>(null);
+
+  // когда baseKey меняется (другая партия/ориентация) — снимаем блок
+  private readonly releaseSuppressOnBaseChange = effect(() => {
+    const base = this.baseKey();
+    const gameId = this.gameId();
+    if (
+      this.suppressBase() !== null &&
+      this.suppressBase() !== base &&
+      gameId
+    ) {
+      this.suppressBase.set(null);
+      console.log('[TIMER] suppress cleared: base changed to', base);
+    }
+  });
 
   private readonly myMovesCount: Signal<number> = computed((): number => {
     const list: MoveRecordType[] = this.moves();
@@ -167,11 +185,20 @@ export class PlayerTimerService {
 
       const base: string = this.baseKey();
       const current: PersistShape = this.state();
+
+      // если reset уже прошёл — ничего не пишем в storage
+      if (this.skipPersistOnce()) {
+        console.log('[TIMER] onDestroy(): skip persist (after reset)');
+        this.skipPersistOnce.set(false);
+        return;
+      }
+
       if (current.since !== null) {
         const nowMs: number = Date.now();
         const added: number = Math.max(0, nowMs - current.since);
         this.state.set({ elapsedMs: current.elapsedMs + added, since: null });
       }
+      console.log('[TIMER] onDestroy(): persist', base, this.state());
       this.writeToStorage(base, this.state());
 
       hydrateEffect.destroy();
@@ -181,8 +208,11 @@ export class PlayerTimerService {
   }
 
   public reset(): void {
-    this.clearStorage(this.baseKey());
+    const base = this.baseKey();
+    this.clearStorage(base);
     this.state.set({ elapsedMs: 0, since: null });
+    this.skipPersistOnce.set(true);
+    this.suppressBase.set(base);
   }
 
   private readFromStorage(base: string): PersistShape | null {
@@ -190,6 +220,10 @@ export class PlayerTimerService {
   }
 
   private writeToStorage(base: string, next: PersistShape): void {
+    if (this.suppressBase() === base) {
+      console.log('[TIMER] write blocked for base', base);
+      return;
+    }
     untracked(() => {
       const previous: PersistShape | null = this.storageTimer.read(base);
       if (previous && this.samePersist(previous, next)) return;

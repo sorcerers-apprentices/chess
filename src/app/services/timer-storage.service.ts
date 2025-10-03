@@ -6,7 +6,7 @@ import type { PersistShape } from '@/app/types/chess-piece.type';
 })
 export class TimerStorageService {
   public read(base: string): PersistShape | null {
-    const raw = localStorage.getItem(base);
+    const raw: string | null = localStorage.getItem(base);
     if (raw === null || raw === '') return null;
     try {
       const variant: PersistShape = JSON.parse(raw);

@@ -47,6 +47,7 @@ import {
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
+import { PlayerTimerService } from '@/app/services/player-timer.service';
 
 @Component({
   selector: 'app-game-page',
@@ -139,6 +140,7 @@ export class GamePage {
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
   private readonly router: Router = inject(Router);
+  private readonly timer = inject(PlayerTimerService);
 
   private readonly showGameOverEffect: EffectRef = effect((): void => {
     const over: boolean = this.isGameOver();
