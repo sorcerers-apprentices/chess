@@ -32,6 +32,7 @@ export class PlayerTimerService {
     if (state.since === null) return state.elapsedMs;
     return state.elapsedMs + Math.max(0, this.now() - state.since);
   });
+  public pendingBase = signal<string | null>(null);
 
   protected readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
@@ -78,7 +79,6 @@ export class PlayerTimerService {
       gameId
     ) {
       this.suppressBase.set(null);
-      console.log('[TIMER] suppress cleared: base changed to', base);
     }
   });
 
@@ -111,7 +111,6 @@ export class PlayerTimerService {
       const base: string = this.baseKey();
       const hasMoves: boolean = this.moves().length > 0;
 
-      // новая игра: нет ходов — очищаем всё
       if (!hasMoves) {
         const next: PersistShape = { elapsedMs: 0, since: null };
         this.state.set(next);
@@ -119,7 +118,6 @@ export class PlayerTimerService {
         return;
       }
 
-      // читаем из localStorage
       const saved: PersistShape | null = this.readFromStorage(base);
 
       const nowMs: number = Date.now();
@@ -138,7 +136,6 @@ export class PlayerTimerService {
 
       this.state.set(next);
 
-      // запись только если есть отличие
       this.writeToStorage(base, next);
     });
 
@@ -188,7 +185,6 @@ export class PlayerTimerService {
 
       // если reset уже прошёл — ничего не пишем в storage
       if (this.skipPersistOnce()) {
-        console.log('[TIMER] onDestroy(): skip persist (after reset)');
         this.skipPersistOnce.set(false);
         return;
       }
@@ -198,7 +194,6 @@ export class PlayerTimerService {
         const added: number = Math.max(0, nowMs - current.since);
         this.state.set({ elapsedMs: current.elapsedMs + added, since: null });
       }
-      console.log('[TIMER] onDestroy(): persist', base, this.state());
       this.writeToStorage(base, this.state());
 
       hydrateEffect.destroy();
@@ -207,12 +202,26 @@ export class PlayerTimerService {
     });
   }
 
-  public reset(): void {
-    const base = this.baseKey();
+  public baseSnapshot(): string {
+    return untracked(this.baseKey);
+  }
+
+  public reset(explicitBase?: string): void {
+    const base = explicitBase ?? untracked(this.baseKey);
     this.clearStorage(base);
     this.state.set({ elapsedMs: 0, since: null });
     this.skipPersistOnce.set(true);
     this.suppressBase.set(base);
+  }
+
+  public setPendingBase(base: string): void {
+    this.pendingBase.set(base);
+  }
+
+  public consumePendingBase(): string | null {
+    const value = this.pendingBase();
+    this.pendingBase.set(null);
+    return value;
   }
 
   private readFromStorage(base: string): PersistShape | null {
@@ -221,7 +230,6 @@ export class PlayerTimerService {
 
   private writeToStorage(base: string, next: PersistShape): void {
     if (this.suppressBase() === base) {
-      console.log('[TIMER] write blocked for base', base);
       return;
     }
     untracked(() => {

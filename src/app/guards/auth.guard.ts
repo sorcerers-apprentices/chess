@@ -30,7 +30,6 @@ export const anonymousGuardFunction: CanActivateFn = () => {
 export const canDeactivatePopup = (): Observable<boolean> => {
   const bypass = inject(LeaveBypassService);
   if (bypass.consume()) {
-    console.log('[GUARD] bypass.consume() → true');
     return of(true);
   }
 
@@ -41,8 +40,7 @@ export const canDeactivatePopup = (): Observable<boolean> => {
 
   // Если игра реально закончена — уходим БЕЗ модалки, но чистим таймер
   if (isGameOver()) {
-    console.log('[GUARD] isGameOver → true (cleanup + skip dialog)');
-    timer.reset(); // ← ТОЛЬКО reset, БЕЗ bypassOnce()
+    timer.reset();
     return of(true);
   }
 
@@ -54,14 +52,11 @@ export const canDeactivatePopup = (): Observable<boolean> => {
     no: translateService.instant('game.no'),
   };
 
-  console.log('[GUARD] opening confirm dialog');
-
   return dialogs.open<boolean>(TUI_CONFIRM, { size: 's', data }).pipe(
     tap((confirm) => {
-      console.log('[GUARD] confirm result =', confirm);
       if (confirm) {
-        // ЕДИНОЕ МЕСТО: готовим «чистый» выход (и сброс таймера внутри)
-        timer.reset();
+        const pendingBase = timer.consumePendingBase();
+        timer.reset(pendingBase ?? undefined);
       }
     }),
     map(Boolean),

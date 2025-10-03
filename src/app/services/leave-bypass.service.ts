@@ -12,7 +12,6 @@ export class LeaveBypassService {
 
   /** Включить байпас ровно на один переход */
   public bypassOnce(): void {
-    console.log('[BYPASS] bypassOnce() → reset + flag');
     this.timer.reset();
     this.once.set(true);
   }

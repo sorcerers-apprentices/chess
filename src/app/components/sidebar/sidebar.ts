@@ -34,6 +34,7 @@ import {
 import type { AppStateType } from '@/app/store/states/app.state';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import { GameService } from '@/app/services/game.service';
+import { PlayerTimerService } from '@/app/services/player-timer.service';
 
 type SidebarItemType = {
   nameKey: string;
@@ -64,6 +65,7 @@ export class Sidebar {
   protected readonly gameService = inject(GameService);
   protected readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
+  protected readonly timer = inject(PlayerTimerService);
   protected token = localStorage.getItem(LOCAL_STORAGE_KEY);
 
   protected langEn = linkedSignal(() => this.language() === 'en');
@@ -104,12 +106,11 @@ export class Sidebar {
   };
 
   protected onClick(item: SidebarItemType): void {
-    console.log('[SIDEBAR HOME] bypassOnce before navigate');
     this.router.navigate([item.route]);
   }
 
   protected playGame(): void {
-    console.log('[SIDEBAR NEW GAME] bypassOnce before navigate');
+    this.timer.setPendingBase(this.timer.baseSnapshot());
     this.gameService.newGame(START_FEN, this.chosenColor());
   }
 
