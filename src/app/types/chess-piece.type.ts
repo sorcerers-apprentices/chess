@@ -9,3 +9,5 @@ export type MoveRow = {
 };
 
 export type ResultVariant = 'win' | 'loss' | 'draw';
+
+export type PersistShape = { elapsedMs: number; since: number | null };
