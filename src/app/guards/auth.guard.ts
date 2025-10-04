@@ -2,6 +2,8 @@ import { inject } from '@angular/core';
 import { type CanActivateFn, Router } from '@angular/router';
 import { LOCAL_STORAGE_KEY } from '../constants/auth.constants';
 import type { Observable } from 'rxjs';
+import { map, take } from 'rxjs';
+import { tap } from 'rxjs';
 import { of } from 'rxjs';
 import { TUI_CONFIRM, type TuiConfirmData } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
@@ -10,6 +12,7 @@ import { Store } from '@ngrx/store';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { selectIsGameOver } from '@/app/store/selectors/game.selectors';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
+import { PlayerTimerService } from '@/app/services/player-timer.service';
 
 export const authenticatedGuardFunction: CanActivateFn = () => {
   const router = inject(Router);
@@ -27,15 +30,17 @@ export const anonymousGuardFunction: CanActivateFn = () => {
 export const canDeactivatePopup = (): Observable<boolean> => {
   const bypass = inject(LeaveBypassService);
   if (bypass.consume()) {
-    // “Новая игра/Домой” инициированы из приложения → не спрашиваем
     return of(true);
   }
 
   const store = inject<Store<AppStateType>>(Store);
   const isGameOver = store.selectSignal(selectIsGameOver);
 
+  const timer = inject(PlayerTimerService);
+
+  // Если игра реально закончена — уходим БЕЗ модалки, но чистим таймер
   if (isGameOver()) {
-    // Игра уже закончена → уходим без подтверждения
+    timer.reset();
     return of(true);
   }
 
@@ -47,8 +52,14 @@ export const canDeactivatePopup = (): Observable<boolean> => {
     no: translateService.instant('game.no'),
   };
 
-  return dialogs.open<boolean>(TUI_CONFIRM, {
-    size: 's',
-    data,
-  });
+  return dialogs.open<boolean>(TUI_CONFIRM, { size: 's', data }).pipe(
+    tap((confirm) => {
+      if (confirm) {
+        const pendingBase = timer.consumePendingBase();
+        timer.reset(pendingBase ?? undefined);
+      }
+    }),
+    map(Boolean),
+    take(1),
+  );
 };
