@@ -22,6 +22,13 @@ const config: Config = {
     //'node_modules/(?!(?:@angular|@angular/cdk|rxjs|tslib|@supabase|@ngrx|@taiga-ui|@angular-devkit|@ngtools|@ng-web-apis)/)'
     'node_modules/(?!(?:@angular|@angular/cdk|rxjs|tslib|@supabase|@ngrx|@taiga-ui|@angular-devkit|@ngtools|@ng-web-apis|@maskito|@ngx-translate)/)',
   ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/e2e/',
+    'app.routes.ts',
+    '<rootDir>/src/app/app.routes.ts',
+  ],
 
   moduleNameMapper: {
     '\\.(css|scss|sass)$': 'identity-obj-proxy',
