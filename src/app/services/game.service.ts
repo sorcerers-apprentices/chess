@@ -45,22 +45,6 @@ export class GameService {
     this.store.dispatch(newGame({ initialFen: fen, orientation }));
   }
 
-  public getBoard(): BoardMatrix {
-    return clone(this.game()).board();
-  }
-
-  public drawAscii(): void {
-    console.log(this.game().ascii());
-  }
-
-  public getAvailableMoves(square: Square): string[] {
-    return clone(this.game()).moves({ square }) ?? [];
-  }
-
-  public getAllAvailableMoves(): string[] {
-    return clone(this.game()).moves() ?? [];
-  }
-
   public playMove(from: Square, to: Square): boolean {
     try {
       const chess = clone(this.game());
@@ -113,11 +97,6 @@ export class GameService {
   public pieceColorAt(square: Square): Color | null {
     const piece = this.game().get(square);
     return piece ? piece.color : null;
-  }
-
-  // даёт полный объект фигуры ({ type: 'p', color: 'w' }).
-  public getPieceAt(square: Square): Piece | undefined {
-    return this.game().get(square);
   }
 
   public getGameResult(): GameResultType {
