@@ -24,6 +24,7 @@ export class AuthService {
     this.apiUrl,
     this.publishableKey,
   );
+
   public async signup(
     credentials: SignUpCredentialsType,
   ): Promise<AuthResponse> {
