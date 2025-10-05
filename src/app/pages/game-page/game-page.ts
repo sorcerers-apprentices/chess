@@ -47,7 +47,6 @@ import {
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
-import { PlayerTimerService } from '@/app/services/player-timer.service';
 
 @Component({
   selector: 'app-game-page',
@@ -81,6 +80,16 @@ export class GamePage {
   protected readonly viewer: GameViewerService = inject(GameViewerService);
   protected readonly chosenColor: WritableSignal<PieceColorType> =
     inject(CHOSEN_COLOR_TOKEN);
+
+  protected readonly isCheck: Signal<boolean> = computed(() =>
+    this.gameService.isCheck(),
+  );
+  protected readonly isMate: Signal<boolean> = computed(() =>
+    this.gameService.isMate(),
+  );
+  protected readonly kingSquare: Signal<Square | null> = computed(() =>
+    this.gameService.kingSquare('turn'),
+  );
 
   protected loadGameEffect: EffectRef = effect((): void =>
     this.store.dispatch(loadGame({ gameId: this.id() })),
@@ -140,7 +149,6 @@ export class GamePage {
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
   private readonly router: Router = inject(Router);
-  private readonly timer = inject(PlayerTimerService);
 
   private readonly showGameOverEffect: EffectRef = effect((): void => {
     const over: boolean = this.isGameOver();
@@ -175,7 +183,10 @@ export class GamePage {
     this.allowedTargets.set(targets);
   }
 
-  public onBoardDragEnd(): void {}
+  public onBoardDragEnd(): void {
+    this.dragFrom.set(null);
+    this.allowedTargets.set(null);
+  }
 
   public onBoardMove(move: ChessMovePayloadType): void {
     // запретить ходы

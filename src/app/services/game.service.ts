@@ -186,4 +186,20 @@ export class GameService {
 
     this.handleGameEnd(chess, { winner, draw: false });
   }
+
+  public isCheck(): boolean {
+    return this.game().isCheck();
+  }
+
+  public isMate(): boolean {
+    return this.game().isCheckmate();
+  }
+
+  public kingSquare(color: 'w' | 'b' | 'turn' = 'turn'): Square | null {
+    const game: Chess = this.game();
+    const targetColor: 'w' | 'b' = color === 'turn' ? game.turn() : color;
+
+    const squares: Square[] = game.findPiece({ type: 'k', color: targetColor });
+    return squares.length > 0 ? squares[0] : null;
+  }
 }

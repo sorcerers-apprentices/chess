@@ -59,4 +59,6 @@ export type SquareUiStateType = SquareStateType & {
   isAllowed: boolean;
   isOverAllowed: boolean;
   isOverDenied: boolean;
+  isKingCheck: boolean;
+  isKingMate: boolean;
 };
