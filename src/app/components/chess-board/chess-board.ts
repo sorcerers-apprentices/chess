@@ -108,6 +108,17 @@ export class ChessBoard {
   }
 
   public onDragEnd(): void {
+    const from = this.dragFrom();
+    const over = this.dragOver();
+    const allowed: ReadonlySet<SquareType> | null = this.allowedTargets();
+
+    const dropLooksValid: boolean =
+      from !== null && over !== null && allowed !== null && allowed.has(over);
+
+    if (dropLooksValid) {
+      return;
+    }
+
     this.dragFrom.set(null);
     this.dragOver.set(null);
     this.dragEnd.emit();
@@ -117,6 +128,8 @@ export class ChessBoard {
   protected onSquareMove = (payload: ChessMovePayloadType): void => {
     this.dragFrom.set(null);
     this.dragOver.set(null);
+
     this.move.emit(payload);
+    this.dragEnd.emit();
   };
 }
