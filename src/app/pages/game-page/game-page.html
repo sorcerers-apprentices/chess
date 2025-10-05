@@ -13,6 +13,9 @@
         (move)="onBoardMove($event)"
         (dragStart)="onBoardDragStart($event)"
         (dragEnd)="onBoardDragEnd()"
+        [isCheck]="isCheck()"
+        [isMate]="isMate()"
+        [kingSquare]="kingSquare()"
       />
       <div class="player-panel bottom">
         <app-player-panel [color]="bottomPlayerColor()" />

@@ -39,6 +39,9 @@ export class ChessBoard {
 
   public readonly fromSquare = input<SquareType | null>(null);
   public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);
+  public readonly kingSquare = input<SquareType | null>(null);
+  public readonly isCheck = input<boolean>(false);
+  public readonly isMate = input<boolean>(false);
 
   // Массив файлов (a…h) для подписи оси X.
   protected readonly ranksUi = computed(() =>
@@ -78,6 +81,9 @@ export class ChessBoard {
     return baseBoard.map((s) => {
       const isFrom = from === s.square;
       const isOver = over === s.square;
+      const kSq = this.kingSquare();
+      const check = this.isCheck();
+      const mate = this.isMate();
 
       const isAllowed =
         !!allow && from !== null && s.square !== from && allow.has(s.square);
@@ -85,9 +91,20 @@ export class ChessBoard {
       const isOverAllowed = isOver && isAllowed;
       const isOverDenied =
         isOver && from !== null && s.square !== from && !isAllowed;
+      // новые флаги
+      const isKing = kSq !== null && s.square === kSq;
+      const isKingCheck = isKing && check;
+      const isKingMate = isKing && mate;
 
-      // возвращаем расширенный SquareUiStateType с флагами подсветок
-      return { ...s, isFrom, isAllowed, isOverAllowed, isOverDenied };
+      return {
+        ...s,
+        isFrom,
+        isAllowed,
+        isOverAllowed,
+        isOverDenied,
+        isKingCheck,
+        isKingMate,
+      };
     });
   });
 

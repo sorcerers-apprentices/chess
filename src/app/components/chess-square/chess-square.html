@@ -15,6 +15,8 @@
   [class.is-allowed]="isAllowed()"
   [class.is-over-denied]="isOverDenied()"
   [class.is-empty]="!hasPiece()"
+  [class.is-king-check]="isKingCheck()"
+  [class.is-king-mate]="isKingMate()"
 >
   <img
     cdkDrag

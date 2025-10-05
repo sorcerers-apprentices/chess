@@ -81,6 +81,16 @@ export class GamePage {
   protected readonly chosenColor: WritableSignal<PieceColorType> =
     inject(CHOSEN_COLOR_TOKEN);
 
+  protected readonly isCheck: Signal<boolean> = computed(() =>
+    this.gameService.isCheck(),
+  );
+  protected readonly isMate: Signal<boolean> = computed(() =>
+    this.gameService.isMate(),
+  );
+  protected readonly kingSquare: Signal<Square | null> = computed(() =>
+    this.gameService.kingSquare('turn'),
+  );
+
   protected loadGameEffect: EffectRef = effect((): void =>
     this.store.dispatch(loadGame({ gameId: this.id() })),
   );

@@ -49,6 +49,8 @@ export class ChessSquare {
   public readonly isOverDenied = input<boolean>(false);
   // возможные ходы
   public readonly isAllowed = input<boolean>(false);
+  public readonly isKingCheck = input<boolean>(false);
+  public readonly isKingMate = input<boolean>(false);
 
   public readonly fromSquare = input<SquareType | null>(null);
   public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);

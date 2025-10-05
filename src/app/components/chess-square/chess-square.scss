@@ -69,3 +69,35 @@
   opacity: 1;
   background-color: color-mix(in srgb, vars.$color-red2 42%, transparent);
 }
+
+.square.is-king-check::after {
+  border: 3px solid color-mix(in srgb, vars.$color-red2 42%, transparent);
+  opacity: 1;
+  box-shadow: 0 0 0 6px color-mix(in srgb, vars.$color-red2 28%, transparent);
+  animation: king-pulse 1.15s ease-in-out infinite;
+}
+
+.square.is-king-mate::after {
+  opacity: 1;
+  background-color: color-mix(in srgb, vars.$color-red2 30%, transparent);
+  outline: 3px solid vars.$color-red2;
+  outline-offset: -2px;
+  animation: none;
+}
+
+@keyframes king-pulse {
+  0% {
+    box-shadow: 0 0 0 6px
+      color-mix(in srgb, var(--tui-status-negative) 28%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 0 14px
+      color-mix(in srgb, var(--tui-status-negative) 0%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 6px
+      color-mix(in srgb, var(--tui-status-negative) 0%, transparent);
+  }
+}
