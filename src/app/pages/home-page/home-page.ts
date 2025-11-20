@@ -10,7 +10,12 @@ import {
 import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe } from '@ngx-translate/core';
-import { TuiButton, TuiFormatDatePipe, TuiLoader } from '@taiga-ui/core';
+import {
+  TuiButton,
+  TuiFormatDatePipe,
+  TuiLoader,
+  TuiScrollbar,
+} from '@taiga-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { UserSupabaseService } from '@/app/services/user-supabase.service';
@@ -56,6 +61,7 @@ import { loadGame } from '@/app/store/actions/game.actions';
     TuiTable,
     TuiFormatDatePipe,
     AsyncPipe,
+    TuiScrollbar,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
@@ -81,8 +87,13 @@ export class HomePage {
     initialValue: this.activatedRoute.snapshot.queryParams,
   });
   protected readonly pageParamEffect = effect(() => {
-    this.page.set(this.routerParams()['page'] ?? 0);
-    this.size.set(this.routerParams()['size'] ?? 10);
+    const params = this.routerParams();
+
+    const pageIndexParam = Number(params['page'] ?? 0);
+    const sizeParam = Number(params['size'] ?? 10);
+
+    this.page.set(Number.isNaN(pageIndexParam) ? 0 : pageIndexParam);
+    this.size.set(Number.isNaN(sizeParam) ? 10 : sizeParam);
   });
 
   protected userName = rxResource({
@@ -115,12 +126,20 @@ export class HomePage {
 
   protected columns = ['number', 'date', 'result', ''];
 
+  protected readonly totalPages = computed(() =>
+    Math.ceil(this.total() / this.size() || 1),
+  );
+
   protected usersGames = rxResource({
-    params: () => ({
-      userId: this.authService.getUserData().user.id,
-      size: this.size(),
-      offset: this.page() * this.size(),
-    }),
+    params: () => {
+      const params = {
+        userId: this.authService.getUserData().user.id,
+        size: this.size(),
+        offset: this.page() * this.size(),
+      };
+      console.log('fetchGames params', params);
+      return params;
+    },
     stream: ({ params }) => from(this.userSupabaseService.fetchGames(params)),
   });
 

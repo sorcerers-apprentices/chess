@@ -5,10 +5,10 @@ main[tuinavigationmain] {
 
 .home-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto;
+  grid-template-columns: 1fr max-content;
+  grid-template-rows: auto auto;
   gap: 1rem;
-  justify-items: center;
+  justify-items: stretch;
   padding: 3rem 2rem 1rem;
 }
 
@@ -16,7 +16,9 @@ main[tuinavigationmain] {
   display: flex;
   grid-area: 1/1/1/1;
   gap: 1rem;
+  align-self: start;
   max-height: 45rem;
+  padding: 10px;
 }
 
 .game-settings {
@@ -26,9 +28,27 @@ main[tuinavigationmain] {
   gap: 0.5rem;
 }
 
-.table {
-  grid-column: 2/2;
+tui-scrollbar.pairs-scroll {
+  grid-column: 2/3;
   grid-row: 1 / span 2;
+  inline-size: 100%;
+  block-size: calc(100dvh - 48px - 40px);
+  padding: 10px;
+}
+
+.moves-scroll {
+  padding-inline: 0.6875rem;
+
+  tfoot {
+    tr td {
+      padding-top: 20px;
+    }
+  }
+}
+
+table[tuiTable] {
+  width: max-content;
+  max-width: 38rem; // можно регулировать
 }
 
 .avatar {
@@ -114,11 +134,12 @@ main[tuinavigationmain] {
   }
 }
 
-@media (width <= 680px) {
+@media (width <= 768px) {
   .home-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: max-content;
     grid-template-rows: auto auto auto;
-    gap: 0.7rem;
+    gap: 4rem;
+    justify-content: center;
     justify-items: center;
     padding: 2rem 1rem 1rem;
   }
@@ -127,7 +148,7 @@ main[tuinavigationmain] {
     max-height: 15rem;
   }
 
-  .table {
+  tui-scrollbar.pairs-scroll {
     grid-column: 1/1;
     grid-row: 3/3;
   }
