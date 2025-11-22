@@ -2,157 +2,164 @@
 <main tuiNavigationMain>
   <app-navigation />
   <section class="home-wrapper">
-    <div class="information">
-      <div class="avatar">
-        <img alt="avatar" src="/assets/img/avatar.jpg" class="avatar_img" />
+    <div class="left-column">
+      <div class="information">
+        <div class="avatar">
+          <img alt="avatar" src="/assets/img/avatar.jpg" class="avatar_img" />
+        </div>
+        <div class="user_info">
+          @if (userName.value(); as value) {
+            <h3 class="user_info__name">
+              {{ value }}
+            </h3>
+          }
+          @if (userName.isLoading()) {
+            <tui-loader size="s"></tui-loader>
+          }
+          @if (userElo.value(); as count) {
+            <h4 class="user_info__game">
+              {{ "home.elo" | translate }}{{ count }}
+            </h4>
+          }
+          @if (!userElo.value()) {
+            <h4 class="user_info__game">{{ "home.elo" | translate }}{{ 0 }}</h4>
+          }
+          @if (winedGamesCount.value(); as count) {
+            <h4 class="user_info__game">
+              {{ "home.winedGames" | translate }}{{ count }}
+            </h4>
+          }
+          @if (!winedGamesCount.value()) {
+            <h4 class="user_info__game">
+              {{ "home.winedGames" | translate }}{{ 0 }}
+            </h4>
+          }
+          @if (winedGamesCount.isLoading()) {
+            <tui-loader size="s"></tui-loader>
+          }
+          @if (playedGamesCount.value(); as count) {
+            <h4 class="user_info__game">
+              {{ "home.playedGames" | translate }}{{ count }}
+            </h4>
+          }
+          @if (!playedGamesCount.value()) {
+            <h4 class="user_info__game">
+              {{ "home.playedGames" | translate }}{{ 0 }}
+            </h4>
+          }
+          @if (playedGamesCount.isLoading()) {
+            <tui-loader size="s"></tui-loader>
+          }
+          <p class="user_info__text">
+            {{ "home.phone" | translate }}{{ phoneNumber }}
+          </p>
+          <p class="user_info__text">
+            {{ "home.lastSignIn" | translate }}{{ lastSignInData | date }}
+          </p>
+        </div>
       </div>
-      <div class="user_info">
-        @if (userName.value(); as value) {
-          <h3 class="user_info__name">
-            {{ value }}
-          </h3>
-        }
-        @if (userName.isLoading()) {
-          <tui-loader size="s"></tui-loader>
-        }
-        @if (userElo.value(); as count) {
-          <h4 class="user_info__game">
-            {{ "home.elo" | translate }}{{ count }}
-          </h4>
-        }
-        @if (!userElo.value()) {
-          <h4 class="user_info__game">{{ "home.elo" | translate }}{{ 0 }}</h4>
-        }
-        @if (winedGamesCount.value(); as count) {
-          <h4 class="user_info__game">
-            {{ "home.winedGames" | translate }}{{ count }}
-          </h4>
-        }
-        @if (!winedGamesCount.value()) {
-          <h4 class="user_info__game">
-            {{ "home.winedGames" | translate }}{{ 0 }}
-          </h4>
-        }
-        @if (winedGamesCount.isLoading()) {
-          <tui-loader size="s"></tui-loader>
-        }
-        @if (playedGamesCount.value(); as count) {
-          <h4 class="user_info__game">
-            {{ "home.playedGames" | translate }}{{ count }}
-          </h4>
-        }
-        @if (!playedGamesCount.value()) {
-          <h4 class="user_info__game">
-            {{ "home.playedGames" | translate }}{{ 0 }}
-          </h4>
-        }
-        @if (playedGamesCount.isLoading()) {
-          <tui-loader size="s"></tui-loader>
-        }
-        <p class="user_info__text">
-          {{ "home.phone" | translate }}{{ phoneNumber }}
-        </p>
-        <p class="user_info__text">
-          {{ "home.lastSignIn" | translate }}{{ lastSignInData | date }}
-        </p>
+      <div class="game-settings">
+        <h3>{{ "home.choseColor" | translate }}</h3>
+        <form class="form">
+          <label
+            class="radio-label"
+            for="black"
+            [class.selected]="chosenColor() === 'black'"
+          >
+            <input
+              type="radio"
+              id="black"
+              value="black"
+              [checked]="chosenColor() === 'black'"
+              (input)="setColor($event)"
+              class="radio-input"
+            />
+            <img
+              src="/assets/img/black.jpg"
+              alt="color"
+              class="radio-input_img"
+            />
+          </label>
+          <label
+            class="radio-label"
+            for="white"
+            [class.selected]="chosenColor() === 'white'"
+          >
+            <input
+              type="radio"
+              id="white"
+              value="white"
+              [checked]="chosenColor() === 'white'"
+              (input)="setColor($event)"
+              class="radio-input"
+            />
+            <img
+              src="/assets/img/white.jpg"
+              alt="color"
+              class="radio-input_img"
+            />
+          </label>
+        </form>
+        <button
+          size="m"
+          tuiButton
+          type="button"
+          class="button"
+          (click)="playGame()"
+        >
+          {{ "home.play" | translate }}
+        </button>
       </div>
     </div>
-    <div class="game-settings">
-      <h3>{{ "home.choseColor" | translate }}</h3>
-      <form class="form">
-        <label
-          class="radio-label"
-          for="black"
-          [class.selected]="chosenColor() === 'black'"
-        >
-          <input
-            type="radio"
-            id="black"
-            value="black"
-            [checked]="chosenColor() === 'black'"
-            (input)="setColor($event)"
-            class="radio-input"
-          />
-          <img
-            src="/assets/img/black.jpg"
-            alt="color"
-            class="radio-input_img"
-          />
-        </label>
-        <label
-          class="radio-label"
-          for="white"
-          [class.selected]="chosenColor() === 'white'"
-        >
-          <input
-            type="radio"
-            id="white"
-            value="white"
-            [checked]="chosenColor() === 'white'"
-            (input)="setColor($event)"
-            class="radio-input"
-          />
-          <img
-            src="/assets/img/white.jpg"
-            alt="color"
-            class="radio-input_img"
-          />
-        </label>
-      </form>
-      <button
-        size="m"
-        tuiButton
-        type="button"
-        class="button"
-        (click)="playGame()"
-      >
-        {{ "home.play" | translate }}
-      </button>
-    </div>
-    <tui-loader [overlay]="true" [showLoader]="loading()" class="table">
-      <table tuiTable>
-        <thead>
-          <tr tuiThGroup>
-            <th tuiTh>{{ "home.date" | translate }}</th>
-            <th tuiTh>{{ "home.result" | translate }}</th>
-            <th tuiTh>{{ "home.action" | translate }}</th>
-          </tr>
-        </thead>
-        <tbody tuiTbody [data]="usersGames.value()?.games ?? []">
-          @for (game of usersGames.value()?.games; track game.id) {
-            <tr tuiTr>
-              <td tuiTd>
-                {{ game.created_at | date }}
-                {{ game.created_at | tuiFormatDate | async }}
-              </td>
-              <td tuiTd>{{ `home.${game.result}` | translate }}</td>
-              <td tuiTd>
-                <button
-                  size="m"
-                  tuiButton
-                  type="button"
-                  (click)="replyGame(game.id)"
-                >
-                  {{ "home.replay" | translate }}
-                </button>
+    <tui-scrollbar class="pairs-scroll">
+      <div class="moves-scroll">
+        <table tuiTable>
+          <thead>
+            <tr tuiThGroup>
+              <th tuiTh>{{ "home.date" | translate }}</th>
+              <th tuiTh>{{ "home.result" | translate }}</th>
+              <th tuiTh>{{ "home.action" | translate }}</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody [data]="tableData()">
+            @for (game of tableData(); track game.id) {
+              <tr tuiTr>
+                <td tuiTd>
+                  {{ game.created_at | date }}
+                  {{ game.created_at | tuiFormatDate | async }}
+                </td>
+                <td tuiTd>{{ `home.${game.result}` | translate }}</td>
+                <td tuiTd>
+                  <button
+                    size="m"
+                    tuiButton
+                    type="button"
+                    (click)="replyGame(game.id)"
+                  >
+                    {{ "home.replay" | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td [colSpan]="columns.length">
+                <div class="page-info">
+                  Page <strong>{{ page() + 1 }}</strong>
+                </div>
+                <tui-table-pagination
+                  class="tui-space_top-2"
+                  [page]="page()"
+                  [size]="size()"
+                  [total]="total()"
+                  (paginationChange)="onPagination($event)"
+                />
               </td>
             </tr>
-          }
-        </tbody>
-        <tfoot>
-          <tr>
-            <td [colSpan]="columns.length">
-              <tui-table-pagination
-                class="tui-space_top-2"
-                [page]="page()"
-                [size]="size()"
-                [total]="total()"
-                (paginationChange)="onPagination($event)"
-              />
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </tui-loader>
+          </tfoot>
+        </table>
+      </div>
+    </tui-scrollbar>
   </section>
 </main>

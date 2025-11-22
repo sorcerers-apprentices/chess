@@ -10,7 +10,12 @@ import {
 import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { TranslatePipe } from '@ngx-translate/core';
-import { TuiButton, TuiFormatDatePipe, TuiLoader } from '@taiga-ui/core';
+import {
+  TuiButton,
+  TuiFormatDatePipe,
+  TuiLoader,
+  TuiScrollbar,
+} from '@taiga-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { UserSupabaseService } from '@/app/services/user-supabase.service';
@@ -35,6 +40,12 @@ import {
   TuiTableTr,
 } from '@taiga-ui/addon-table';
 import { loadGame } from '@/app/store/actions/game.actions';
+import type { GameModel } from '@/app/types/supabase-game.type';
+
+type UsersGamesPage = {
+  games: GameModel[];
+  count: number;
+};
 
 @Component({
   selector: 'app-game-page',
@@ -56,6 +67,7 @@ import { loadGame } from '@/app/store/actions/game.actions';
     TuiTable,
     TuiFormatDatePipe,
     AsyncPipe,
+    TuiScrollbar,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
@@ -80,9 +92,15 @@ export class HomePage {
   protected readonly routerParams = toSignal(this.activatedRoute.queryParams, {
     initialValue: this.activatedRoute.snapshot.queryParams,
   });
+
   protected readonly pageParamEffect = effect(() => {
-    this.page.set(this.routerParams()['page'] ?? 0);
-    this.size.set(this.routerParams()['size'] ?? 10);
+    const params = this.routerParams();
+
+    const pageIndexParam = Number(params['page'] ?? 0);
+    const sizeParam = Number(params['size'] ?? 10);
+
+    this.page.set(Number.isNaN(pageIndexParam) ? 0 : pageIndexParam);
+    this.size.set(Number.isNaN(sizeParam) ? 10 : sizeParam);
   });
 
   protected userName = rxResource({
@@ -116,19 +134,35 @@ export class HomePage {
   protected columns = ['number', 'date', 'result', ''];
 
   protected usersGames = rxResource({
-    params: () => ({
-      userId: this.authService.getUserData().user.id,
-      size: this.size(),
-      offset: this.page() * this.size(),
-    }),
+    params: () => {
+      const params = {
+        userId: this.authService.getUserData().user.id,
+        size: this.size(),
+        offset: this.page() * this.size(),
+      };
+      return params;
+    },
     stream: ({ params }) => from(this.userSupabaseService.fetchGames(params)),
   });
 
-  protected readonly loading = computed(() => !this.usersGames.value());
+  protected readonly usersGamesView = signal<UsersGamesPage>({
+    games: [],
+    count: 0,
+  });
 
-  protected readonly total = computed(
-    () => this.usersGames.value()?.count ?? 0,
-  );
+  protected readonly updateUsersGamesViewEffect = effect(() => {
+    const value = this.usersGames.value(); // может быть undefined во время загрузки
+
+    if (value) {
+      this.usersGamesView.set(value);
+    }
+  });
+
+  protected readonly tableData = computed(() => this.usersGamesView().games);
+
+  protected readonly total = computed(() => this.usersGamesView().count);
+
+  protected readonly loading = this.usersGames.isLoading;
 
   protected onPagination({ page, size }: TuiTablePaginationEvent): void {
     this.router.navigate([], {
