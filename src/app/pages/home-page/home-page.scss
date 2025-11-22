@@ -61,8 +61,8 @@ tui-scrollbar.pairs-scroll {
 }
 
 table[tuiTable] {
-  width: max-content;
-  max-width: 68rem;
+  table-layout: fixed;
+  white-space: nowrap;
 }
 
 .avatar {
@@ -155,7 +155,6 @@ table[tuiTable] {
 
 @media (width <= 850px) {
   .home-wrapper {
-    // gap: 0.8rem;
     justify-items: start;
   }
 

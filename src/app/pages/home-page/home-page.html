@@ -121,8 +121,8 @@
               <th tuiTh>{{ "home.action" | translate }}</th>
             </tr>
           </thead>
-          <tbody tuiTbody [data]="usersGames.value()?.games ?? []">
-            @for (game of usersGames.value()?.games; track game.id) {
+          <tbody tuiTbody [data]="tableData()">
+            @for (game of tableData(); track game.id) {
               <tr tuiTr>
                 <td tuiTd>
                   {{ game.created_at | date }}

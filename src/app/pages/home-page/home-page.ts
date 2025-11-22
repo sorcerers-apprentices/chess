@@ -40,6 +40,12 @@ import {
   TuiTableTr,
 } from '@taiga-ui/addon-table';
 import { loadGame } from '@/app/store/actions/game.actions';
+import type { GameModel } from '@/app/types/supabase-game.type';
+
+type UsersGamesPage = {
+  games: GameModel[];
+  count: number;
+};
 
 @Component({
   selector: 'app-game-page',
@@ -86,6 +92,7 @@ export class HomePage {
   protected readonly routerParams = toSignal(this.activatedRoute.queryParams, {
     initialValue: this.activatedRoute.snapshot.queryParams,
   });
+
   protected readonly pageParamEffect = effect(() => {
     const params = this.routerParams();
 
@@ -126,10 +133,6 @@ export class HomePage {
 
   protected columns = ['number', 'date', 'result', ''];
 
-  protected readonly totalPages = computed(() =>
-    Math.ceil(this.total() / this.size() || 1),
-  );
-
   protected usersGames = rxResource({
     params: () => {
       const params = {
@@ -137,17 +140,29 @@ export class HomePage {
         size: this.size(),
         offset: this.page() * this.size(),
       };
-      console.log('fetchGames params', params);
       return params;
     },
     stream: ({ params }) => from(this.userSupabaseService.fetchGames(params)),
   });
 
-  protected readonly loading = computed(() => !this.usersGames.value());
+  protected readonly usersGamesView = signal<UsersGamesPage>({
+    games: [],
+    count: 0,
+  });
 
-  protected readonly total = computed(
-    () => this.usersGames.value()?.count ?? 0,
-  );
+  protected readonly updateUsersGamesViewEffect = effect(() => {
+    const value = this.usersGames.value(); // может быть undefined во время загрузки
+
+    if (value) {
+      this.usersGamesView.set(value);
+    }
+  });
+
+  protected readonly tableData = computed(() => this.usersGamesView().games);
+
+  protected readonly total = computed(() => this.usersGamesView().count);
+
+  protected readonly loading = this.usersGames.isLoading;
 
   protected onPagination({ page, size }: TuiTablePaginationEvent): void {
     this.router.navigate([], {
