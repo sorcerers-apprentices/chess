@@ -18,8 +18,8 @@ import {
 } from '@taiga-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { UserSupabaseService } from '@/app/services/user-supabase.service';
-import { AuthService } from '@/app/services/auth.service';
+import { UserSupabaseService } from '@/app/services/supabase/user-supabase.service';
+import { AuthService } from '@/app/services/supabase/auth.service';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { from, map } from 'rxjs';

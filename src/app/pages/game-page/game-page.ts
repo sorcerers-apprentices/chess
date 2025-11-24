@@ -26,7 +26,7 @@ import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
 import { GameService } from '@/app/services/game.service';
 import type { Chess, Color, Square } from 'chess.js';
-import { GameSupabaseService } from '@/app/services/game-supabase.service';
+import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
 import { loadGame } from '@/app/store/actions/game.actions';
 import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 import { load } from '@/app/utilities/chess-piece';

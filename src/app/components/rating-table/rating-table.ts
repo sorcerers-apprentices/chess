@@ -10,8 +10,8 @@ import type { OnInit } from '@angular/core';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import type { UserData } from '@/app/services/user-supabase.service';
-import { UserSupabaseService } from '@/app/services/user-supabase.service';
+import type { UserData } from '@/app/services/supabase/user-supabase.service';
+import { UserSupabaseService } from '@/app/services/supabase/user-supabase.service';
 
 type UserWithRankType = {
   rank: number;

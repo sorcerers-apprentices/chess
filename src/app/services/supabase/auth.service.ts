@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type {
   SavedUserData,
   SignInCredentialsType,
@@ -7,23 +7,17 @@ import type {
 import {
   type AuthResponse,
   type AuthTokenResponsePassword,
-  createClient,
-  type SupabaseClient,
 } from '@supabase/supabase-js';
 import { environment } from '@/environments/environment.development';
 import { LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
+import { SupabaseService } from '@/app/services/supabase/supabase.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = environment.apiUrl;
-  private readonly publishableKey = environment.publishableKey;
-  private readonly redirectUrl = environment.redirectURL;
-  private readonly supabase: SupabaseClient = createClient(
-    this.apiUrl,
-    this.publishableKey,
-  );
+  private readonly supabase = inject(SupabaseService).client;
+  private readonly redirectUrl: string = environment.redirectURL;
 
   public async signup(
     credentials: SignUpCredentialsType,

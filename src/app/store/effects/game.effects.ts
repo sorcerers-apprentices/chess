@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { GameSupabaseService } from '@/app/services/game-supabase.service';
+import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
 import {
   gameOver,
   gameOverSuccess,
@@ -16,7 +16,7 @@ import {
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
 import { filter, from, map, switchMap, tap } from 'rxjs';
-import { AuthService } from '@/app/services/auth.service';
+import { AuthService } from '@/app/services/supabase/auth.service';
 import type { GameStateType } from '@/app/store/states/game.state';
 import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
