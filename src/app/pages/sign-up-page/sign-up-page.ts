@@ -51,7 +51,7 @@ import {
   upperCasePresent,
 } from '../../utilities/validation-funtions';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '@/app/services/auth.service';
+import { AuthService } from '@/app/services/supabase/auth.service';
 import { Router } from '@angular/router';
 
 @Component({

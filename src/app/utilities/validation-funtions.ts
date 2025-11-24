@@ -6,7 +6,7 @@ import type {
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { inject } from '@angular/core';
-import { UserSupabaseService } from '@/app/services/user-supabase.service';
+import { UserSupabaseService } from '@/app/services/supabase/user-supabase.service';
 
 export function noWhitespace(): ValidatorFn {
   const translateService = inject(TranslateService);

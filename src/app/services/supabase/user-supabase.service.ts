@@ -1,8 +1,6 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
-import { Injectable } from '@angular/core';
-import { environment } from '@/environments/environment.development';
+import { inject, Injectable } from '@angular/core';
 import type { GameModel } from '@/app/types/supabase-game.type';
+import { SupabaseService } from '@/app/services/supabase/supabase.service';
 
 export type UserData = {
   display_name: string;
@@ -13,12 +11,7 @@ export type UserData = {
   providedIn: 'root',
 })
 export class UserSupabaseService {
-  private readonly apiUrl = environment.apiUrl;
-  private readonly publishableKey = environment.publishableKey;
-  private readonly supabase: SupabaseClient = createClient(
-    this.apiUrl,
-    this.publishableKey,
-  );
+  private readonly supabase = inject(SupabaseService).client;
 
   public async fetchUsernameExists(displayName: string): Promise<boolean> {
     const { data, error } = await this.supabase

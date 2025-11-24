@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { switchMap } from 'rxjs';
 import { updateElo, updateEloSuccess } from '@/app/store/actions/user.actions';
-import { AuthService } from '@/app/services/auth.service';
-import { GameSupabaseService } from '@/app/services/game-supabase.service';
+import { AuthService } from '@/app/services/supabase/auth.service';
+import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
 
 @Injectable({
   providedIn: 'root',

@@ -33,8 +33,8 @@ import {
   noValidEmailFormat,
   noWhitespace,
 } from '@/app/utilities/validation-funtions';
-import { AuthService } from '@/app/services/auth.service';
-import { UserSupabaseService } from '@/app/services/user-supabase.service';
+import { AuthService } from '@/app/services/supabase/auth.service';
+import { UserSupabaseService } from '@/app/services/supabase/user-supabase.service';
 
 @Component({
   selector: 'app-sign-in-page',
