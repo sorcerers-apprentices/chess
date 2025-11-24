@@ -47,6 +47,7 @@ import {
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
+import { StockfishService } from '@/app/services/stockfish/stockfish.service';
 
 @Component({
   selector: 'app-game-page',
@@ -69,11 +70,13 @@ export class GamePage {
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
   public readonly id: InputSignal<string> = input.required<string>();
+
   protected readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
   protected readonly gameSupabaseService: GameSupabaseService =
     inject(GameSupabaseService);
   protected readonly gameService: GameService = inject(GameService);
+  protected readonly stockfish = inject(StockfishService);
   protected readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
   );
@@ -224,5 +227,11 @@ export class GamePage {
   public goHome(): void {
     this.leaveBypass.bypassOnce();
     this.router.navigate(['/home']);
+  }
+
+  public askEngine(): void {
+    // пример: запросить лучший ход из стартовой позиции
+    this.stockfish.sendCommand('position startpos');
+    this.stockfish.sendCommand('go depth 10');
   }
 }
