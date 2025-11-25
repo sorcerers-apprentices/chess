@@ -162,8 +162,6 @@ export class HomePage {
 
   protected readonly total = computed(() => this.usersGamesView().count);
 
-  protected readonly loading = this.usersGames.isLoading;
-
   protected onPagination({ page, size }: TuiTablePaginationEvent): void {
     this.router.navigate([], {
       relativeTo: this.activatedRoute,

@@ -226,12 +226,6 @@ export class GamePage {
 
   public goHome(): void {
     this.leaveBypass.bypassOnce();
-    this.router.navigate(['/home']);
-  }
-
-  public askEngine(): void {
-    // пример: запросить лучший ход из стартовой позиции
-    this.stockfish.sendCommand('position startpos');
-    this.stockfish.sendCommand('go depth 10');
+    this.router.navigate(['/home']).then();
   }
 }
