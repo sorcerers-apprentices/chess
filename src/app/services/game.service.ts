@@ -20,6 +20,8 @@ import { computed, inject, Injectable } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { clone, load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
+import { EngineService } from '@/app/services/stockfish/engine.service';
+import type { PromotionPiece } from '@/app/types/stockfish.type';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -34,6 +36,7 @@ export type BoardMatrix = (Piece | null)[][];
 export class GameService {
   private readonly store = inject<Store<AppStateType>>(Store);
   private readonly elo = inject(EloService);
+  private readonly engine = inject(EngineService);
 
   private readonly pgn = this.store.selectSignal(selectChess);
   private readonly game = computed(() => load(this.pgn()));
@@ -45,10 +48,14 @@ export class GameService {
     this.store.dispatch(newGame({ initialFen: fen, orientation }));
   }
 
-  public playMove(from: Square, to: Square): boolean {
+  public playMove(
+    from: Square,
+    to: Square,
+    promotion: PromotionPiece = 'q',
+  ): boolean {
     try {
       const chess = clone(this.game());
-      const move = chess.move({ from, to, promotion: 'q' });
+      const move = chess.move({ from, to, promotion });
       if (move === null) return false;
 
       const newFen = chess.fen();

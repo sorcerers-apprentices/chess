@@ -83,6 +83,7 @@ export class OpponentRunnerService {
 
       if (sameGame && notOver && opponentTurnNow) {
         this.gameService.playOpponentMove();
+        //this.gameService.playEngineMove();
       }
     }, this.delayMs);
 

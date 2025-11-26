@@ -110,6 +110,7 @@ export class StockfishService implements OnDestroy {
   }
 
   private pushLog(message: string): void {
+    console.log(message);
     this.log.update((current) => {
       const next = [...current, message];
       if (next.length > this.maxLogLength) {
@@ -120,6 +121,20 @@ export class StockfishService implements OnDestroy {
   }
 
   private handleEngineOutput(line: string): void {
+    if (line.startsWith('info ')) {
+      this.lastInfoLine.set(line);
+      return;
+    }
+
+    if (
+      line.startsWith('option ') ||
+      line.startsWith('id name') ||
+      line.startsWith('id author') ||
+      line.startsWith('Stockfish ')
+    ) {
+      return;
+    }
+
     this.pushLog(`<<< ${line}`);
 
     if (line === 'uciok') {
@@ -129,11 +144,6 @@ export class StockfishService implements OnDestroy {
 
     if (line === 'readyok') {
       this.status.set('ready');
-      return;
-    }
-
-    if (line.startsWith('info ')) {
-      this.lastInfoLine.set(line);
       return;
     }
 

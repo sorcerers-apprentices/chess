@@ -24,7 +24,21 @@
     <aside class="game-settings">
       <app-game-settings />
     </aside>
-    <section class="game-extra-right"><!-- справа --></section>
+
+    <section class="game-extra-right">
+      <p>Engine status: {{ engineStatus }}</p>
+      <button
+        type="button"
+        tuiButton
+        size="m"
+        appearance="secondary"
+        aria-label="Engine move"
+        title="Engine move"
+        (click)="onEngineMoveClick()"
+      >
+        <tui-icon icon="@tui.play" />
+      </button>
+    </section>
   </section>
 </main>
 

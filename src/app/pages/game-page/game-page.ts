@@ -37,6 +37,7 @@ import {
 import type { AppStateType } from '@/app/store/states/app.state';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameViewerService } from '@/app/services/game-viewer.service';
@@ -60,6 +61,7 @@ import { StockfishService } from '@/app/services/stockfish/stockfish.service';
     GameSettings,
     TuiButton,
     TranslatePipe,
+    TuiIcon,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',
@@ -168,6 +170,10 @@ export class GamePage {
     }
   });
 
+  public get engineStatus(): string {
+    return this.stockfish.status();
+  }
+
   public onBoardDragStart(from: Square): void {
     // чей ход
     const turnPiece: Color = this.gameService.turn();
@@ -227,5 +233,10 @@ export class GamePage {
   public goHome(): void {
     this.leaveBypass.bypassOnce();
     this.router.navigate(['/home']).then();
+  }
+
+  public onEngineMoveClick(): void {
+    this.stockfish.setFen(this.fen());
+    this.stockfish.analyzeDepth(12);
   }
 }
