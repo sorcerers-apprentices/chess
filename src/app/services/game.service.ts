@@ -22,6 +22,7 @@ import { clone, load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { EngineService } from '@/app/services/stockfish/engine.service';
 import type { PromotionPiece } from '@/app/types/stockfish.type';
+import type { PieceColorType } from '@/app/types/chess-square.type';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -208,5 +209,75 @@ export class GameService {
 
     const squares: Square[] = game.findPiece({ type: 'k', color: targetColor });
     return squares.length > 0 ? squares[0] : null;
+  }
+
+  public async playEngineMove(): Promise<MoveRecordType | null> {
+    // партия уже закончена — ничего не делаем
+    if (this.isFinished()) return null;
+
+    try {
+      // текущее состояние партии
+      const chess = this.game();
+      const fen = chess.fen();
+
+      // чей ход по мнению chess.js
+      const sideToMove = chess.turn() === 'w' ? 'white' : 'black';
+
+      // цвет игрока (выбран на HomePage и хранится в сторе)
+      const me: PieceColorType = this.orientation();
+
+      // движок играет за противоположный цвет
+      const engineSide: PieceColorType = me === 'white' ? 'black' : 'white';
+
+      // если сейчас не очередь движка — выходим
+      if (sideToMove !== engineSide) {
+        return null;
+      }
+
+      // запрос у движка лучшего хода из текущей позиции
+      const best = await this.engine.getBestMove(fen);
+
+      if (!best) {
+        console.warn('[GameService] Engine returned no move');
+        return null;
+      }
+
+      // ход к локальной копии позиции
+      const moveResult = chess.move({
+        from: best.from,
+        to: best.to,
+        promotion: best.promotion ?? 'q',
+      });
+
+      if (moveResult === null) {
+        console.warn('[GameService] Engine move is invalid:', best);
+        return null;
+      }
+
+      const newFen = chess.fen();
+      const newPgn = chess.pgn();
+
+      const moveRecord: MoveRecordType = {
+        uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
+        san: moveResult.san,
+        move: moveResult,
+        fenAfter: newFen,
+        timestamp: Date.now(),
+      };
+
+      // ещё раз проверка перед диспатчем
+      if (this.isFinished()) {
+        return null;
+      }
+
+      this.store.dispatch(playMove({ fen: newFen, moveRecord, pgn: newPgn }));
+
+      this.handleGameEnd(chess);
+
+      return moveRecord;
+    } catch (error) {
+      console.error('[GameService] playEngineMove failed:', error);
+      return null;
+    }
   }
 }

@@ -82,8 +82,8 @@ export class OpponentRunnerService {
       const opponentTurnNow = activeNow !== meNow;
 
       if (sameGame && notOver && opponentTurnNow) {
-        this.gameService.playOpponentMove();
-        //this.gameService.playEngineMove();
+        //this.gameService.playOpponentMove();
+        this.gameService.playEngineMove().then();
       }
     }, this.delayMs);
 
