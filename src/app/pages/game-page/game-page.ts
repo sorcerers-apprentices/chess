@@ -37,6 +37,7 @@ import {
 import type { AppStateType } from '@/app/store/states/app.state';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameViewerService } from '@/app/services/game-viewer.service';
@@ -47,6 +48,7 @@ import {
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
+import { StockfishService } from '@/app/services/stockfish/stockfish.service';
 
 @Component({
   selector: 'app-game-page',
@@ -59,6 +61,7 @@ import type { ResultVariant } from '@/app/types/chess-piece.type';
     GameSettings,
     TuiButton,
     TranslatePipe,
+    TuiIcon,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',
@@ -69,11 +72,13 @@ export class GamePage {
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
   public readonly id: InputSignal<string> = input.required<string>();
+
   protected readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
   protected readonly gameSupabaseService: GameSupabaseService =
     inject(GameSupabaseService);
   protected readonly gameService: GameService = inject(GameService);
+  protected readonly stockfish = inject(StockfishService);
   protected readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
   );
@@ -165,6 +170,10 @@ export class GamePage {
     }
   });
 
+  public get engineStatus(): string {
+    return this.stockfish.status();
+  }
+
   public onBoardDragStart(from: Square): void {
     // чей ход
     const turnPiece: Color = this.gameService.turn();
@@ -223,6 +232,11 @@ export class GamePage {
 
   public goHome(): void {
     this.leaveBypass.bypassOnce();
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home']).then();
+  }
+
+  public onEngineMoveClick(): void {
+    this.stockfish.setFen(this.fen());
+    this.stockfish.analyzeDepth(12);
   }
 }
