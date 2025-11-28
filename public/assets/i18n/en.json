@@ -60,7 +60,22 @@
     "playedGames": "Played Games: ",
     "phone": "Phone: ",
     "lastSignIn": "Last sign in: ",
-    "choseColor": "Chose color:",
+    "chooseColor": "Choose color",
+    "chooseDifficulty": "Choose difficulty",
+    "difficulty": {
+      "easy": {
+        "label": "Easy",
+        "description": "AI plays inconsistently and often makes mistakes. Good for beginners."
+      },
+      "medium": {
+        "label": "Medium",
+        "description": "AI plays confidently but can still make mistakes."
+      },
+      "hard": {
+        "label": "Hard",
+        "description": "AI plays strongly and almost never blunder."
+      }
+    },
     "elo": "ELO: ",
     "date": "Date",
     "result": "Result",

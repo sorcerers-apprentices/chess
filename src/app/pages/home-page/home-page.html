@@ -59,7 +59,7 @@
         </div>
       </div>
       <div class="game-settings">
-        <h3>{{ "home.choseColor" | translate }}</h3>
+        <h3 class="choose-game">{{ "home.chooseColor" | translate }}</h3>
         <form class="form">
           <label
             class="radio-label"
@@ -100,6 +100,31 @@
             />
           </label>
         </form>
+        <div class="difficulty">
+          <h3 class="choose-game">{{ "home.chooseDifficulty" | translate }}</h3>
+          @for (item of difficulties; track item.value) {
+            <label class="difficulty-option">
+              <div class="difficulty-body">
+                <input
+                  type="radio"
+                  name="difficulty"
+                  [value]="item.value"
+                  [checked]="selectedDifficulty() === item.value"
+                  (change)="onDifficultyChange(item.value)"
+                />
+                <div class="difficulty-radio">
+                  <div class="dot"></div>
+                </div>
+                <div class="difficulty-label">
+                  {{ item.labelKey | translate }}
+                </div>
+              </div>
+              <div class="difficulty-description">
+                {{ item.descriptionKey | translate }}
+              </div>
+            </label>
+          }
+        </div>
         <button
           size="m"
           tuiButton
