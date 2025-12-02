@@ -79,6 +79,7 @@ export class GamePage {
     inject(GameSupabaseService);
   protected readonly gameService: GameService = inject(GameService);
   protected readonly stockfish = inject(StockfishService);
+
   protected readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
   );

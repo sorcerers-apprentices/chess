@@ -100,7 +100,7 @@ export class EngineService {
     }
   }
 
-  private getDifficultyConfig(): EngineDifficultyConfig {
+  public getDifficultyConfig(): EngineDifficultyConfig {
     return ENGINE_DIFFICULTY_PRESETS[this.currentDifficulty];
   }
 

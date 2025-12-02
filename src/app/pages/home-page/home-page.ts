@@ -46,6 +46,7 @@ import type { GameDifficulty } from '@/app/types/stockfish.type';
 import { DIFFICULTY_VALUES } from '@/app/types/stockfish.type';
 import { DIFFICULTY_OPTIONS } from '@/app/types/stockfish.type';
 import { ENGINE_DEFAULT_DIFFICULTY } from '@/app/constants/stockfish.constans';
+import { EngineService } from '@/app/services/stockfish/engine.service';
 
 type UsersGamesPage = {
   games: GameModel[];
@@ -86,6 +87,7 @@ export class HomePage {
   protected readonly authService = inject(AuthService);
   protected readonly gameService = inject(GameService);
   protected readonly userSupabaseService = inject(UserSupabaseService);
+  protected readonly engineService = inject(EngineService);
   protected readonly userId = this.authService.getUserData().user.id;
   protected phoneNumber =
     this.authService.getUserData().user.user_metadata.phone;
@@ -207,6 +209,7 @@ export class HomePage {
   }
 
   protected playGame(): void {
+    this.engineService.setDifficulty(this.selectedDifficulty());
     this.gameService.newGame(START_FEN, this.chosenColor());
   }
 }
