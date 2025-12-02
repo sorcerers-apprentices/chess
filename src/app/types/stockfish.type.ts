@@ -18,6 +18,8 @@ export type EngineMove = {
 
 export type GameDifficulty = 'easy' | 'medium' | 'hard';
 
+export const DIFFICULTY_VALUES: GameDifficulty[] = ['easy', 'medium', 'hard'];
+
 export type EngineDifficultyConfig = {
   depth: number;
   skill: number;
@@ -54,4 +56,24 @@ export type EngineRequestOptions = {
 export type WaitForBestMoveOptions = {
   timeoutMs: number;
   signal?: AbortSignal;
+};
+
+export type DifficultyOptionUI = {
+  labelKey: string;
+  descriptionKey: string;
+};
+
+export const DIFFICULTY_OPTIONS: Record<GameDifficulty, DifficultyOptionUI> = {
+  easy: {
+    labelKey: 'home.difficulty.easy.label',
+    descriptionKey: 'home.difficulty.easy.description',
+  },
+  medium: {
+    labelKey: 'home.difficulty.medium.label',
+    descriptionKey: 'home.difficulty.medium.description',
+  },
+  hard: {
+    labelKey: 'home.difficulty.hard.label',
+    descriptionKey: 'home.difficulty.hard.description',
+  },
 };

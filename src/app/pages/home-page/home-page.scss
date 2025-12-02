@@ -80,6 +80,10 @@ table[tuiTable] {
 .form {
   display: flex;
   gap: 0.4rem;
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
 }
 
 .radio-label {
@@ -135,6 +139,75 @@ table[tuiTable] {
 
 .page-info {
   margin-bottom: 0.5rem;
+}
+
+.difficulty {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}
+
+.choose-game {
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+}
+
+.difficulty-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .difficulty-body {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    .difficulty-radio {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--tui-background-accent-1-pressed);
+      border-radius: 50%;
+      background: white;
+      transition: 0.2s;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: transparent;
+      transition: background 0.2s;
+    }
+
+    input[type="radio"]:checked + .difficulty-radio .dot {
+      background-color: var(--tui-background-accent-1);
+    }
+
+    &:hover .difficulty-radio {
+      border-color: var(--tui-background-accent-1-pressed);
+    }
+  }
+
+  .difficulty-description {
+    max-width: 100%;
+    line-height: 1.4;
+    word-break: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
 }
 
 @media (width <= 1200px) {
