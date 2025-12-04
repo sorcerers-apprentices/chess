@@ -49,6 +49,7 @@ import {
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
 import { StockfishService } from '@/app/services/stockfish/stockfish.service';
+import { EnginePanel } from '@/app/components/engine-panel/engine-panel';
 
 @Component({
   selector: 'app-game-page',
@@ -62,6 +63,7 @@ import { StockfishService } from '@/app/services/stockfish/stockfish.service';
     TuiButton,
     TranslatePipe,
     TuiIcon,
+    EnginePanel,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',
@@ -78,7 +80,7 @@ export class GamePage {
   protected readonly gameSupabaseService: GameSupabaseService =
     inject(GameSupabaseService);
   protected readonly gameService: GameService = inject(GameService);
-  protected readonly stockfish = inject(StockfishService);
+  protected readonly stockfishService = inject(StockfishService);
 
   protected readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
@@ -172,7 +174,7 @@ export class GamePage {
   });
 
   public get engineStatus(): string {
-    return this.stockfish.status();
+    return this.stockfishService.status();
   }
 
   public onBoardDragStart(from: Square): void {
@@ -237,7 +239,7 @@ export class GamePage {
   }
 
   public onEngineMoveClick(): void {
-    this.stockfish.setFen(this.fen());
-    this.stockfish.analyzeDepth(12);
+    this.stockfishService.setFen(this.fen());
+    this.stockfishService.analyzeDepth(12);
   }
 }

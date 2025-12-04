@@ -1,7 +1,11 @@
 import type { OnDestroy } from '@angular/core';
 import { signal } from '@angular/core';
 import { Injectable } from '@angular/core';
-import type { BestMove, EngineStatus } from '@/app/types/stockfish.type';
+import type {
+  BestMove,
+  EngineEvaluation,
+  EngineStatus,
+} from '@/app/types/stockfish.type';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +15,8 @@ export class StockfishService implements OnDestroy {
   public readonly thinking = signal(false);
   public readonly lastBestMove = signal<BestMove | null>(null);
   public readonly lastInfoLine = signal<string | null>(null);
+  public readonly lastEvaluation = signal<EngineEvaluation | null>(null);
+  public readonly skillLevel = signal<number>(0);
   public readonly log = signal<string[]>([]);
 
   private worker: Worker | null = null;
@@ -29,6 +35,7 @@ export class StockfishService implements OnDestroy {
       this.worker.addEventListener('error', (event: ErrorEvent) => {
         console.error('Stockfish worker error:', event.message);
         this.status.set('error');
+        this.thinking.set(false);
 
         // завершить воркер
         this.worker?.terminate();
@@ -39,17 +46,16 @@ export class StockfishService implements OnDestroy {
     } catch (error) {
       console.error('Failed to initialize Stockfish worker', error);
       this.status.set('error');
+      this.thinking.set(false);
     }
   }
 
   public newGame(): void {
     this.lastBestMove.set(null);
+    this.lastEvaluation.set(null);
+    this.lastInfoLine.set(null);
     this.thinking.set(false);
     this.sendRaw('ucinewgame');
-  }
-
-  public setStartPosition(): void {
-    this.sendRaw('position startpos');
   }
 
   public setFen(fen: string): void {
@@ -66,6 +72,7 @@ export class StockfishService implements OnDestroy {
 
     this.lastBestMove.set(null);
     this.lastInfoLine.set(null);
+    this.lastEvaluation.set(null);
 
     this.sendRaw(`go depth ${depth}`);
   }
@@ -77,6 +84,7 @@ export class StockfishService implements OnDestroy {
 
   public setSkillLevel(level: number): void {
     const normalized = Math.min(20, Math.max(0, level));
+    this.skillLevel.set(normalized);
     this.sendRaw(`setoption name Skill Level value ${normalized}`);
   }
 
@@ -106,13 +114,14 @@ export class StockfishService implements OnDestroy {
     } catch (error) {
       console.error('Failed to send command to Stockfish:', error);
       this.status.set('error');
+      this.thinking.set(false);
     }
   }
 
   private pushLog(message: string): void {
     console.log(message);
-    this.log.update((current) => {
-      const next = [...current, message];
+    this.log.update((current: string[]): string[] => {
+      const next: string[] = [...current, message];
       if (next.length > this.maxLogLength) {
         next.shift();
       }
@@ -121,11 +130,6 @@ export class StockfishService implements OnDestroy {
   }
 
   private handleEngineOutput(line: string): void {
-    if (line.startsWith('info ')) {
-      this.lastInfoLine.set(line);
-      return;
-    }
-
     if (
       line.startsWith('option ') ||
       line.startsWith('id name') ||
@@ -136,6 +140,18 @@ export class StockfishService implements OnDestroy {
     }
 
     this.pushLog(`<<< ${line}`);
+
+    if (line.startsWith('info ')) {
+      this.lastInfoLine.set(line);
+
+      const evaluation = this.parseEvaluationFromInfo(line);
+      if (evaluation) {
+        this.lastEvaluation.set(evaluation);
+      }
+      return;
+    }
+
+    //this.pushLog(`<<< ${line}`);
 
     if (line === 'uciok') {
       this.sendRaw('isready');
@@ -157,7 +173,7 @@ export class StockfishService implements OnDestroy {
 
   private parseBestMove(line: string): BestMove {
     const parts = line.split(/\s+/);
-    const move = parts[1] ?? '';
+    const bestMove = parts[1] ?? '';
     let ponder: string | undefined;
 
     const idx = parts.indexOf('ponder');
@@ -165,6 +181,42 @@ export class StockfishService implements OnDestroy {
       ponder = parts[idx + 1];
     }
 
-    return { move, ponder };
+    return { bestMove, ponder };
+  }
+
+  private parseEvaluationFromInfo(infoLine: string): EngineEvaluation | null {
+    const parts = infoLine.split(/\s+/);
+
+    const scoreIndex = parts.indexOf('score');
+    if (scoreIndex === -1) {
+      return null;
+    }
+
+    const type = parts[scoreIndex + 1]; // 'cp' or 'mate'
+    const valueRaw = parts[scoreIndex + 2];
+    if (!type || !valueRaw) {
+      return null;
+    }
+
+    const value = Number.parseInt(valueRaw, 10);
+    if (Number.isNaN(value)) {
+      return null;
+    }
+
+    if (type === 'cp') {
+      return {
+        cp: value,
+        mate: null,
+      };
+    }
+
+    if (type === 'mate') {
+      return {
+        cp: null,
+        mate: value,
+      };
+    }
+
+    return null;
   }
 }

@@ -47,6 +47,7 @@ import { DIFFICULTY_VALUES } from '@/app/types/stockfish.type';
 import { DIFFICULTY_OPTIONS } from '@/app/types/stockfish.type';
 import { ENGINE_DEFAULT_DIFFICULTY } from '@/app/constants/stockfish.constans';
 import { EngineService } from '@/app/services/stockfish/engine.service';
+import type { PieceColorType } from '@/app/types/chess-square.type';
 
 type UsersGamesPage = {
   games: GameModel[];
@@ -208,8 +209,14 @@ export class HomePage {
     }
   }
 
-  protected playGame(): void {
-    this.engineService.setDifficulty(this.selectedDifficulty());
-    this.gameService.newGame(START_FEN, this.chosenColor());
+  public playGame(): void {
+    const difficulty: GameDifficulty = this.selectedDifficulty();
+    const color: PieceColorType = this.chosenColor();
+
+    // готовим движок к новой партии (сложность + ucinewgame + сброс сигналов)
+    this.engineService.engineForNewGame(difficulty);
+
+    //запускаем новую игру в логике Chess / стора
+    this.gameService.newGame(START_FEN, color);
   }
 }

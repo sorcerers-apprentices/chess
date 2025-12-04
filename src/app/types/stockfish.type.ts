@@ -3,8 +3,14 @@ import type { Square } from 'chess.js';
 export type EngineStatus = 'not-ready' | 'ready' | 'error';
 
 export type BestMove = {
-  move: string;
-  ponder?: string;
+  bestMove: string;
+  ponder?: string | null;
+};
+
+// для позиции
+export type EngineEvaluation = {
+  cp: number | null; //  e.g. +34, -120
+  mate: number | null; //
 };
 
 export type PromotionPiece = 'q' | 'r' | 'b' | 'n';
@@ -76,4 +82,16 @@ export const DIFFICULTY_OPTIONS: Record<GameDifficulty, DifficultyOptionUI> = {
     labelKey: 'home.difficulty.hard.label',
     descriptionKey: 'home.difficulty.hard.description',
   },
+};
+
+export const STATUS_LABELS: Record<EngineStatus, string> = {
+  ready: 'Ready',
+  'not-ready': 'Initializing',
+  error: 'Error',
+};
+
+export const DIFFICULTY_LABELS: Record<GameDifficulty, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
 };

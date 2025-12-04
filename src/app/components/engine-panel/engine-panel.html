@@ -1,0 +1,134 @@
+<section class="engine-panel">
+  <div class="engine-panel__section">
+    <h3 class="engine-panel__title">Stockfish engine</h3>
+    <div class="engine-panel__status">
+      <span class="engine-panel__status-label"> Engine status: </span>
+      <span class="engine-panel__value">
+        {{ statusLabel() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- БЛОК: общая информация -->
+  <div class="engine-panel__section">
+    <h4 class="engine-panel__subtitle">General</h4>
+
+    <div class="engine-panel__row">
+      <span class="engine-panel__label">State: </span>
+      <span class="engine-panel__value">
+        {{ thinkingLabel() }}
+      </span>
+    </div>
+
+    <div class="engine-panel__row">
+      <span class="engine-panel__label">Difficulty: </span>
+      <span class="engine-panel__value">
+        {{ difficultyLabel() }}
+      </span>
+    </div>
+
+    <div class="engine-panel__row">
+      <span class="engine-panel__label">Skill level: </span>
+      <span class="engine-panel__value">
+        {{ skillLevelLabel() }}
+      </span>
+    </div>
+
+    <div class="engine-panel__row">
+      <span class="engine-panel__label">Search Depth: </span>
+      <span class="engine-panel__value">
+        {{ depthLabel() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- БЛОК: последний ход движка -->
+  <div class="engine-panel__section">
+    <h4 class="engine-panel__subtitle">Analysis</h4>
+
+    @if (hasLastBestMove()) {
+      <!-- 1) Move by Engine -->
+      <div class="engine-panel__row">
+        <span class="engine-panel__label"> Move by Stockfish engine: </span>
+        <span class="engine-panel__value">
+          {{ engineMoveHuman() }}
+        </span>
+      </div>
+
+      <!-- 2) Predicted Player Response -->
+      <div class="engine-panel__row">
+        <span class="engine-panel__label"> Predicted Player Response: </span>
+        <span class="engine-panel__value">
+          @if (hasPonder()) {
+            {{ playerPonderHuman() }}
+          } @else {
+            <span class="engine-panel__value engine-panel__value--muted">
+              — no prediction
+            </span>
+          }
+        </span>
+      </div>
+
+      <!-- 3) Best Move for Player (Hint) -->
+      <div class="engine-panel__row">
+        <span class="engine-panel__label"> Best Move for Player (Hint): </span>
+        <span class="engine-panel__value">
+          @if (hasHint()) {
+            {{ playerHintHuman() }}
+          } @else {
+            <button
+              type="button"
+              class="engine-panel__hint-button"
+              (click)="onShowHintClick()"
+            >
+              Show hint
+            </button>
+          }
+        </span>
+      </div>
+    } @else {
+      <div class="engine-panel__row">
+        <span class="engine-panel__label"> Move by Engine: </span>
+
+        <span class="engine-panel__value engine-panel__value--muted">
+          — not calculated yet
+        </span>
+      </div>
+    }
+  </div>
+
+  <!-- БЛОК: оценка позиции -->
+  <div class="engine-panel__section">
+    <h4 class="engine-panel__subtitle">Evaluation</h4>
+
+    @if (hasEvaluation()) {
+      <div class="engine-panel__row">
+        <span class="engine-panel__label"> Position </span>
+        <span class="engine-panel__value">
+          {{ positionSummaryLabel() }}
+        </span>
+      </div>
+    } @else {
+      <div class="engine-panel__row">
+        <span class="engine-panel__value engine-panel__value--muted">
+          No evaluation from Stockfish engine
+        </span>
+      </div>
+    }
+  </div>
+
+  <!-- БЛОК: лог — включим позже, когда решим, что именно показывать -->
+  <!--
+  <div class="engine-panel__section engine-panel__section--log">
+    <h4 class="engine-panel__subtitle">Лог движка</h4>
+
+    <div class="engine-panel__log">
+      @for (line of log(); track $index) {
+        <div class="engine-panel__log-line">
+          {{ line }}
+        </div>
+      }
+    </div>
+  </div>
+  -->
+</section>

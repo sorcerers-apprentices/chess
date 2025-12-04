@@ -24,7 +24,7 @@ function isSquare(value: string): value is Square {
   providedIn: 'root',
 })
 export class EngineService {
-  private readonly stockfish = inject(StockfishService);
+  private readonly stockfishService = inject(StockfishService);
 
   private currentDifficulty: GameDifficulty = ENGINE_DEFAULT_DIFFICULTY;
 
@@ -38,7 +38,7 @@ export class EngineService {
     const config = ENGINE_DIFFICULTY_PRESETS[difficulty];
 
     // официальная опция Stockfish: Skill Level 0–20
-    this.stockfish.setSkillLevel(config.skill);
+    this.stockfishService.setSkillLevel(config.skill);
 
     // UCI_Elo тут не трогаем, чтобы не смешивать с игровым рейтингом
   }
@@ -64,17 +64,17 @@ export class EngineService {
     } = options;
 
     try {
-      if (this.stockfish.status() !== 'ready') {
+      if (this.stockfishService.status() !== 'ready') {
         console.warn('Stockfish is not ready');
         return null;
       }
 
       // сбрасываем состояние перед новым анализом
-      this.stockfish.lastBestMove.set(null);
-      this.stockfish.lastInfoLine.set(null);
+      this.stockfishService.lastBestMove.set(null);
+      this.stockfishService.lastInfoLine.set(null);
 
-      this.stockfish.setFen(fen);
-      this.stockfish.analyzeDepth(depth);
+      this.stockfishService.setFen(fen);
+      this.stockfishService.analyzeDepth(depth);
 
       const bestRaw = await this.waitForBestMove({ timeoutMs, signal });
       const parsed = this.parseEngineMove(bestRaw);
@@ -89,19 +89,24 @@ export class EngineService {
 
         if (err.message === 'Stockfish did not return bestmove in time') {
           console.warn('Stockfish timeout:', err.message);
-          this.stockfish.stop();
+          this.stockfishService.stop();
           return null;
         }
       }
 
       console.error('Engine analysis failed:', err);
-      this.stockfish.stop();
+      this.stockfishService.stop();
       return null;
     }
   }
 
   public getDifficultyConfig(): EngineDifficultyConfig {
     return ENGINE_DIFFICULTY_PRESETS[this.currentDifficulty];
+  }
+
+  public engineForNewGame(difficulty: GameDifficulty): void {
+    this.setDifficulty(difficulty); // выставили skill
+    this.stockfishService.newGame(); // сбросили состояние движка
   }
 
   // ===============================
@@ -146,11 +151,11 @@ export class EngineService {
           return;
         }
 
-        const best = this.stockfish.lastBestMove(); // signal → читаем как функцию
+        const best = this.stockfishService.lastBestMove(); // signal → читаем как функцию
 
         if (best) {
           cleanup();
-          resolve(best.move); // напр. 'e7e8q'
+          resolve(best.bestMove); // напр. 'e7e8q'
           return;
         }
 
