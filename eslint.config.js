@@ -60,10 +60,11 @@ export default [
         {
           default: {
             memberTypes: [
-              // порядок групп, не зависящий от модификаторов
               "field",
               "constructor",
-              "method",
+              "public-method",
+              "protected-method",
+              "private-method",
             ],
             order: "as-written", // сохраняет порядок, как в коде
           },

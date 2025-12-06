@@ -121,10 +121,10 @@ export class EnginePanel {
   );
 
   public readonly hasLastBestMove: Signal<boolean> = computed(
-    () => this.lastBestMove() !== null,
+    (): boolean => this.lastBestMove() !== null,
   );
 
-  public readonly hasEvaluation = computed(() => {
+  public readonly hasEvaluation: Signal<boolean> = computed(() => {
     return this.stockfishService.lastEvaluation() !== null;
   });
 
@@ -160,7 +160,7 @@ export class EnginePanel {
     return this.formatUciMove(move.bestMove);
   });
 
-  public readonly positionSummaryLabel = computed(() => {
+  public readonly positionSummaryLabel: Signal<string> = computed(() => {
     const evalData = this.stockfishService.lastEvaluation();
 
     if (!evalData) {
@@ -200,6 +200,15 @@ export class EnginePanel {
       return ENGINE_DIFFICULTY_PRESETS[difficulty];
     });
 
+  public onShowHintClick(): void {
+    const currentFen = this.fen();
+
+    this.lastHintFen.set(currentFen);
+
+    this.stockfishService.setFen(currentFen);
+    this.stockfishService.analyzeDepth(12);
+  }
+
   private formatUciMove(uci: string): string {
     if (!uci || uci.length < 4) {
       return uci || '—';
@@ -209,14 +218,5 @@ export class EnginePanel {
     const to: string = uci.slice(2, 4);
 
     return `${from} → ${to}`;
-  }
-
-  public onShowHintClick(): void {
-    const currentFen = this.fen();
-
-    this.lastHintFen.set(currentFen);
-
-    this.stockfishService.setFen(currentFen);
-    this.stockfishService.analyzeDepth(12);
   }
 }
