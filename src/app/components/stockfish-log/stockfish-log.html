@@ -1,0 +1,37 @@
+<section class="engine-log">
+  <header class="engine-log__header">
+    <h2 class="engine-log__title">Stockfish engine log</h2>
+
+    <div class="engine-log__actions">
+      <button
+        type="button"
+        tuiButton
+        size="s"
+        appearance="secondary"
+        (click)="onBackClick()"
+      >
+        Back to game
+      </button>
+
+      <button
+        type="button"
+        tuiButton
+        size="s"
+        appearance="outline"
+        (click)="onClearClick()"
+      >
+        Clear log
+      </button>
+    </div>
+  </header>
+
+  @if (hasLines()) {
+    <div class="engine-log__list">
+      @for (line of log(); track $index) {
+        <pre class="engine-log__line">{{ line }}</pre>
+      }
+    </div>
+  } @else {
+    <p class="engine-log__empty">No messages from Stockfish engine yet.</p>
+  }
+</section>

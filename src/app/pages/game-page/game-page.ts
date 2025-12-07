@@ -244,4 +244,8 @@ export class GamePage {
     this.stockfishService.setFen(this.fen());
     this.stockfishService.analyzeDepth(12);
   }
+
+  public openEngineLog(): void {
+    this.router.navigate(['/engine-log']).then();
+  }
 }

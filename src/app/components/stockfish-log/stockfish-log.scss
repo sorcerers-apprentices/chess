@@ -1,0 +1,45 @@
+.engine-log {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 16px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #eee;
+    background: #111;
+  }
+
+  &__line {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  &__empty {
+    color: #666;
+  }
+}

@@ -83,7 +83,7 @@ type UsersGamesPage = {
 })
 export class HomePage {
   // 1. DI services
-  private readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
+  public readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
   private readonly router: Router = inject(Router);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly store: Store<AppStateType> =

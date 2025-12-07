@@ -39,6 +39,17 @@
         <tui-icon icon="@tui.play" />
       </button>
       <app-engine-panel [fen]="fen()"></app-engine-panel>
+      <button
+        type="button"
+        tuiButton
+        size="s"
+        appearance="secondary"
+        aria-label="Engine Log"
+        title="Engine Log"
+        (click)="openEngineLog()"
+      >
+        <tui-icon icon="@tui.play" />
+      </button>
     </section>
   </section>
 </main>
