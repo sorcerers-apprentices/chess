@@ -74,3 +74,13 @@
     align-items: center;
   }
 }
+
+.game-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}

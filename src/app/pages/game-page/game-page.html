@@ -26,18 +26,22 @@
     </aside>
 
     <section class="game-extra-right">
-      <p>Engine status: {{ engineStatus }}</p>
-      <button
-        type="button"
-        tuiButton
-        size="m"
-        appearance="secondary"
-        aria-label="Engine move"
-        title="Engine move"
-        (click)="onEngineMoveClick()"
-      >
-        <tui-icon icon="@tui.play" />
-      </button>
+      <div class="game-info">
+        <button
+          type="button"
+          tuiButton
+          size="s"
+          appearance="outline"
+          (click)="onHintClick()"
+        >
+          Hint <tui-icon icon="@tui.play" />
+        </button>
+        @if (hintText()) {
+          <div class="game-hint">
+            {{ hintText() }}
+          </div>
+        }
+      </div>
       <app-engine-panel [fen]="fen()"></app-engine-panel>
       <button
         type="button"
@@ -48,7 +52,7 @@
         title="Engine Log"
         (click)="openEngineLog()"
       >
-        <tui-icon icon="@tui.play" />
+        Going to the logs page <tui-icon icon="@tui.play" />
       </button>
     </section>
   </section>

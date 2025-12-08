@@ -1,3 +1,5 @@
+@use "variables" as vars;
+
 .engine-log {
   display: flex;
   flex-direction: column;
@@ -11,15 +13,17 @@
     justify-content: space-between;
   }
 
-  &__title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-  }
-
   &__actions {
     display: flex;
-    gap: 8px;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
   }
 
   &__list {
@@ -28,18 +32,32 @@
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-family: monospace;
-    font-size: 13px;
+    font-size: 15px;
     color: #eee;
     background: #111;
   }
 
   &__line {
-    margin: 0;
+    margin: 0 0 0.25rem;
     white-space: pre-wrap;
   }
 
+  &__line--command {
+    color: vars.$color-yellow; // команды, которые ты отправляешь (>>>)
+  }
+
+  &__line--response {
+    color: vars.$color-red2; // ответы движка (<<<)
+  }
+
+  &__line--other {
+    color: vars.$color-white; // прочая инфа
+    opacity: 0.85;
+  }
+
   &__empty {
-    color: #666;
+    margin-top: 1rem;
+    font-style: italic;
+    opacity: 0.8;
   }
 }
