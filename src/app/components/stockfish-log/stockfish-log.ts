@@ -35,14 +35,15 @@ export class StockfishLog {
 
   protected readonly log: Signal<string[]> = this.stockfishService.log;
 
-  protected readonly gameId = this.store.selectSignal(selectGameId);
+  protected readonly gameId: Signal<string> =
+    this.store.selectSignal(selectGameId);
 
   protected readonly hasLines: Signal<boolean> = computed(
     (): boolean => this.log().length > 0,
   );
 
   protected readonly logEntries = computed<EngineLogEntry[]>(() =>
-    this.log().map((line) => {
+    this.log().map((line: string) => {
       if (line.startsWith('>>>')) {
         return { type: 'command', text: line };
       }
@@ -56,9 +57,9 @@ export class StockfishLog {
   );
 
   protected onBackClick(): void {
-    const id = this.gameId();
+    const id: string = this.gameId();
 
-    if (id == null) {
+    if (!id) {
       this.routerService.navigate(['home']).then();
       return;
     }

@@ -77,7 +77,7 @@ export class GamePage {
 
   public readonly id: InputSignal<string> = input.required<string>();
   protected readonly hint = signal<MoveRecordType | null>(null);
-  protected readonly hintText = computed(() => {
+  protected readonly hintText: Signal<string | null> = computed(() => {
     const hint = this.hint();
     if (!hint) {
       return null;
@@ -124,6 +124,9 @@ export class GamePage {
   );
   protected readonly isGameOver: Signal<boolean> =
     this.store.selectSignal(selectIsGameOver);
+
+  protected readonly lastEngineMoveSignal =
+    this.gameService.lastEngineMoveSignal;
 
   // Flags: check/mate/king & players colors
   protected readonly isCheck: Signal<boolean> = computed(() =>
@@ -190,11 +193,6 @@ export class GamePage {
     }
   });
 
-  // Methods (обработчики, геттеры)
-  public get engineStatus(): string {
-    return this.stockfishService.status();
-  }
-
   // Drag & drop API доски
   public onBoardDragStart(from: Square): void {
     // чей ход
@@ -258,17 +256,13 @@ export class GamePage {
     this.router.navigate(['/home']).then();
   }
 
-  public onEngineMoveClick(): void {
-    this.stockfishService.setFen(this.fen());
-    this.stockfishService.analyzeDepth(12);
-  }
-
   public openEngineLog(): void {
     this.router.navigate(['/engine-log']).then();
   }
 
   protected async onHintClick(): Promise<void> {
-    const res = await this.gameService.getHintForPlayer();
+    const res: MoveRecordType | null =
+      await this.gameService.getHintForPlayer();
     this.hint.set(res);
   }
 }

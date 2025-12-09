@@ -16,7 +16,7 @@ import { Store } from '@ngrx/store';
 import type { Square, Piece, Color } from 'chess.js';
 import { EloService } from '@/app/services/elo.service';
 
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { clone, load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
@@ -44,6 +44,9 @@ export class GameService {
 
   private readonly orientation = this.store.selectSignal(selectOrientation);
   private readonly isFinished = this.store.selectSignal(selectIsGameOver);
+  private readonly lastEngineMove = signal<EngineMove | null>(null);
+
+  public readonly lastEngineMoveSignal = this.lastEngineMove.asReadonly();
 
   public newGame(fen: string, orientation: 'white' | 'black'): void {
     this.store.dispatch(newGame({ initialFen: fen, orientation }));
@@ -253,6 +256,14 @@ export class GameService {
         console.warn('[GameService] Engine move is invalid:', best);
         return null;
       }
+
+      // фиксируем последний РЕАЛЬНЫЙ ход движка для UI
+      this.lastEngineMove.set({
+        from: best.from,
+        to: best.to,
+        promotion: best.promotion,
+        raw: `${best.from}${best.to}${best.promotion ?? ''}`,
+      });
 
       const newFen = chess.fen();
       const newPgn = chess.pgn();

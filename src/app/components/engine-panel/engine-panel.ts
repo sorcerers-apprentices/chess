@@ -1,4 +1,4 @@
-import type { Signal, WritableSignal } from '@angular/core';
+import type { InputSignal, Signal, WritableSignal } from '@angular/core';
 import { input } from '@angular/core';
 import {
   ChangeDetectionStrategy,
@@ -12,16 +12,19 @@ import { StockfishService } from '@/app/services/stockfish/stockfish.service';
 import type {
   BestMove,
   EngineDifficultyConfig,
+  EngineEvaluation,
+  EngineMove,
   EngineStatus,
   GameDifficulty,
 } from '@/app/types/stockfish.type';
 import { ENGINE_DIFFICULTY_PRESETS } from '@/app/types/stockfish.type';
 import { DIFFICULTY_LABELS, STATUS_LABELS } from '@/app/types/stockfish.type';
 import { EQUAL_POSITION_THRESHOLD_CP } from '@/app/constants/stockfish.constans';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-engine-panel',
-  imports: [],
+  imports: [TuiButton, TuiIcon],
   templateUrl: './engine-panel.html',
   styleUrl: './engine-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,16 +34,18 @@ export class EnginePanel {
     inject(StockfishService);
   private readonly engineService: EngineService = inject(EngineService);
 
-  // Запросил ли пользователь подсказку
-  private readonly hintRequested: WritableSignal<boolean> = signal(false);
-
   // сырой bestmove от движка
   private readonly lastBestMove: WritableSignal<BestMove | null> =
     this.stockfishService.lastBestMove;
 
-  public readonly fen = input.required<string>();
+  private readonly lastHintFen: WritableSignal<string | null> = signal<
+    string | null
+  >(null);
 
-  private readonly lastHintFen = signal<string | null>(null);
+  public readonly fen: InputSignal<string> = input.required<string>();
+  public readonly lastEngineMoveSignal: InputSignal<
+    EngineMove | null | undefined
+  > = input<EngineMove | null>();
 
   // статус движка
   public readonly status: WritableSignal<EngineStatus> =
@@ -121,7 +126,7 @@ export class EnginePanel {
   );
 
   public readonly hasLastBestMove: Signal<boolean> = computed(
-    (): boolean => this.lastBestMove() !== null,
+    (): boolean => this.lastEngineMoveSignal() !== null,
   );
 
   public readonly hasEvaluation: Signal<boolean> = computed(() => {
@@ -129,13 +134,13 @@ export class EnginePanel {
   });
 
   public readonly engineMoveHuman: Signal<string> = computed((): string => {
-    const move = this.lastBestMove();
+    const move: EngineMove | null | undefined = this.lastEngineMoveSignal();
 
-    if (!move || !move.bestMove) {
+    if (!move) {
       return '—';
     }
 
-    return this.formatUciMove(move.bestMove);
+    return `${move.from} → ${move.to}`;
   });
 
   public readonly playerPonderHuman: Signal<string> = computed((): string => {
@@ -149,9 +154,9 @@ export class EnginePanel {
   });
 
   public readonly playerHintHuman: Signal<string> = computed((): string => {
-    const move = this.lastBestMove();
-    const currentFen = this.fen();
-    const hintFen = this.lastHintFen();
+    const move: BestMove | null = this.lastBestMove();
+    const currentFen: string = this.fen();
+    const hintFen: string | null = this.lastHintFen();
 
     if (!move || !move.bestMove || hintFen === null || hintFen !== currentFen) {
       return '—';
@@ -161,7 +166,8 @@ export class EnginePanel {
   });
 
   public readonly positionSummaryLabel: Signal<string> = computed(() => {
-    const evalData = this.stockfishService.lastEvaluation();
+    const evalData: EngineEvaluation | null =
+      this.stockfishService.lastEvaluation();
 
     if (!evalData) {
       return 'No evaluation';
@@ -170,7 +176,7 @@ export class EnginePanel {
     const { cp, mate } = evalData;
 
     if (typeof mate === 'number') {
-      const moves = Math.abs(mate);
+      const moves: number = Math.abs(mate);
 
       if (moves === 1) {
         return 'Checkmate in 1 move';
@@ -201,11 +207,12 @@ export class EnginePanel {
     });
 
   public onShowHintClick(): void {
-    const currentFen = this.fen();
+    const currentFen: string = this.fen();
 
     this.lastHintFen.set(currentFen);
 
     this.stockfishService.setFen(currentFen);
+    // стоит 12 чтобы отличалось от уровня установленного в игре
     this.stockfishService.analyzeDepth(12);
   }
 

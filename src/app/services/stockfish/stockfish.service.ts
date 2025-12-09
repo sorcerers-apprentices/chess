@@ -119,7 +119,7 @@ export class StockfishService implements OnDestroy {
   }
 
   private pushLog(message: string): void {
-    console.log(message);
+    //console.log(message);
     this.log.update((current: string[]): string[] => {
       const next: string[] = [...current, message];
       if (next.length > this.maxLogLength) {

@@ -42,7 +42,10 @@
           </div>
         }
       </div>
-      <app-engine-panel [fen]="fen()"></app-engine-panel>
+      <app-engine-panel
+        [fen]="fen()"
+        [lastEngineMoveSignal]="lastEngineMoveSignal()"
+      ></app-engine-panel>
       <button
         type="button"
         tuiButton
