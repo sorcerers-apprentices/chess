@@ -2,8 +2,8 @@
   <!-- БЛОК: статус движка -->
   <div class="engine-panel__section">
     <h3 class="engine-panel__title">Stockfish engine</h3>
-    <div class="engine-panel__status">
-      <span class="engine-panel__status-label"> Engine status: </span>
+    <div class="engine-panel__row">
+      <span class="engine-panel__label"> Engine status: </span>
       <span class="engine-panel__value">
         {{ statusLabel() }}
       </span>
@@ -50,7 +50,7 @@
     @if (hasLastBestMove()) {
       <!-- 1) Move by Engine -->
       <div class="engine-panel__row">
-        <span class="engine-panel__label"> Move by Stockfish engine: </span>
+        <span class="engine-panel__label"> Move engine: </span>
         <span class="engine-panel__value">
           {{ engineMoveHuman() }}
         </span>
@@ -58,7 +58,7 @@
 
       <!-- 2) Predicted Player Response -->
       <div class="engine-panel__row">
-        <span class="engine-panel__label"> Predicted Player Response: </span>
+        <span class="engine-panel__label">Predicted Player:</span>
         <span class="engine-panel__value">
           @if (hasPonder()) {
             {{ playerPonderHuman() }}
@@ -72,6 +72,7 @@
 
       <!-- 3) Best Move for Player (Hint) -->
       <div class="engine-panel__row">
+        <span class="engine-panel__label"> Hint: </span>
         <span class="engine-panel__value">
           @if (hasHint()) {
             {{ playerHintHuman() }}

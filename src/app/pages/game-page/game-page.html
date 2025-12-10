@@ -22,42 +22,12 @@
       </div>
     </article>
     <aside class="game-settings">
-      <app-game-settings />
-    </aside>
-
-    <section class="game-extra-right">
-      <div class="game-info">
-        <button
-          type="button"
-          tuiButton
-          size="s"
-          appearance="outline"
-          (click)="onHintClick()"
-        >
-          Hint <tui-icon icon="@tui.play" />
-        </button>
-        @if (hintText()) {
-          <div class="game-hint">
-            {{ hintText() }}
-          </div>
-        }
-      </div>
-      <app-engine-panel
+      <app-game-settings
         [fen]="fen()"
         [lastEngineMoveSignal]="lastEngineMoveSignal()"
-      ></app-engine-panel>
-      <button
-        type="button"
-        tuiButton
-        size="s"
-        appearance="secondary"
-        aria-label="Engine Log"
-        title="Engine Log"
-        (click)="openEngineLog()"
-      >
-        Going to the logs page <tui-icon icon="@tui.play" />
-      </button>
-    </section>
+      />
+    </aside>
+    <section class="game-extra-right"></section>
   </section>
 </main>
 

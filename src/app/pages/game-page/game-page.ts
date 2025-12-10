@@ -37,7 +37,6 @@ import {
 import type { AppStateType } from '@/app/store/states/app.state';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
-import { TuiIcon } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameViewerService } from '@/app/services/game-viewer.service';
@@ -49,8 +48,6 @@ import {
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
 import { StockfishService } from '@/app/services/stockfish/stockfish.service';
-import { EnginePanel } from '@/app/components/engine-panel/engine-panel';
-import type { MoveRecordType } from '@/app/store/states/game.state';
 
 @Component({
   selector: 'app-game-page',
@@ -63,8 +60,6 @@ import type { MoveRecordType } from '@/app/store/states/game.state';
     GameSettings,
     TuiButton,
     TranslatePipe,
-    TuiIcon,
-    EnginePanel,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',
@@ -76,23 +71,6 @@ export class GamePage {
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
   public readonly id: InputSignal<string> = input.required<string>();
-  protected readonly hint = signal<MoveRecordType | null>(null);
-  protected readonly hintText: Signal<string | null> = computed(() => {
-    const hint = this.hint();
-    if (!hint) {
-      return null;
-    }
-
-    const uci = hint.uci;
-    if (uci.length < 4) {
-      return null;
-    }
-
-    const from = uci.slice(0, 2);
-    const to = uci.slice(2, 4);
-
-    return `${from} → ${to}`;
-  });
 
   // 2. DI services
   private readonly store: Store<AppStateType> =
@@ -254,15 +232,5 @@ export class GamePage {
   public goHome(): void {
     this.leaveBypass.bypassOnce();
     this.router.navigate(['/home']).then();
-  }
-
-  public openEngineLog(): void {
-    this.router.navigate(['/engine-log']).then();
-  }
-
-  protected async onHintClick(): Promise<void> {
-    const res: MoveRecordType | null =
-      await this.gameService.getHintForPlayer();
-    this.hint.set(res);
   }
 }
