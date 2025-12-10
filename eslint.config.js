@@ -55,7 +55,21 @@ export default [
         "error",
         { accessibility: "explicit", overrides: { constructors: "off" } },
       ],
-      "@typescript-eslint/member-ordering": "error",
+      "@typescript-eslint/member-ordering": [
+        "error",
+        {
+          default: {
+            memberTypes: [
+              "field",
+              "constructor",
+              "public-method",
+              "protected-method",
+              "private-method",
+            ],
+            order: "as-written", // сохраняет порядок, как в коде
+          },
+        },
+      ],
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "unicorn/no-array-callback-reference": "off",
       "unicorn/no-array-for-each": "off",

@@ -14,6 +14,7 @@ export const AppRoutes = {
   ABOUT: 'about',
   RATING: 'rating',
   NOT_FOUND: 'not_found',
+  ENGINE_LOG: 'engine_log',
 } as const;
 
 type AppRouteType = (typeof AppRoutes)[keyof typeof AppRoutes];
@@ -28,6 +29,7 @@ export const RoutePath: Record<AppRouteType, string> = {
   [AppRoutes.ABOUT]: 'about',
   [AppRoutes.RATING]: 'rating',
   [AppRoutes.NOT_FOUND]: '**',
+  [AppRoutes.ENGINE_LOG]: 'engine-log',
 };
 
 export const appRoutes: Route[] = [
@@ -81,6 +83,16 @@ export const appRoutes: Route[] = [
     title: 'Rating | Chess Game',
     loadComponent: () =>
       import('./pages/rating-page/rating-page').then((m) => m.RatingPage),
+  },
+  {
+    path: RoutePath.engine_log,
+    title: 'Stockfish Log | Chess Game',
+    canActivate: [authenticatedGuardFunction], // лог доступен только авторизованным
+    loadComponent: () =>
+      import('./components/stockfish-log/stockfish-log').then(
+        (m) => m.StockfishLog,
+      ),
+    data: { preload: false },
   },
   {
     path: RoutePath.not_found,

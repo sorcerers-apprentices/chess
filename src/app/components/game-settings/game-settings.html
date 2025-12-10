@@ -51,29 +51,66 @@
     <tui-icon icon="@tui.chevrons-right" />
   </button>
 </nav>
-<div class="game-pairs-users">
-  <tui-scrollbar class="pairs-scroll">
-    <div class="moves-scroll">
-      <table role="table" aria-label="Moves">
-        <thead>
-          <tr>
-            <th>№</th>
-            <th>{{ "game.player" | translate }}</th>
-            <th>{{ "game.opponent" | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of movesRows(); track row.num) {
-            <tr>
-              <td>{{ row.num }}</td>
-              <td class="player">{{ row.playerText }}</td>
-              <td class="opponent">{{ row.opponentText }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </tui-scrollbar>
+<div class="game-log-button">
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    class="game-tabs-log"
+    appearance="outline"
+    aria-label="Engine Log"
+    title="Engine Log"
+    (click)="openEngineLog()"
+  >
+    Going to the logs page <tui-icon icon="@tui.play" />
+  </button>
+</div>
+<div class="game-analysis-moves">
+  <nav
+    tuiTabs
+    class="game-tabs"
+    [activeItemIndex]="activeTab()"
+    (activeItemIndexChange)="activeTab.set($event)"
+  >
+    <button tuiTab>Moves</button>
+    <button tuiTab>Stockfish engine</button>
+  </nav>
+  <div class="game-tabs-content">
+    @switch (activeTab()) {
+      @case (0) {
+        <div class="game-pairs-users">
+          <tui-scrollbar class="pairs-scroll">
+            <div class="moves-scroll">
+              <table role="table" aria-label="Moves">
+                <thead>
+                  <tr>
+                    <th>№</th>
+                    <th>{{ "game.player" | translate }}</th>
+                    <th>{{ "game.opponent" | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of movesRows(); track row.num) {
+                    <tr>
+                      <td>{{ row.num }}</td>
+                      <td class="player">{{ row.playerText }}</td>
+                      <td class="opponent">{{ row.opponentText }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </tui-scrollbar>
+        </div>
+      }
+      @case (1) {
+        <app-engine-panel
+          [fen]="fen()"
+          [lastEngineMoveSignal]="lastEngineMoveSignal()"
+        />
+      }
+    }
+  </div>
 </div>
 <div class="game-controls">
   <button

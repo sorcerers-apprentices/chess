@@ -10,18 +10,18 @@ import {
   selectIsGameOver,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
-import type { Chess } from 'chess.js';
+import type { Chess, Move } from 'chess.js';
 import { Store } from '@ngrx/store';
 
 import type { Square, Piece, Color } from 'chess.js';
 import { EloService } from '@/app/services/elo.service';
 
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { clone, load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { EngineService } from '@/app/services/stockfish/engine.service';
-import type { PromotionPiece } from '@/app/types/stockfish.type';
+import type { EngineMove, PromotionPiece } from '@/app/types/stockfish.type';
 import type { PieceColorType } from '@/app/types/chess-square.type';
 
 export type GameResultType = {
@@ -44,6 +44,9 @@ export class GameService {
 
   private readonly orientation = this.store.selectSignal(selectOrientation);
   private readonly isFinished = this.store.selectSignal(selectIsGameOver);
+  private readonly lastEngineMove = signal<EngineMove | null>(null);
+
+  public readonly lastEngineMoveSignal = this.lastEngineMove.asReadonly();
 
   public newGame(fen: string, orientation: 'white' | 'black'): void {
     this.store.dispatch(newGame({ initialFen: fen, orientation }));
@@ -254,6 +257,14 @@ export class GameService {
         return null;
       }
 
+      // фиксируем последний РЕАЛЬНЫЙ ход движка для UI
+      this.lastEngineMove.set({
+        from: best.from,
+        to: best.to,
+        promotion: best.promotion,
+        raw: `${best.from}${best.to}${best.promotion ?? ''}`,
+      });
+
       const newFen = chess.fen();
       const newPgn = chess.pgn();
 
@@ -279,5 +290,56 @@ export class GameService {
       console.error('[GameService] playEngineMove failed:', error);
       return null;
     }
+  }
+
+  public async getHintForPlayer(): Promise<MoveRecordType | null> {
+    // партия уже закончена — подсказка не нужна
+    if (this.isFinished()) return null;
+
+    // текущее состояние партии
+    const chess: Chess = this.game();
+    const fen: string = chess.fen();
+
+    const sideToMove: 'white' | 'black' =
+      chess.turn() === 'w' ? 'white' : 'black';
+
+    const me: 'white' | 'black' = this.orientation();
+
+    // если сейчас не ход игрока — подсказка не нужна
+    if (sideToMove !== me) {
+      return null;
+    }
+
+    // запрос у движка лучшего хода из текущей позиции
+    const best: EngineMove | null = await this.engine.getBestMove(fen);
+
+    if (!best) {
+      console.warn('[GameService] Hint: engine returned no move');
+      return null;
+    }
+
+    const tmp: Chess = clone(chess);
+
+    const moveResult: Move = tmp.move({
+      from: best.from,
+      to: best.to,
+      promotion: best.promotion ?? 'q',
+    });
+
+    if (moveResult === null) {
+      console.warn('[GameService] Hint move is invalid:', best);
+      return null;
+    }
+
+    const moveRecord: MoveRecordType = {
+      uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
+      san: moveResult.san,
+      move: moveResult,
+      fenAfter: tmp.fen(),
+      timestamp: Date.now(),
+    };
+
+    // dispatch здесь нет, подсказка
+    return moveRecord;
   }
 }

@@ -37,7 +37,6 @@ import {
 import type { AppStateType } from '@/app/store/states/app.state';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import type { TuiDialogContext } from '@taiga-ui/core';
-import { TuiIcon } from '@taiga-ui/core';
 import { TuiButton } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameViewerService } from '@/app/services/game-viewer.service';
@@ -61,46 +60,38 @@ import { StockfishService } from '@/app/services/stockfish/stockfish.service';
     GameSettings,
     TuiButton,
     TranslatePipe,
-    TuiIcon,
   ],
   templateUrl: './game-page.html',
   styleUrl: './game-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GamePage {
+  // 1. Template & inputs
   @ViewChild('gameOverTpl', { static: true })
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
   public readonly id: InputSignal<string> = input.required<string>();
 
-  protected readonly store: Store<AppStateType> =
+  // 2. DI services
+  private readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
-  protected readonly gameSupabaseService: GameSupabaseService =
+  private readonly gameSupabaseService: GameSupabaseService =
     inject(GameSupabaseService);
-  protected readonly gameService: GameService = inject(GameService);
-  protected readonly stockfish = inject(StockfishService);
-
-  protected readonly opponent: OpponentRunnerService = inject(
+  private readonly gameService: GameService = inject(GameService);
+  private readonly stockfishService = inject(StockfishService);
+  private readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
   );
-  protected readonly viewer: GameViewerService = inject(GameViewerService);
-  protected readonly chosenColor: WritableSignal<PieceColorType> =
+  private readonly viewer: GameViewerService = inject(GameViewerService);
+  private readonly dialogs: TuiResponsiveDialogService = inject(
+    TuiResponsiveDialogService,
+  );
+  private readonly leaveBypass: LeaveBypassService = inject(LeaveBypassService);
+  private readonly router: Router = inject(Router);
+  private readonly chosenColor: WritableSignal<PieceColorType> =
     inject(CHOSEN_COLOR_TOKEN);
 
-  protected readonly isCheck: Signal<boolean> = computed(() =>
-    this.gameService.isCheck(),
-  );
-  protected readonly isMate: Signal<boolean> = computed(() =>
-    this.gameService.isMate(),
-  );
-  protected readonly kingSquare: Signal<Square | null> = computed(() =>
-    this.gameService.kingSquare('turn'),
-  );
-
-  protected loadGameEffect: EffectRef = effect((): void =>
-    this.store.dispatch(loadGame({ gameId: this.id() })),
-  );
-
+  // 3. Store state & derived game state
   protected readonly pgn: Signal<string> = this.store.selectSignal(
     (state) => state.game.pgn,
   );
@@ -111,22 +102,29 @@ export class GamePage {
   );
   protected readonly isGameOver: Signal<boolean> =
     this.store.selectSignal(selectIsGameOver);
-  protected readonly dialogs: TuiResponsiveDialogService = inject(
-    TuiResponsiveDialogService,
-  );
-  protected readonly leaveBypass: LeaveBypassService =
-    inject(LeaveBypassService);
 
+  protected readonly lastEngineMoveSignal =
+    this.gameService.lastEngineMoveSignal;
+
+  // Flags: check/mate/king & players colors
+  protected readonly isCheck: Signal<boolean> = computed(() =>
+    this.gameService.isCheck(),
+  );
+  protected readonly isMate: Signal<boolean> = computed(() =>
+    this.gameService.isMate(),
+  );
+  protected readonly kingSquare: Signal<Square | null> = computed(() =>
+    this.gameService.kingSquare('turn'),
+  );
   protected readonly topPlayerColor = computed(() =>
     this.orientation() === 'white' ? 'black' : 'white',
   );
-
   protected readonly bottomPlayerColor = computed(() =>
     this.orientation() === 'white' ? 'white' : 'black',
   );
-
   protected readonly meColor = this.store.selectSignal(selectOrientation);
 
+  // Game result (for "Game Over" dialog)
   protected readonly resultVariant: Signal<ResultVariant> =
     computed<ResultVariant>(() => {
       const res = this.gameService.getGameResult();
@@ -137,7 +135,6 @@ export class GamePage {
       const mySide: 'white' | 'black' = iAmWhite ? 'white' : 'black';
       return res.winner === mySide ? 'win' : 'loss';
     });
-
   protected readonly resultText: Signal<string> = computed<string>(() => {
     const v = this.resultVariant();
     if (v === 'draw') return 'Game Drawn';
@@ -145,17 +142,20 @@ export class GamePage {
     return 'You lost';
   });
 
+  // Local board / drag&drop state
   // куда можно поставить фигуру
   protected readonly allowedTargets = signal<ReadonlySet<Square> | null>(null);
-
   // локально можем хранить, откуда началось перетаскивание (если нужно для UI страницы)
   protected readonly dragFrom = signal<SquareType | null>(null);
-
   // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
-  private readonly router: Router = inject(Router);
+  // Effects
 
+  // загрузка партии по id
+  private loadGameEffect: EffectRef = effect((): void =>
+    this.store.dispatch(loadGame({ gameId: this.id() })),
+  );
   private readonly showGameOverEffect: EffectRef = effect((): void => {
     const over: boolean = this.isGameOver();
     const hasTpl: boolean = this.gameOverTpl != null;
@@ -171,10 +171,7 @@ export class GamePage {
     }
   });
 
-  public get engineStatus(): string {
-    return this.stockfish.status();
-  }
-
+  // Drag & drop API доски
   public onBoardDragStart(from: Square): void {
     // чей ход
     const turnPiece: Color = this.gameService.turn();
@@ -226,6 +223,7 @@ export class GamePage {
     this.allowedTargets.set(null);
   }
 
+  // Game control / navigation
   public newGame(): void {
     this.leaveBypass.bypassOnce();
     this.gameService.newGame(START_FEN, this.chosenColor());
@@ -234,10 +232,5 @@ export class GamePage {
   public goHome(): void {
     this.leaveBypass.bypassOnce();
     this.router.navigate(['/home']).then();
-  }
-
-  public onEngineMoveClick(): void {
-    this.stockfish.setFen(this.fen());
-    this.stockfish.analyzeDepth(12);
   }
 }

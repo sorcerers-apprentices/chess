@@ -1,4 +1,6 @@
-import type { Signal } from '@angular/core';
+import type { InputSignal, Signal, WritableSignal } from '@angular/core';
+import { input } from '@angular/core';
+import { signal } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,15 +22,43 @@ import type { AppStateType } from '@/app/store/states/app.state';
 import { GameService } from '@/app/services/game.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GameViewerService } from '@/app/services/game-viewer.service';
+import type { EngineMove } from '@/app/types/stockfish.type';
+import { EnginePanel } from '@/app/components/engine-panel/engine-panel';
+import { TuiTabs } from '@taiga-ui/kit';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-settings',
-  imports: [TuiButton, TuiIcon, TuiScrollbar, TranslatePipe],
+  imports: [
+    TuiButton,
+    TuiIcon,
+    TuiScrollbar,
+    TuiTabs,
+    TranslatePipe,
+    EnginePanel,
+  ],
   templateUrl: './game-settings.html',
   styleUrl: './game-settings.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GameSettings {
+  private readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
+  private readonly gameService: GameService = inject(GameService);
+  private readonly viewer: GameViewerService = inject(GameViewerService);
+  private readonly timer: PlayerTimerService = inject(PlayerTimerService);
+  private readonly router: Router = inject(Router);
+
+  private readonly canUndo: Signal<boolean> =
+    this.store.selectSignal(selectCanUndo);
+  private readonly canRedo: Signal<boolean> =
+    this.store.selectSignal(selectCanRedo);
+  private readonly isFinished: Signal<boolean> =
+    this.store.selectSignal(selectIsGameOver);
+
+  private readonly moves = this.store.selectSignal(selectMoves);
+  private readonly orientation = this.store.selectSignal(selectOrientation);
+
   public readonly movesRows = computed<MoveRow[]>(() => {
     const list = this.moves(); // массив из стора
     const myColor = this.orientation() === 'white' ? 'w' : 'b';
@@ -48,9 +78,16 @@ export class GameSettings {
     });
   });
 
-  public readonly resignDisabled = computed(() => this.isFinished());
+  public readonly resignDisabled: Signal<boolean> = computed((): boolean =>
+    this.isFinished(),
+  );
 
-  protected readonly text = computed(() => {
+  public readonly fen: InputSignal<string> = input.required<string>();
+  public readonly lastEngineMoveSignal: InputSignal<
+    EngineMove | null | undefined
+  > = input<EngineMove | null>();
+
+  protected readonly text: Signal<string> = computed((): string => {
     const totalSec = Math.floor(this.timer.totalMs() / 1000);
     const h = Math.floor(totalSec / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
@@ -64,23 +101,17 @@ export class GameSettings {
     return `${hh} : ${mm} : ${ss}`;
   });
 
-  protected readonly store = inject<Store<AppStateType>>(Store);
-  protected readonly gameService = inject(GameService);
-  protected readonly undoDisabled = computed(() => !this.canUndo());
-  protected readonly redoDisabled = computed(() => !this.canRedo());
-  protected readonly viewer: GameViewerService = inject(GameViewerService);
+  protected readonly undoDisabled: Signal<boolean> = computed(
+    (): boolean => !this.canUndo(),
+  );
+  protected readonly redoDisabled: Signal<boolean> = computed(
+    (): boolean => !this.canRedo(),
+  );
 
   protected readonly atStart: Signal<boolean> = this.viewer.atStart;
   protected readonly atEnd: Signal<boolean> = this.viewer.atEnd;
-
-  private readonly timer = inject(PlayerTimerService);
-  private readonly canUndo = this.store.selectSignal(selectCanUndo);
-  private readonly canRedo = this.store.selectSignal(selectCanRedo);
-  private readonly isFinished = this.store.selectSignal(selectIsGameOver);
-
-  private readonly moves = this.store.selectSignal(selectMoves);
-
-  private readonly orientation = this.store.selectSignal(selectOrientation);
+  // 0 — Ходы, 1 — Движок
+  protected readonly activeTab: WritableSignal<number> = signal(0);
 
   public onUndoClick(): void {
     if (this.canUndo()) this.gameService.undoMove();
@@ -93,6 +124,10 @@ export class GameSettings {
   public onResignClick(): void {
     if (this.resignDisabled()) return;
     this.gameService.resign();
+  }
+
+  public openEngineLog(): void {
+    this.router.navigate(['/engine-log']).then();
   }
 
   public goStart = (): void => this.viewer.goStart();

@@ -1,4 +1,9 @@
 import { inject } from '@angular/core';
+import type {
+  ActivatedRouteSnapshot,
+  CanDeactivateFn,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { type CanActivateFn, Router } from '@angular/router';
 import { LOCAL_STORAGE_KEY } from '../constants/auth.constants';
 import type { Observable } from 'rxjs';
@@ -27,7 +32,18 @@ export const anonymousGuardFunction: CanActivateFn = () => {
   return token !== null ? router.parseUrl('game') : true;
 };
 
-export const canDeactivatePopup = (): Observable<boolean> => {
+export const canDeactivatePopup: CanDeactivateFn<unknown> = (
+  _component: unknown,
+  _currentRoute: ActivatedRouteSnapshot,
+  _currentState: RouterStateSnapshot,
+  nextState: RouterStateSnapshot,
+): Observable<boolean> => {
+  const url = nextState?.url ?? '';
+
+  if (url.includes('engine-log')) {
+    return of(true);
+  }
+
   const bypass = inject(LeaveBypassService);
   if (bypass.consume()) {
     return of(true);

@@ -1,4 +1,5 @@
 import { Header } from '../../components/header/header';
+import type { WritableSignal } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -47,6 +48,7 @@ import { DIFFICULTY_VALUES } from '@/app/types/stockfish.type';
 import { DIFFICULTY_OPTIONS } from '@/app/types/stockfish.type';
 import { ENGINE_DEFAULT_DIFFICULTY } from '@/app/constants/stockfish.constans';
 import { EngineService } from '@/app/services/stockfish/engine.service';
+import type { PieceColorType } from '@/app/types/chess-square.type';
 
 type UsersGamesPage = {
   games: GameModel[];
@@ -80,36 +82,33 @@ type UsersGamesPage = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
-  protected readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
-  protected readonly router = inject(Router);
-  protected readonly activatedRoute = inject(ActivatedRoute);
-  protected readonly store = inject<Store<AppStateType>>(Store);
-  protected readonly authService = inject(AuthService);
-  protected readonly gameService = inject(GameService);
-  protected readonly userSupabaseService = inject(UserSupabaseService);
-  protected readonly engineService = inject(EngineService);
-  protected readonly userId = this.authService.getUserData().user.id;
-  protected phoneNumber =
+  // 1. DI services
+  public readonly chosenColor = inject(CHOSEN_COLOR_TOKEN);
+  private readonly router: Router = inject(Router);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly gameService: GameService = inject(GameService);
+  private readonly userSupabaseService: UserSupabaseService =
+    inject(UserSupabaseService);
+  private readonly engineService: EngineService = inject(EngineService);
+
+  // 2. Basic user info
+  protected readonly userId: string = this.authService.getUserData().user.id;
+  protected phoneNumber: string =
     this.authService.getUserData().user.user_metadata.phone;
   protected lastSignInData =
     this.authService.getUserData().user.last_sign_in_at;
-  protected readonly size = signal(10);
-  protected readonly page = signal(0);
 
+  // 3. Pagination & router params
+  protected readonly size: WritableSignal<number> = signal(10);
+  protected readonly page: WritableSignal<number> = signal(0);
   protected readonly routerParams = toSignal(this.activatedRoute.queryParams, {
     initialValue: this.activatedRoute.snapshot.queryParams,
   });
 
-  protected readonly pageParamEffect = effect(() => {
-    const params = this.routerParams();
-
-    const pageIndexParam = Number(params['page'] ?? 0);
-    const sizeParam = Number(params['size'] ?? 10);
-
-    this.page.set(Number.isNaN(pageIndexParam) ? 0 : pageIndexParam);
-    this.size.set(Number.isNaN(sizeParam) ? 10 : sizeParam);
-  });
-
+  // 4. User resources (async data)
   protected userName = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
@@ -117,7 +116,6 @@ export class HomePage {
         map((user) => user?.display_name),
       ),
   });
-
   protected userElo = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
@@ -125,21 +123,19 @@ export class HomePage {
         map((user) => user?.elo),
       ),
   });
-
   protected playedGamesCount = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
       from(this.userSupabaseService.fetchGamesCount(params)),
   });
-
   protected winedGamesCount = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
       from(this.userSupabaseService.fetchWinedGamesCount(params)),
   });
 
+  // 5. Games table data
   protected columns = ['number', 'date', 'result', ''];
-
   protected usersGames = rxResource({
     params: () => {
       const params = {
@@ -151,12 +147,33 @@ export class HomePage {
     },
     stream: ({ params }) => from(this.userSupabaseService.fetchGames(params)),
   });
-
   protected readonly usersGamesView = signal<UsersGamesPage>({
     games: [],
     count: 0,
   });
+  protected readonly tableData = computed(() => this.usersGamesView().games);
+  protected readonly total = computed(() => this.usersGamesView().count);
 
+  // 6. Difficulty settings
+  protected readonly difficulties = DIFFICULTY_VALUES.map((value) => ({
+    value,
+    labelKey: DIFFICULTY_OPTIONS[value].labelKey,
+    descriptionKey: DIFFICULTY_OPTIONS[value].descriptionKey,
+  }));
+  protected readonly selectedDifficulty = signal<GameDifficulty>(
+    ENGINE_DEFAULT_DIFFICULTY,
+  );
+
+  // 7. Effects
+  protected readonly pageParamEffect = effect(() => {
+    const params = this.routerParams();
+
+    const pageIndexParam = Number(params['page'] ?? 0);
+    const sizeParam = Number(params['size'] ?? 10);
+
+    this.page.set(Number.isNaN(pageIndexParam) ? 0 : pageIndexParam);
+    this.size.set(Number.isNaN(sizeParam) ? 10 : sizeParam);
+  });
   protected readonly updateUsersGamesViewEffect = effect(() => {
     const value = this.usersGames.value(); // может быть undefined во время загрузки
 
@@ -165,19 +182,17 @@ export class HomePage {
     }
   });
 
-  protected readonly tableData = computed(() => this.usersGamesView().games);
+  // 8. Methods
+  public playGame(): void {
+    const difficulty: GameDifficulty = this.selectedDifficulty();
+    const color: PieceColorType = this.chosenColor();
 
-  protected readonly total = computed(() => this.usersGamesView().count);
+    // готовим движок к новой партии (сложность + ucinewgame + сброс сигналов)
+    this.engineService.engineForNewGame(difficulty);
 
-  protected readonly difficulties = DIFFICULTY_VALUES.map((value) => ({
-    value,
-    labelKey: DIFFICULTY_OPTIONS[value].labelKey,
-    descriptionKey: DIFFICULTY_OPTIONS[value].descriptionKey,
-  }));
-
-  protected readonly selectedDifficulty = signal<GameDifficulty>(
-    ENGINE_DEFAULT_DIFFICULTY,
-  );
+    //запускаем новую игру в логике Chess / стора
+    this.gameService.newGame(START_FEN, color);
+  }
 
   protected onDifficultyChange(difficulty: GameDifficulty): void {
     this.selectedDifficulty.set(difficulty);
@@ -206,10 +221,5 @@ export class HomePage {
     ) {
       this.chosenColor.set(target.value);
     }
-  }
-
-  protected playGame(): void {
-    this.engineService.setDifficulty(this.selectedDifficulty());
-    this.gameService.newGame(START_FEN, this.chosenColor());
   }
 }
