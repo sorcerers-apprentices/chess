@@ -1,16 +1,15 @@
+@use "variables" as vars;
+
 main[tuinavigationmain] {
   padding-top: 48px;
   border: 0;
+  background-color: var(--tui-background-base);
 }
 
 .home-wrapper {
   display: grid;
   grid-template-columns: max-content max-content;
   gap: 2rem 10rem;
-
-  // gap: clamp(2rem, 4vw + 20rem, 30rem);
-  // gap: 30rem;
-
   max-width: 1800px;
   margin-inline: auto;
   padding: 3rem 2rem 1rem;
@@ -63,6 +62,7 @@ tui-scrollbar.pairs-scroll {
 table[tuiTable] {
   table-layout: fixed;
   white-space: nowrap;
+  background-color: var(--tui-background-base);
 }
 
 .avatar {
@@ -201,11 +201,6 @@ table[tuiTable] {
   }
 
   .difficulty-description {
-    max-width: 100%;
-    line-height: 1.4;
-    word-break: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
     white-space: normal;
   }
 }
@@ -231,16 +226,6 @@ table[tuiTable] {
     justify-items: start;
   }
 
-  .information {
-    max-height: 25rem;
-  }
-
-  .avatar {
-    display: none;
-  }
-}
-
-@media (width <= 768px) {
   .home-wrapper {
     grid-template-columns: max-content;
     grid-template-rows: auto auto auto;
@@ -252,21 +237,27 @@ table[tuiTable] {
     padding: 2rem 1rem 1rem;
   }
 
+  tui-scrollbar.pairs-scroll {
+    grid-column: 1/1;
+    grid-row: 3/3;
+  }
+
+  .information {
+    max-height: 25rem;
+  }
+
+  .avatar {
+    display: none;
+  }
+}
+
+@media (width <= 768px) {
   .left-column {
     gap: 3rem;
   }
 
   .information {
     max-height: 15rem;
-  }
-
-  tui-scrollbar.pairs-scroll {
-    grid-column: 1/1;
-    grid-row: 3/3;
-  }
-
-  .avatar {
-    display: none;
   }
 
   .radio-label {
@@ -276,5 +267,27 @@ table[tuiTable] {
 
   .button {
     width: 7rem;
+  }
+}
+
+@media (width <= 425px) {
+  .difficulty-option {
+    width: 300px;
+  }
+}
+
+@media (width <= 374px) {
+  .home-wrapper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .moves-scroll {
+    width: 100%;
+  }
+
+  table[tuiTable] {
+    table-layout: auto;
+    width: 100%;
+    white-space: normal;
   }
 }
