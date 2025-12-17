@@ -11,8 +11,6 @@
   gap: 1rem;
   align-items: stretch;
   inline-size: 100%;
-
-  // min-height: calc(100vh - 48px);
   padding-top: 20px;
   padding-bottom: 20px;
 }
@@ -51,8 +49,15 @@
     grid-template-rows: 1fr 1fr;
     gap: 0.5rem;
     align-items: stretch;
-    block-size: calc(100dvh - 48px);
+
+    // block-size: calc(100dvh - 48px);
     min-block-size: 0;
+  }
+}
+
+@media (width <= 350px) {
+  main[tuinavigationmain] {
+    border: 0.2rem solid transparent;
   }
 }
 

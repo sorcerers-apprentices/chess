@@ -1,9 +1,11 @@
 :host {
-  padding: 1rem;
+  // padding: 1rem;
 
   .engine-panel {
     display: flex;
     flex-direction: column;
+    padding-right: 1rem;
+    padding-left: 1rem;
 
     // gap: 1.25rem;
     color: var(--tui-text-primary);
@@ -22,6 +24,14 @@
     &__title {
       margin: 0 0 0.5rem;
       font: var(--tui-font-heading-5);
+
+      @media (width <= 620px) {
+        font: var(--tui-font-heading-6);
+      }
+
+      @media (width <= 420px) {
+        font-size: 16px;
+      }
     }
 
     &__subtitle {

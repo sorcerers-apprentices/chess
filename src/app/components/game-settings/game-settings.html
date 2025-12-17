@@ -104,10 +104,14 @@
         </div>
       }
       @case (1) {
-        <app-engine-panel
-          [fen]="fen()"
-          [lastEngineMoveSignal]="lastEngineMoveSignal()"
-        />
+        <tui-scrollbar class="pairs-scroll">
+          <div class="moves-scroll">
+            <app-engine-panel
+              [fen]="fen()"
+              [lastEngineMoveSignal]="lastEngineMoveSignal()"
+            />
+          </div>
+        </tui-scrollbar>
       }
     }
   </div>
