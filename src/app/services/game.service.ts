@@ -60,6 +60,7 @@ export class GameService {
     try {
       const chess = clone(this.game());
       const move = chess.move({ from, to, promotion });
+      console.log('move returned by chess.move()', move);
       if (move === null) return false;
 
       const newFen = chess.fen();
@@ -72,6 +73,9 @@ export class GameService {
         fenAfter: newFen,
         timestamp: Date.now(),
       };
+
+      console.log('moveRecord', moveRecord);
+      console.log('moveRecord.move', moveRecord.move);
 
       this.store.dispatch(playMove({ fen: newFen, moveRecord, pgn: newPgn }));
       this.handleGameEnd(chess);
