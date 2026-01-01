@@ -17,10 +17,15 @@ import {
 } from '@/app/store/actions/game.actions';
 import { filter, from, map, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
-import type { GameStateType } from '@/app/store/states/game.state';
+import type {
+  GameStateType,
+  MoveRecordType,
+} from '@/app/store/states/game.state';
 import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
+import type { HistoryMoveVerbose } from '@/app/types/store-game.type';
+import { toStoredMoveFromHistory } from '@/app/utilities/transformation-chess-move-class';
 
 @Injectable({
   providedIn: 'root',
@@ -61,7 +66,10 @@ export class GameEffects {
             const chess = new Chess();
             const pgn = game.pgn;
             chess.loadPgn(pgn);
-            const moves = chess.history({ verbose: true });
+            const moves: HistoryMoveVerbose[] = chess.history({
+              verbose: true,
+            });
+
             const lastMove = chess.history({ verbose: true }).at(-1);
             const gameModel: GameStateType = {
               pgn: chess.pgn(),
@@ -69,13 +77,13 @@ export class GameEffects {
               fen: game.fen,
               id: game.id,
               moves: moves.map((move) => {
-                return {
-                  uci: `${move.from}${move.to}${move.promotion ?? ''}`,
-                  san: move.san,
-                  move: move,
-                  fenAfter: move.after,
+                const stored = toStoredMoveFromHistory(move);
+                const record: MoveRecordType = {
+                  move: stored,
+                  fenAfter: stored.after,
                   timestamp: game.timestamp,
                 };
+                return record;
               }),
               undoneMoves: [],
               lastMove: lastMove

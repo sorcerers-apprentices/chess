@@ -1,12 +1,10 @@
-import { type Move } from 'chess.js';
 import { Chess } from 'chess.js';
 import { DEFAULT_POSITION } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
+import type { StoredMove } from '@/app/types/store-game.type';
 
 export type MoveRecordType = {
-  uci: string;
-  san: string;
-  move: Move;
+  move: StoredMove;
   fenAfter: string;
   timestamp: number;
 };

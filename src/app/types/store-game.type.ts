@@ -24,3 +24,16 @@ export type StoredMove = {
   isQueensideCastle: boolean;
   isBigPawn: boolean;
 };
+
+export type HistoryMoveVerbose = {
+  color: Color;
+  from: Square;
+  to: Square;
+  piece: PieceSymbol;
+  captured?: PieceSymbol;
+  promotion?: PieceSymbol;
+  san: string;
+  before: string;
+  after: string;
+  flags?: string;
+};

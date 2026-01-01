@@ -23,6 +23,7 @@ import type { AppStateType } from '@/app/store/states/app.state';
 import { EngineService } from '@/app/services/stockfish/engine.service';
 import type { EngineMove, PromotionPiece } from '@/app/types/stockfish.type';
 import type { PieceColorType } from '@/app/types/chess-square.type';
+import { toStoredMove } from '@/app/utilities/transformation-chess-move-class';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -60,22 +61,16 @@ export class GameService {
     try {
       const chess = clone(this.game());
       const move = chess.move({ from, to, promotion });
-      console.log('move returned by chess.move()', move);
       if (move === null) return false;
 
       const newFen = chess.fen();
       const newPgn = chess.pgn();
 
       const moveRecord: MoveRecordType = {
-        uci: `${move.from}${move.to}${move.promotion ?? ''}`,
-        san: move.san,
-        move,
+        move: toStoredMove(move),
         fenAfter: newFen,
         timestamp: Date.now(),
       };
-
-      console.log('moveRecord', moveRecord);
-      console.log('moveRecord.move', moveRecord.move);
 
       this.store.dispatch(playMove({ fen: newFen, moveRecord, pgn: newPgn }));
       this.handleGameEnd(chess);
@@ -142,20 +137,19 @@ export class GameService {
       return null;
     }
 
+    const fenAfter = chess.fen();
+    const pgn = chess.pgn();
+
     const moveRecord: MoveRecordType = {
-      uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
-      san: moveResult.san,
-      move: moveResult,
-      fenAfter: chess.fen(),
+      move: toStoredMove(moveResult),
+      fenAfter,
       timestamp: Date.now(),
     };
 
     // ещё раз проверим прямо перед диспатчем
     if (this.isFinished()) return null;
 
-    this.store.dispatch(
-      playMove({ fen: chess.fen(), moveRecord, pgn: chess.pgn() }),
-    );
+    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord, pgn }));
     this.handleGameEnd(chess);
     return moveRecord;
   }
@@ -273,11 +267,9 @@ export class GameService {
       const newPgn = chess.pgn();
 
       const moveRecord: MoveRecordType = {
-        uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
-        san: moveResult.san,
-        move: moveResult,
-        fenAfter: newFen,
+        move: toStoredMove(moveResult),
         timestamp: Date.now(),
+        fenAfter: newFen,
       };
 
       // ещё раз проверка перед диспатчем
@@ -336,9 +328,7 @@ export class GameService {
     }
 
     const moveRecord: MoveRecordType = {
-      uci: `${moveResult.from}${moveResult.to}${moveResult.promotion ?? ''}`,
-      san: moveResult.san,
-      move: moveResult,
+      move: toStoredMove(moveResult),
       fenAfter: tmp.fen(),
       timestamp: Date.now(),
     };
