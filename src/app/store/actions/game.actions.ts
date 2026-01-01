@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import type { GameResultType } from '@/app/services/game.service';
 import type {
-  GameStateType,
+  GameDomainType,
   MoveRecordType,
 } from '@/app/store/states/game.state';
 
@@ -20,7 +20,12 @@ export const loadGame = createAction(
 );
 export const loadGameSuccess = createAction(
   '[Chess] Load Game Success',
-  props<{ game: GameStateType }>(),
+  props<{ game: GameDomainType }>(),
+);
+
+export const loadGameFailed = createAction(
+  '[Chess] Load Game Failed',
+  props<{ error: string }>(),
 );
 
 export const playMove = createAction(

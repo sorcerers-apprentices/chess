@@ -5,6 +5,7 @@ import {
   gameOver,
   gameOverSuccess,
   loadGame,
+  loadGameFailed,
   loadGameSuccess,
   moveSuccess,
   newGame,
@@ -15,10 +16,10 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { filter, from, map, switchMap, tap } from 'rxjs';
+import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
 import type {
-  GameStateType,
+  GameDomainType,
   MoveRecordType,
 } from '@/app/store/states/game.state';
 import { Chess } from 'chess.js';
@@ -61,8 +62,10 @@ export class GameEffects {
       ofType(loadGame),
       switchMap(({ gameId }) => {
         return from(this.api.loadGame(gameId)).pipe(
-          filter((game) => game !== null),
           map((game) => {
+            if (game === null) {
+              return loadGameFailed({ error: 'Game not found' });
+            }
             const chess = new Chess();
             const pgn = game.pgn;
             chess.loadPgn(pgn);
@@ -71,7 +74,7 @@ export class GameEffects {
             });
 
             const lastMove = chess.history({ verbose: true }).at(-1);
-            const gameModel: GameStateType = {
+            const gameModel: GameDomainType = {
               pgn: chess.pgn(),
               pgnLast: game.pgn_last,
               fen: game.fen,
@@ -102,6 +105,11 @@ export class GameEffects {
               finalFen: game.fen_final,
             };
             return loadGameSuccess({ game: gameModel });
+          }),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Load game failed';
+            return of(loadGameFailed({ error: message }));
           }),
         );
       }),

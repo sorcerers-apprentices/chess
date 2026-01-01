@@ -50,8 +50,12 @@ import { ENGINE_DEFAULT_DIFFICULTY } from '@/app/constants/stockfish.constans';
 import { EngineService } from '@/app/services/stockfish/engine.service';
 import type { PieceColorType } from '@/app/types/chess-square.type';
 
-type UsersGamesPage = {
-  games: GameModel[];
+type GameRow = GameModel & {
+  created_at_ts: number;
+};
+
+type UsersGamesPageVm = {
+  games: GameRow[];
   count: number;
 };
 
@@ -147,7 +151,7 @@ export class HomePage {
     },
     stream: ({ params }) => from(this.userSupabaseService.fetchGames(params)),
   });
-  protected readonly usersGamesView = signal<UsersGamesPage>({
+  protected readonly usersGamesView = signal<UsersGamesPageVm>({
     games: [],
     count: 0,
   });
@@ -175,11 +179,19 @@ export class HomePage {
     this.size.set(Number.isNaN(sizeParam) ? 10 : sizeParam);
   });
   protected readonly updateUsersGamesViewEffect = effect(() => {
-    const value = this.usersGames.value(); // может быть undefined во время загрузки
-
-    if (value) {
-      this.usersGamesView.set(value);
+    const value = this.usersGames.value();
+    if (!value) {
+      return;
     }
+    const viewModel: UsersGamesPageVm = {
+      ...value,
+      games: value.games.map((game) => ({
+        ...game,
+        created_at_ts: Date.parse(game.created_at),
+      })),
+    };
+
+    this.usersGamesView.set(viewModel);
   });
 
   // 8. Methods

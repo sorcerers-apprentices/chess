@@ -1,5 +1,7 @@
 import {
   gameOver,
+  loadGame,
+  loadGameFailed,
   loadGameSuccess,
   newGame,
   playMove,
@@ -37,6 +39,8 @@ export const gameReducers = createReducer(
       finished: false,
       result: null,
       finalFen: null,
+      loading: false,
+      error: null,
     };
   }),
 
@@ -45,9 +49,24 @@ export const gameReducers = createReducer(
     id: gameId,
   })),
 
-  on(loadGameSuccess, (_state, { game }) => ({
+  on(loadGame, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(loadGameSuccess, (state, { game }) => ({
+    ...state,
     ...game,
     pgnLast: game.pgnLast ?? null,
+    loading: false,
+    error: null,
+  })),
+
+  on(loadGameFailed, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
   })),
 
   on(playMove, (state, { fen, moveRecord, pgn }) => {

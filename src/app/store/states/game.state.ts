@@ -9,7 +9,8 @@ export type MoveRecordType = {
   timestamp: number;
 };
 
-export type GameStateType = {
+// Данные игры (без UI)
+export type GameDomainType = {
   id: string;
   pgn: string;
   pgnLast: string | null;
@@ -22,6 +23,13 @@ export type GameStateType = {
   finished: boolean;
   result: GameResultType | null;
   finalFen?: string | null;
+};
+
+// Store-состояние = данные + UI
+export type GameStateType = GameDomainType & {
+  // UI-состояние загрузки
+  loading: boolean;
+  error: string | null;
 };
 
 export const initialGameState: GameStateType = {
@@ -37,4 +45,7 @@ export const initialGameState: GameStateType = {
   finished: false,
   result: null,
   finalFen: null,
+
+  loading: false,
+  error: null,
 };

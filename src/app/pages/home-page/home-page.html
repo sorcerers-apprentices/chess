@@ -150,8 +150,8 @@
             @for (game of tableData(); track game.id) {
               <tr tuiTr>
                 <td tuiTd>
-                  {{ game.created_at | date }}
-                  {{ game.created_at | tuiFormatDate | async }}
+                  {{ game.created_at_ts | date }}
+                  {{ game.created_at_ts | tuiFormatDate | async }}
                 </td>
                 <td tuiTd>{{ `home.${game.result}` | translate }}</td>
                 <td tuiTd>
