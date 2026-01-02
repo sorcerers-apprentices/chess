@@ -35,6 +35,11 @@ export const playMove = createAction(
 
 export const moveSuccess = createAction('[Game] Move Success');
 
+export const moveFailed = createAction(
+  '[Game] Move Failed',
+  props<{ error: string }>(),
+);
+
 export const undoMove = createAction('[Game] Undo Move');
 export const undoMoveSuccess = createAction(
   '[Game] Undo Success',

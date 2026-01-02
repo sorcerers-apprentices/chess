@@ -37,12 +37,12 @@ export class GameSupabaseService {
       return null;
     }
 
-    this.setGameId(data.id);
+    this.rememberGameIdLS(data.id);
     return data.id;
   }
 
   public async loadGame(gameId: string): Promise<GameModel | null> {
-    this.setGameId(gameId);
+    this.rememberGameIdLS(gameId);
     return await this.fetchGame(gameId);
   }
 
@@ -59,10 +59,14 @@ export class GameSupabaseService {
     }
   }
 
-  public async move(chess: Chess, moveRecord: MoveRecordType): Promise<void> {
-    const gameId = this.getGameId();
+  public async move(
+    gameId: string,
+    chess: Chess,
+    moveRecord: MoveRecordType,
+  ): Promise<void> {
     const game = await this.fetchGame(gameId);
     const oldPgn = game?.pgn;
+
     const { error } = await this.supabase
       .from('game')
       .update({
@@ -78,8 +82,7 @@ export class GameSupabaseService {
     }
   }
 
-  public async undoMove(): Promise<GameProjection> {
-    const gameId = this.getGameId();
+  public async toggleMove(gameId: string): Promise<GameProjection> {
     const game = await this.fetchGame(gameId);
     if (!game) {
       throw new Error('Game not found');
@@ -113,10 +116,10 @@ export class GameSupabaseService {
   }
 
   public async gameOver(
+    gameId: string,
     storeResult: GameResultType,
     finalFen: string,
   ): Promise<void> {
-    const gameId = this.getGameId();
     const result = storeResult.draw
       ? 'DRAW'
       : storeResult.winner === 'white'
@@ -134,15 +137,8 @@ export class GameSupabaseService {
       .eq('id', gameId);
 
     if (error) {
-      console.error('Error undoing move:', error?.message);
+      throw new Error(error.message);
     }
-  }
-
-  private setGameId(id: string | null): void {
-    if (id == null) {
-      return;
-    }
-    localStorage.setItem(GAME_ID, id);
   }
 
   private async fetchGame(id: string): Promise<GameModel | null> {
@@ -159,7 +155,10 @@ export class GameSupabaseService {
     return data[0];
   }
 
-  private getGameId(): string {
-    return localStorage.getItem(GAME_ID) ?? '';
+  private rememberGameIdLS(id: string | null): void {
+    if (id == null) {
+      return;
+    }
+    localStorage.setItem(GAME_ID, id);
   }
 }

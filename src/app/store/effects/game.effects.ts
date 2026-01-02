@@ -16,7 +16,7 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { catchError, from, map, of, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, from, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
 import type {
   GameDomainType,
@@ -27,15 +27,21 @@ import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
 import type { HistoryMoveVerbose } from '@/app/types/store-game.type';
 import { toStoredMoveFromHistory } from '@/app/utilities/transformation-chess-move-class';
+import { Store } from '@ngrx/store';
+import type { AppStateType } from '@/app/store/states/app.state';
+import { concatLatestFrom } from '@ngrx/operators';
+import { selectGameId } from '@/app/store/selectors/game.selectors';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameEffects {
-  private readonly api = inject(GameSupabaseService);
-  private readonly authService = inject(AuthService);
-  private readonly actions$ = inject(Actions);
-  private readonly router = inject(Router);
+  private readonly api: GameSupabaseService = inject(GameSupabaseService);
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly actions$: Actions = inject(Actions);
+  private readonly router: Router = inject(Router);
+  private readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
 
   private startGame$ = createEffect(() => {
     return this.actions$.pipe(
@@ -119,8 +125,13 @@ export class GameEffects {
   private move$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(playMove),
-      switchMap(async ({ moveRecord, pgn }) => {
-        await this.api.move(load(pgn), moveRecord);
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(async ([{ moveRecord, pgn }, gameId]) => {
+        if (!gameId) {
+          throw new Error('Game id is missing in store');
+        }
+
+        await this.api.move(gameId, load(pgn), moveRecord);
         return moveSuccess();
       }),
     );
@@ -129,8 +140,13 @@ export class GameEffects {
   private undoMove$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(undoMove),
-      switchMap(async () => {
-        const result = await this.api.undoMove();
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(async ([, gameId]) => {
+        if (!gameId) {
+          // пока нет undoMoveFailed — можно бросить, но лучше action
+          throw new Error('Game id is missing in store');
+        }
+        const result = await this.api.toggleMove(gameId);
         return undoMoveSuccess(result);
       }),
     );
@@ -139,8 +155,13 @@ export class GameEffects {
   private redoMove$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(redoMove),
-      switchMap(async () => {
-        const result = await this.api.undoMove();
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(async ([, gameId]) => {
+        if (!gameId) {
+          // пока нет undoMoveFailed — можно бросить, но лучше action
+          throw new Error('Game id is missing in store');
+        }
+        const result = await this.api.toggleMove(gameId);
         return redoMoveSuccess(result);
       }),
     );
@@ -149,9 +170,22 @@ export class GameEffects {
   private GameOver$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(gameOver),
-      switchMap(async ({ result, finalFen }) => {
-        await this.api.gameOver(result, finalFen);
-        return gameOverSuccess();
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(([{ result, finalFen }, gameId]) => {
+        if (!gameId) {
+          // пока нет GameOverFailed — можно бросить, но лучше action
+          throw new Error('Game id is missing in store');
+        }
+        return from(this.api.gameOver(gameId, result, finalFen)).pipe(
+          map(() => gameOverSuccess()),
+          catchError((err) => {
+            console.error(
+              'Game over failed:',
+              err instanceof Error ? err.message : err,
+            );
+            return EMPTY;
+          }),
+        );
       }),
     );
   });

@@ -26,7 +26,6 @@ import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
 import { GameService } from '@/app/services/game.service';
 import type { Chess, Color, Square } from 'chess.js';
-import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
 import { loadGame } from '@/app/store/actions/game.actions';
 import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 import { load } from '@/app/utilities/chess-piece';
@@ -47,7 +46,6 @@ import {
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import type { ResultVariant } from '@/app/types/chess-piece.type';
-import { StockfishService } from '@/app/services/stockfish/stockfish.service';
 
 @Component({
   selector: 'app-game-page',
@@ -75,10 +73,7 @@ export class GamePage {
   // 2. DI services
   private readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
-  private readonly gameSupabaseService: GameSupabaseService =
-    inject(GameSupabaseService);
   private readonly gameService: GameService = inject(GameService);
-  private readonly stockfishService = inject(StockfishService);
   private readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
   );
