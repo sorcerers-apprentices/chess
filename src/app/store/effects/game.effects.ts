@@ -2,10 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
 import {
+  gameApiErrorActions,
   gameOver,
   gameOverSuccess,
   loadGame,
-  loadGameFailed,
   loadGameSuccess,
   moveSuccess,
   newGame,
@@ -16,7 +16,7 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { catchError, EMPTY, from, map, of, switchMap, tap } from 'rxjs';
+import { catchError, from, map, of, switchMap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
 import type {
   GameDomainType,
@@ -46,20 +46,32 @@ export class GameEffects {
   private startGame$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(newGame),
-      switchMap(({ initialFen, orientation }) => {
-        return from(
+      switchMap(({ initialFen, orientation }) =>
+        from(
           this.api.createGame(
             this.authService.getUserData().user.id,
             orientation,
             initialFen,
           ),
         ).pipe(
-          map((id) => setGameId({ gameId: id ?? '' })),
-          tap((game) => {
-            this.router.navigate([`/game/${game.gameId}`]).then();
+          switchMap((id) => {
+            if (id === null) {
+              return of(
+                gameApiErrorActions.createGameFailed({
+                  error: 'Create game failed',
+                }),
+              );
+            }
+            this.router.navigate([`/game/${id}`]).then();
+            return of(setGameId({ gameId: id }));
           }),
-        );
-      }),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Create game failed';
+            return of(gameApiErrorActions.createGameFailed({ error: message }));
+          }),
+        ),
+      ),
     );
   });
 
@@ -70,7 +82,9 @@ export class GameEffects {
         return from(this.api.loadGame(gameId)).pipe(
           map((game) => {
             if (game === null) {
-              return loadGameFailed({ error: 'Game not found' });
+              return gameApiErrorActions.loadGameFailed({
+                error: 'Game not found',
+              });
             }
             const chess = new Chess();
             const pgn = game.pgn;
@@ -79,7 +93,7 @@ export class GameEffects {
               verbose: true,
             });
 
-            const lastMove = chess.history({ verbose: true }).at(-1);
+            const lastMove = moves.at(-1);
             const gameModel: GameDomainType = {
               pgn: chess.pgn(),
               pgnLast: game.pgn_last,
@@ -115,7 +129,7 @@ export class GameEffects {
           catchError((error: unknown) => {
             const message =
               error instanceof Error ? error.message : 'Load game failed';
-            return of(loadGameFailed({ error: message }));
+            return of(gameApiErrorActions.loadGameFailed({ error: message }));
           }),
         );
       }),
@@ -126,13 +140,23 @@ export class GameEffects {
     return this.actions$.pipe(
       ofType(playMove),
       concatLatestFrom(() => this.store.select(selectGameId)),
-      switchMap(async ([{ moveRecord, pgn }, gameId]) => {
-        if (!gameId) {
-          throw new Error('Game id is missing in store');
+      switchMap(([{ moveRecord, pgn }, gameId]) => {
+        if (gameId == null || gameId === '') {
+          return of(
+            gameApiErrorActions.moveFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
         }
 
-        await this.api.move(gameId, load(pgn), moveRecord);
-        return moveSuccess();
+        return from(this.api.move(gameId, load(pgn), moveRecord)).pipe(
+          map(() => moveSuccess()),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Move failed';
+            return of(gameApiErrorActions.moveFailed({ error: message }));
+          }),
+        );
       }),
     );
   });
@@ -141,13 +165,22 @@ export class GameEffects {
     return this.actions$.pipe(
       ofType(undoMove),
       concatLatestFrom(() => this.store.select(selectGameId)),
-      switchMap(async ([, gameId]) => {
-        if (!gameId) {
-          // пока нет undoMoveFailed — можно бросить, но лучше action
-          throw new Error('Game id is missing in store');
+      switchMap(([, gameId]) => {
+        if (gameId === null || gameId === '') {
+          return of(
+            gameApiErrorActions.undoMoveFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
         }
-        const result = await this.api.toggleMove(gameId);
-        return undoMoveSuccess(result);
+        return from(this.api.toggleMove(gameId)).pipe(
+          map((result) => undoMoveSuccess(result)),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Undo move failed';
+            return of(gameApiErrorActions.undoMoveFailed({ error: message }));
+          }),
+        );
       }),
     );
   });
@@ -156,13 +189,23 @@ export class GameEffects {
     return this.actions$.pipe(
       ofType(redoMove),
       concatLatestFrom(() => this.store.select(selectGameId)),
-      switchMap(async ([, gameId]) => {
-        if (!gameId) {
-          // пока нет undoMoveFailed — можно бросить, но лучше action
-          throw new Error('Game id is missing in store');
+      switchMap(([, gameId]) => {
+        if (gameId === null || gameId === '') {
+          return of(
+            gameApiErrorActions.redoMoveFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
         }
-        const result = await this.api.toggleMove(gameId);
-        return redoMoveSuccess(result);
+
+        return from(this.api.toggleMove(gameId)).pipe(
+          map((result) => redoMoveSuccess(result)),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Redo move failed';
+            return of(gameApiErrorActions.redoMoveFailed({ error: message }));
+          }),
+        );
       }),
     );
   });
@@ -172,18 +215,20 @@ export class GameEffects {
       ofType(gameOver),
       concatLatestFrom(() => this.store.select(selectGameId)),
       switchMap(([{ result, finalFen }, gameId]) => {
-        if (!gameId) {
-          // пока нет GameOverFailed — можно бросить, но лучше action
-          throw new Error('Game id is missing in store');
+        if (gameId === null || gameId === '') {
+          return of(
+            gameApiErrorActions.gameOverFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
         }
+
         return from(this.api.gameOver(gameId, result, finalFen)).pipe(
           map(() => gameOverSuccess()),
-          catchError((err) => {
-            console.error(
-              'Game over failed:',
-              err instanceof Error ? err.message : err,
-            );
-            return EMPTY;
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Move failed';
+            return of(gameApiErrorActions.gameOverFailed({ error: message }));
           }),
         );
       }),

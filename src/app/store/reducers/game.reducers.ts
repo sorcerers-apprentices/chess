@@ -1,7 +1,7 @@
 import {
+  gameApiErrorActions,
   gameOver,
   loadGame,
-  loadGameFailed,
   loadGameSuccess,
   newGame,
   playMove,
@@ -13,7 +13,17 @@ import {
 } from '@/app/store/actions/game.actions';
 import { Chess, DEFAULT_POSITION } from 'chess.js';
 import { createReducer, on } from '@ngrx/store';
+import type { GameStateType } from '@/app/store/states/game.state';
 import { initialGameState } from '@/app/store/states/game.state';
+
+const apiErrorFailed = (
+  state: GameStateType,
+  { error }: { error: string },
+): GameStateType => ({
+  ...state,
+  loading: false,
+  error,
+});
 
 export const gameReducers = createReducer(
   initialGameState,
@@ -61,12 +71,6 @@ export const gameReducers = createReducer(
     pgnLast: game.pgnLast ?? null,
     loading: false,
     error: null,
-  })),
-
-  on(loadGameFailed, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error,
   })),
 
   on(playMove, (state, { fen, moveRecord, pgn }) => {
@@ -142,4 +146,11 @@ export const gameReducers = createReducer(
     result,
     finalFen,
   })),
+
+  on(gameApiErrorActions.createGameFailed, apiErrorFailed),
+  on(gameApiErrorActions.loadGameFailed, apiErrorFailed),
+  on(gameApiErrorActions.moveFailed, apiErrorFailed),
+  on(gameApiErrorActions.undoMoveFailed, apiErrorFailed),
+  on(gameApiErrorActions.redoMoveFailed, apiErrorFailed),
+  on(gameApiErrorActions.gameOverFailed, apiErrorFailed),
 );

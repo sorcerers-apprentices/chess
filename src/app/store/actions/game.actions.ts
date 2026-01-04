@@ -1,4 +1,4 @@
-import { createAction, props } from '@ngrx/store';
+import { createAction, createActionGroup, props } from '@ngrx/store';
 import type { GameResultType } from '@/app/services/game.service';
 import type {
   GameDomainType,
@@ -23,22 +23,12 @@ export const loadGameSuccess = createAction(
   props<{ game: GameDomainType }>(),
 );
 
-export const loadGameFailed = createAction(
-  '[Chess] Load Game Failed',
-  props<{ error: string }>(),
-);
-
 export const playMove = createAction(
   '[Game] Play Move',
   props<{ fen: string; moveRecord: MoveRecordType; pgn: string }>(),
 );
 
 export const moveSuccess = createAction('[Game] Move Success');
-
-export const moveFailed = createAction(
-  '[Game] Move Failed',
-  props<{ error: string }>(),
-);
 
 export const undoMove = createAction('[Game] Undo Move');
 export const undoMoveSuccess = createAction(
@@ -57,3 +47,16 @@ export const gameOver = createAction(
   props<{ result: GameResultType; finalFen: string }>(),
 );
 export const gameOverSuccess = createAction('[Game] Game Over Success');
+
+// actions error
+export const gameApiErrorActions = createActionGroup({
+  source: 'Game API Error',
+  events: {
+    'Create Game Failed': props<{ error: string }>(),
+    'Load Game Failed': props<{ error: string }>(),
+    'Move Failed': props<{ error: string }>(),
+    'Undo Move Failed': props<{ error: string }>(),
+    'Redo Move Failed': props<{ error: string }>(),
+    'Game Over Failed': props<{ error: string }>(),
+  },
+});

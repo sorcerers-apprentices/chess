@@ -37,12 +37,12 @@ export class GameSupabaseService {
       return null;
     }
 
-    this.rememberGameIdLS(data.id);
+    //this.rememberGameIdLS(data.id);
     return data.id;
   }
 
   public async loadGame(gameId: string): Promise<GameModel | null> {
-    this.rememberGameIdLS(gameId);
+    //this.rememberGameIdLS(gameId);
     return await this.fetchGame(gameId);
   }
 
