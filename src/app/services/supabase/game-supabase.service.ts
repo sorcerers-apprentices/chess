@@ -1,6 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { GAME_ID } from '@/app/constants/auth.constants';
-import type { GameModel, GameProjection } from '@/app/types/supabase-game.type';
+import type {
+  GameModel,
+  GameProjection,
+} from '@/app/types/supabase-type/supabase-game.type';
 import { Chess } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
 import { clone } from '@/app/utilities/chess-piece';

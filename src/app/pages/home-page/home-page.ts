@@ -41,7 +41,7 @@ import {
   TuiTableTr,
 } from '@taiga-ui/addon-table';
 import { loadGame } from '@/app/store/actions/game.actions';
-import type { GameModel } from '@/app/types/supabase-game.type';
+import type { GameModel } from '@/app/types/supabase-type/supabase-game.type';
 import type { AppStateType } from '@/app/store/states/app.state';
 import type { GameDifficulty } from '@/app/types/stockfish.type';
 import { DIFFICULTY_VALUES } from '@/app/types/stockfish.type';

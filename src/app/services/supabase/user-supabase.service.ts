@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import type { GameModel } from '@/app/types/supabase-game.type';
+import type { GameModel } from '@/app/types/supabase-type/supabase-game.type';
 import { SupabaseService } from '@/app/services/supabase/supabase.service';
 
 export type UserData = {
