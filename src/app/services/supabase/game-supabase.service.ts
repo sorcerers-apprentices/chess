@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { GAME_ID } from '@/app/constants/auth.constants';
 import type {
   GameModel,
   GameProjection,
@@ -9,6 +8,10 @@ import type { GameResultType } from '@/app/services/game.service';
 import { clone } from '@/app/utilities/chess-piece';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { SupabaseService } from '@/app/services/supabase/supabase.service';
+import type {
+  MoveDbInsert,
+  MoveDbRow,
+} from '@/app/types/supabase-type/supabase-move.type';
 
 @Injectable({
   providedIn: 'root',
@@ -144,6 +147,21 @@ export class GameSupabaseService {
     }
   }
 
+  public async insertMove(row: MoveDbInsert): Promise<MoveDbRow | null> {
+    const { data, error } = await this.supabase
+      .from('move')
+      .insert(row)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error inserting move:', error.message);
+      return null;
+    }
+
+    return data;
+  }
+
   private async fetchGame(id: string): Promise<GameModel | null> {
     const { data, error } = await this.supabase
       .from('game')
@@ -156,12 +174,5 @@ export class GameSupabaseService {
     }
 
     return data[0];
-  }
-
-  private rememberGameIdLS(id: string | null): void {
-    if (id == null) {
-      return;
-    }
-    localStorage.setItem(GAME_ID, id);
   }
 }
