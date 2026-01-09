@@ -26,7 +26,7 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { from, map } from 'rxjs';
 import {
   CHOSEN_COLOR_TOKEN,
-  START_FEN,
+  DEFAULT_POSITION_FEN,
 } from '@/app/constants/chess-game.constants';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from '@/app/services/game.service';
@@ -48,7 +48,7 @@ import { DIFFICULTY_VALUES } from '@/app/types/stockfish.type';
 import { DIFFICULTY_OPTIONS } from '@/app/types/stockfish.type';
 import { ENGINE_DEFAULT_DIFFICULTY } from '@/app/constants/stockfish.constans';
 import { EngineService } from '@/app/services/stockfish/engine.service';
-import type { PieceColorType } from '@/app/types/chess-square.type';
+import type { PieceColorType } from '@/app/types/chess-type/chess-square.type';
 
 type GameRow = GameModel & {
   created_at_ts: number;
@@ -203,7 +203,7 @@ export class HomePage {
     this.engineService.engineForNewGame(difficulty);
 
     //запускаем новую игру в логике Chess / стора
-    this.gameService.newGame(START_FEN, color);
+    this.gameService.newGame(DEFAULT_POSITION_FEN, color);
   }
 
   protected onDifficultyChange(difficulty: GameDifficulty): void {

@@ -1,12 +1,8 @@
-import type { Piece } from 'chess.js';
-
 export type SquareStateType = {
-  square: SquareType;
+  square: NotationSquare;
   squareColor: SquareColorType;
-  piece: Piece | null;
+  piece: NotationPiece | null;
 };
-
-export type SquareType = `${FileType}${RankType}`;
 
 /** Фигура на доске: id обязателен */
 export type PieceType = {
@@ -28,6 +24,18 @@ export type PieceKindType =
   | 'bishop'
   | 'knight'
   | 'pawn';
+
+export type SquareUiStateType = SquareStateType & {
+  isFrom: boolean;
+  isAllowed: boolean;
+  isOverAllowed: boolean;
+  isOverDenied: boolean;
+  isKingCheck: boolean;
+  isKingMate: boolean;
+};
+
+// Domain / Store types
+export type NotationSquare = `${FileType}${RankType}`;
 
 export const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 export type FileType = (typeof FILES)[number];
@@ -54,11 +62,11 @@ export const RANKS = [
 
 export type RankType = (typeof RANKS)[number];
 
-export type SquareUiStateType = SquareStateType & {
-  isFrom: boolean;
-  isAllowed: boolean;
-  isOverAllowed: boolean;
-  isOverDenied: boolean;
-  isKingCheck: boolean;
-  isKingMate: boolean;
+export type NotationLetter = 'p' | 'n' | 'b' | 'r' | 'q' | 'k';
+export type PromotionNotationLetter = 'n' | 'b' | 'r' | 'q';
+export type NotationColor = 'w' | 'b';
+export type NotationPiece = {
+  color: NotationColor;
+  type: NotationLetter;
 };
+export type BoardMatrix = (NotationPiece | null)[][];

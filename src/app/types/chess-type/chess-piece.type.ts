@@ -1,9 +1,9 @@
-import type { Square } from 'chess.js';
+import type { NotationSquare } from '@/app/types/chess-type/chess-square.type';
 
 export type MoveRow = {
   num: number;
-  player?: { from: Square; to: Square };
-  opponent?: { from: Square; to: Square };
+  player?: { from: NotationSquare; to: NotationSquare };
+  opponent?: { from: NotationSquare; to: NotationSquare };
   playerText: string;
   opponentText: string;
 };

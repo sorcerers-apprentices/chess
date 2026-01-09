@@ -25,7 +25,7 @@ import type {
 import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
-import type { HistoryMoveVerbose } from '@/app/types/store-game.type';
+import type { HistoryMoveVerbose } from '@/app/types/chess-type/chess-game.type';
 import { toStoredMoveFromHistory } from '@/app/utilities/transformation-chess-move-class';
 import { Store } from '@ngrx/store';
 import type { AppStateType } from '@/app/store/states/app.state';

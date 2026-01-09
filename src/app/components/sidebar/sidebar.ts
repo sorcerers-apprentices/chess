@@ -29,7 +29,7 @@ import { logoutUser } from '@/app/store/actions/user.actions';
 import { Store } from '@ngrx/store';
 import {
   CHOSEN_COLOR_TOKEN,
-  START_FEN,
+  DEFAULT_POSITION_FEN,
 } from '@/app/constants/chess-game.constants';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
@@ -111,7 +111,7 @@ export class Sidebar {
 
   protected playGame(): void {
     this.timer.setPendingBase(this.timer.baseSnapshot());
-    this.gameService.newGame(START_FEN, this.chosenColor());
+    this.gameService.newGame(DEFAULT_POSITION_FEN, this.chosenColor());
   }
 
   private isOnGamePage(): boolean {

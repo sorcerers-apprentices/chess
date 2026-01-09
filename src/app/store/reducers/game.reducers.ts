@@ -11,10 +11,11 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { Chess, DEFAULT_POSITION } from 'chess.js';
+import { Chess } from 'chess.js';
 import { createReducer, on } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
 import { initialGameState } from '@/app/store/states/game.state';
+import { DEFAULT_POSITION_FEN } from '@/app/constants/chess-game.constants';
 
 const apiErrorFailed = (
   state: GameStateType,
@@ -33,7 +34,7 @@ export const gameReducers = createReducer(
     if (initialFen) {
       chess.load(initialFen);
     } else {
-      chess.load(DEFAULT_POSITION);
+      chess.load(DEFAULT_POSITION_FEN);
     }
     return {
       ...state,
@@ -93,7 +94,7 @@ export const gameReducers = createReducer(
     const undoneMove = state.moves[state.moves.length - 1];
     const newFen = newMoves.length
       ? newMoves[newMoves.length - 1].fenAfter
-      : DEFAULT_POSITION;
+      : DEFAULT_POSITION_FEN;
 
     return {
       ...state,

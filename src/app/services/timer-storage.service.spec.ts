@@ -1,6 +1,6 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { TimerStorageService } from './timer-storage.service';
-import type { PersistShape } from '@/app/types/chess-piece.type';
+import type { PersistShape } from '@/app/types/chess-type/chess-piece.type';
 
 describe('TimerStorageService', () => {
   let service: TimerStorageService;

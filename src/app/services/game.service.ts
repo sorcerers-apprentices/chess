@@ -13,7 +13,7 @@ import {
 import type { Chess, Move } from 'chess.js';
 import { Store } from '@ngrx/store';
 
-import type { Square, Piece, Color } from 'chess.js';
+import type { Square, Color } from 'chess.js';
 import { EloService } from '@/app/services/elo.service';
 
 import { computed, inject, Injectable, signal } from '@angular/core';
@@ -21,8 +21,11 @@ import type { MoveRecordType } from '@/app/store/states/game.state';
 import { clone, load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { EngineService } from '@/app/services/stockfish/engine.service';
-import type { EngineMove, PromotionPiece } from '@/app/types/stockfish.type';
-import type { PieceColorType } from '@/app/types/chess-square.type';
+import type { EngineMove } from '@/app/types/stockfish.type';
+import type {
+  PieceColorType,
+  PromotionNotationLetter,
+} from '@/app/types/chess-type/chess-square.type';
 import { toStoredMove } from '@/app/utilities/transformation-chess-move-class';
 
 export type GameResultType = {
@@ -30,7 +33,7 @@ export type GameResultType = {
   draw: boolean;
 };
 
-export type BoardMatrix = (Piece | null)[][];
+//export type BoardMatrix = (Piece | null)[][];
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +59,7 @@ export class GameService {
   public playMove(
     from: Square,
     to: Square,
-    promotion: PromotionPiece = 'q',
+    promotion: PromotionNotationLetter = 'q',
   ): boolean {
     try {
       const chess = clone(this.game());

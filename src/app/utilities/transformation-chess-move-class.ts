@@ -1,8 +1,39 @@
-import type { Move } from 'chess.js';
+import type { Move, Piece, PieceSymbol } from 'chess.js';
 import type {
   HistoryMoveVerbose,
   StoredMove,
-} from '@/app/types/store-game.type';
+} from '@/app/types/chess-type/chess-game.type';
+import type {
+  BoardMatrix,
+  NotationPiece,
+  PromotionNotationLetter,
+} from '@/app/types/chess-type/chess-square.type';
+
+function toPromotionLetter(
+  value: PieceSymbol | undefined,
+): PromotionNotationLetter | undefined {
+  if (!value) return undefined;
+
+  if (value === 'q' || value === 'r' || value === 'b' || value === 'n') {
+    return value;
+  }
+  throw new Error(`Invalid promotion piece: ${value}`);
+}
+
+export function chessBoardToBoardMatrix(
+  chessBoard: (Piece | null)[][],
+): BoardMatrix {
+  return chessBoard.map((row: (Piece | null)[]): (NotationPiece | null)[] =>
+    row.map((pieceOrNull: Piece | null): NotationPiece | null => {
+      if (pieceOrNull === null) return null;
+
+      return {
+        color: pieceOrNull.color,
+        type: pieceOrNull.type,
+      };
+    }),
+  );
+}
 
 export function toStoredMove(move: Move): StoredMove {
   return {
@@ -12,7 +43,7 @@ export function toStoredMove(move: Move): StoredMove {
     piece: move.piece,
 
     captured: move.captured,
-    promotion: move.promotion,
+    promotion: toPromotionLetter(move.promotion),
 
     san: move.san,
     uci: `${move.from}${move.to}${move.promotion ?? ''}`,
@@ -39,7 +70,7 @@ export function toStoredMoveFromHistory(m: HistoryMoveVerbose): StoredMove {
     piece: m.piece,
 
     captured: m.captured,
-    promotion: m.promotion,
+    promotion: toPromotionLetter(m.promotion),
 
     san: m.san,
     uci: `${m.from}${m.to}${m.promotion ?? ''}`,

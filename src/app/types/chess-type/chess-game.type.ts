@@ -1,14 +1,18 @@
-// StoredMove — сериализуемый, стабильный, без методов
-import type { Color, PieceSymbol, Square } from 'chess.js';
+import type {
+  NotationColor,
+  NotationLetter,
+  NotationSquare,
+  PromotionNotationLetter,
+} from '@/app/types/chess-type/chess-square.type';
 
 export type StoredMove = {
-  color: Color; // 'w' | 'b'
-  from: Square; // например 'a2'
-  to: Square; // например 'a4'
-  piece: PieceSymbol; // 'p','n','b','r','q','k'
+  color: NotationColor; // 'w' | 'b'
+  from: NotationSquare; // например 'a2'
+  to: NotationSquare; // например 'a4'
+  piece: NotationLetter; // 'p','n','b','r','q','k'
 
-  captured?: PieceSymbol;
-  promotion?: PieceSymbol;
+  captured?: NotationLetter;
+  promotion?: PromotionNotationLetter;
 
   san: string; // "a4", "Nf3", "O-O" и т.д.
   uci: string; // "a2a4", "e7e8q" (можно вычислять, но удобно хранить)
@@ -26,12 +30,12 @@ export type StoredMove = {
 };
 
 export type HistoryMoveVerbose = {
-  color: Color;
-  from: Square;
-  to: Square;
-  piece: PieceSymbol;
-  captured?: PieceSymbol;
-  promotion?: PieceSymbol;
+  color: NotationColor;
+  from: NotationSquare;
+  to: NotationSquare;
+  piece: NotationLetter;
+  captured?: NotationLetter;
+  promotion?: NotationLetter;
   san: string;
   before: string;
   after: string;

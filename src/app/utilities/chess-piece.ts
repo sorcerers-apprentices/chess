@@ -1,15 +1,15 @@
+import type { NotationColor } from '@/app/types/chess-type/chess-square.type';
 import {
   FILES,
   type FileType,
   RANKS,
   type RankType,
-} from '@/app/types/chess-square.type';
+} from '@/app/types/chess-type/chess-square.type';
 import type {
   DragDataType,
   DropDataType,
 } from '@/app/types/drag-drop-data.type';
 import { Chess } from 'chess.js';
-import type { Color } from 'chess.js';
 
 const FILES_SET: ReadonlySet<string> = new Set(FILES);
 const RANKS_SET: ReadonlySet<number> = new Set(RANKS);
@@ -60,7 +60,7 @@ export const load = (pgn: string): Chess => {
   return game;
 };
 
-export function parseActiveColor(fen: string): Color {
+export function parseActiveColor(fen: string): NotationColor {
   const token = fen.split(' ')[1];
   if (token === 'w' || token === 'b') {
     return token;

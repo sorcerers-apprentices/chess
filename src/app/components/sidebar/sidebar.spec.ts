@@ -15,7 +15,7 @@ import { LeaveBypassService } from '@/app/services/leave-bypass.service';
 import { LANGUAGE_KEY, LANGUAGE_TOKEN } from '@/app/services/language.service';
 import {
   CHOSEN_COLOR_TOKEN,
-  START_FEN,
+  DEFAULT_POSITION_FEN,
 } from '@/app/constants/chess-game.constants';
 import { TUI_DARK_MODE } from '@taiga-ui/core';
 import { GAME_ID, LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
@@ -157,12 +157,15 @@ describe('Sidebar (strictly typed)', () => {
     fixture.detectChanges();
   });
 
-  it("'playGame() подготавливает таймер и вызывает newGame(START_FEN, выбранный цвет)'", () => {
+  it("'playGame() подготавливает таймер и вызывает newGame(DEFAULT_POSITION_FEN, выбранный цвет)'", () => {
     fixture.componentInstance.callPlayGame();
 
     expect(timerServiceMock.baseSnapshot).toHaveBeenCalledTimes(1);
     expect(timerServiceMock.setPendingBase).toHaveBeenCalledWith('base-snap');
-    expect(gameServiceMock.newGame).toHaveBeenCalledWith(START_FEN, 'white');
+    expect(gameServiceMock.newGame).toHaveBeenCalledWith(
+      DEFAULT_POSITION_FEN,
+      'white',
+    );
   });
 
   it('onClick(item) вызывает router.navigate([item.route])', () => {
@@ -203,7 +206,7 @@ describe('Sidebar (strictly typed)', () => {
     fixture.componentInstance.callPlayGame();
 
     expect(gameServiceMock.newGame).toHaveBeenLastCalledWith(
-      START_FEN,
+      DEFAULT_POSITION_FEN,
       'black',
     );
   });

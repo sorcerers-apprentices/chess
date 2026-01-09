@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { PersistShape } from '@/app/types/chess-piece.type';
+import type { PersistShape } from '@/app/types/chess-type/chess-piece.type';
 
 @Injectable({
   providedIn: 'root',

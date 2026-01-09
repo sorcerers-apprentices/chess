@@ -1,7 +1,6 @@
-import { Chess } from 'chess.js';
-import { DEFAULT_POSITION } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
-import type { StoredMove } from '@/app/types/store-game.type';
+import type { StoredMove } from '@/app/types/chess-type/chess-game.type';
+import { DEFAULT_POSITION_FEN } from '@/app/constants/chess-game.constants';
 
 export type MoveRecordType = {
   move: StoredMove;
@@ -33,9 +32,9 @@ export type GameStateType = GameDomainType & {
 };
 
 export const initialGameState: GameStateType = {
-  pgn: new Chess(DEFAULT_POSITION).pgn(),
+  pgn: '',
   pgnLast: null,
-  fen: DEFAULT_POSITION,
+  fen: DEFAULT_POSITION_FEN,
   id: '',
   moves: [],
   undoneMoves: [],

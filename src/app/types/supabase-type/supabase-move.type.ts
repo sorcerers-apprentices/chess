@@ -1,6 +1,8 @@
-export type NotationLetter = 'p' | 'n' | 'b' | 'r' | 'q' | 'k';
-export type PromotionNotationLetter = 'n' | 'b' | 'r' | 'q';
-export type NotationColor = 'w' | 'b';
+import type {
+  NotationColor,
+  NotationLetter,
+  PromotionNotationLetter,
+} from '@/app/types/chess-type/chess-square.type';
 
 export type MoveDbRow = {
   id: string;

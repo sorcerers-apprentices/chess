@@ -20,7 +20,10 @@ import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { ChessBoard } from '@/app/components/chess-board/chess-board';
 import { PlayerPanel } from '@/app/components/player-panel/player-panel';
-import type { PieceColorType, SquareType } from '@/app/types/chess-square.type';
+import type {
+  NotationSquare,
+  PieceColorType,
+} from '@/app/types/chess-type/chess-square.type';
 import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
@@ -42,10 +45,10 @@ import { GameViewerService } from '@/app/services/game-viewer.service';
 import { Router } from '@angular/router';
 import {
   CHOSEN_COLOR_TOKEN,
-  START_FEN,
+  DEFAULT_POSITION_FEN,
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
-import type { ResultVariant } from '@/app/types/chess-piece.type';
+import type { ResultVariant } from '@/app/types/chess-type/chess-piece.type';
 
 @Component({
   selector: 'app-game-page',
@@ -141,7 +144,7 @@ export class GamePage {
   // куда можно поставить фигуру
   protected readonly allowedTargets = signal<ReadonlySet<Square> | null>(null);
   // локально можем хранить, откуда началось перетаскивание (если нужно для UI страницы)
-  protected readonly dragFrom = signal<SquareType | null>(null);
+  protected readonly dragFrom = signal<NotationSquare | null>(null);
   // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
@@ -221,7 +224,7 @@ export class GamePage {
   // Game control / navigation
   public newGame(): void {
     this.leaveBypass.bypassOnce();
-    this.gameService.newGame(START_FEN, this.chosenColor());
+    this.gameService.newGame(DEFAULT_POSITION_FEN, this.chosenColor());
   }
 
   public goHome(): void {

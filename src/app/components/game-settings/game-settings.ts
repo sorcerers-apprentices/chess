@@ -16,7 +16,7 @@ import {
   selectMoves,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
-import type { MoveRow } from '@/app/types/chess-piece.type';
+import type { MoveRow } from '@/app/types/chess-type/chess-piece.type';
 import { PlayerTimerService } from '@/app/services/player-timer.service';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { GameService } from '@/app/services/game.service';
