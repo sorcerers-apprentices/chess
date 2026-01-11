@@ -7,10 +7,10 @@ import { ChessSquare } from '@/app/components/chess-square/chess-square';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import type {
+  NotationPiece,
   NotationSquare,
   SquareColorType,
 } from '@/app/types/chess-type/chess-square.type';
-import type { Piece } from 'chess.js';
 import { PIECE_ICON_URL } from '@/app/constants/chess-piece.constans';
 import type {
   DragDataType,
@@ -28,14 +28,14 @@ describe('ChessSquare (standalone, Angular 20)', () => {
 
   const ALL_SQUARES = [A1, A2, H8] as readonly NotationSquare[];
 
-  const whiteQueen: Piece = {
+  const whiteQueen: NotationPiece = {
     type: 'q',
     color: 'w',
   };
 
-  const blackPawn: Piece = {
-    type: 'pawn' as Piece['type'],
-    color: 'black' as Piece['color'],
+  const blackPawn: NotationPiece = {
+    type: 'pawn' as NotationPiece['type'],
+    color: 'black' as NotationPiece['color'],
   };
 
   beforeEach(async () => {

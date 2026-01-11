@@ -7,6 +7,7 @@ import {
   input,
 } from '@angular/core';
 import type {
+  NotationPiece,
   NotationSquare,
   SquareColorType,
 } from '@/app/types/chess-type/chess-square.type';
@@ -21,7 +22,6 @@ import type {
   DropDataType,
 } from '@/app/types/drag-drop-data.type';
 import { isDragData, isDropData } from '@/app/utilities/chess-piece';
-import type { Piece } from 'chess.js';
 
 @Component({
   selector: 'app-chess-square',
@@ -36,7 +36,7 @@ export class ChessSquare {
   //фон клетки
   public readonly backgroundColor = input.required<SquareColorType>();
   // объект фигуры в клетке (id, цвет, что за фигура)
-  public readonly piece = input<Piece | null>(null);
+  public readonly piece = input<NotationPiece | null>(null);
   //event попытка хода drop: { from, to }
   public readonly chessMove = output<ChessMovePayloadType>();
 

@@ -21,6 +21,7 @@ import { Navigation } from '../../components/navigation/navigation';
 import { ChessBoard } from '@/app/components/chess-board/chess-board';
 import { PlayerPanel } from '@/app/components/player-panel/player-panel';
 import type {
+  NotationColor,
   NotationSquare,
   PieceColorType,
 } from '@/app/types/chess-type/chess-square.type';
@@ -28,7 +29,7 @@ import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
 import { GameService } from '@/app/services/game.service';
-import type { Chess, Color, Square } from 'chess.js';
+import type { Chess } from 'chess.js';
 import { loadGame } from '@/app/store/actions/game.actions';
 import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 import { load } from '@/app/utilities/chess-piece';
@@ -111,7 +112,7 @@ export class GamePage {
   protected readonly isMate: Signal<boolean> = computed(() =>
     this.gameService.isMate(),
   );
-  protected readonly kingSquare: Signal<Square | null> = computed(() =>
+  protected readonly kingSquare: Signal<NotationSquare | null> = computed(() =>
     this.gameService.kingSquare('turn'),
   );
   protected readonly topPlayerColor = computed(() =>
@@ -142,7 +143,8 @@ export class GamePage {
 
   // Local board / drag&drop state
   // куда можно поставить фигуру
-  protected readonly allowedTargets = signal<ReadonlySet<Square> | null>(null);
+  protected readonly allowedTargets =
+    signal<ReadonlySet<NotationSquare> | null>(null);
   // локально можем хранить, откуда началось перетаскивание (если нужно для UI страницы)
   protected readonly dragFrom = signal<NotationSquare | null>(null);
   // последний совершённый ход (для логов/истории/нотации)
@@ -170,10 +172,11 @@ export class GamePage {
   });
 
   // Drag & drop API доски
-  public onBoardDragStart(from: Square): void {
+  public onBoardDragStart(from: NotationSquare): void {
     // чей ход
-    const turnPiece: Color = this.gameService.turn();
-    const colorPieceSquare: Color | null = this.gameService.pieceColorAt(from);
+    const turnPiece: NotationColor = this.gameService.turn();
+    const colorPieceSquare: NotationColor | null =
+      this.gameService.pieceColorAt(from);
 
     if (!colorPieceSquare || colorPieceSquare !== turnPiece) {
       this.dragFrom.set(null);
@@ -181,7 +184,8 @@ export class GamePage {
       return;
     }
 
-    const targets: ReadonlySet<Square> = this.gameService.getTargetsSet(from);
+    const targets: ReadonlySet<NotationSquare> =
+      this.gameService.getTargetsSet(from);
 
     this.dragFrom.set(from);
     this.allowedTargets.set(this.gameService.getTargetsSet(from));
@@ -199,7 +203,7 @@ export class GamePage {
       return;
     }
 
-    const allowed: ReadonlySet<Square> | null = this.allowedTargets();
+    const allowed: ReadonlySet<NotationSquare> | null = this.allowedTargets();
     // true только если есть сет разрешённых ходов, источник совпадает с текущим началом перетаскивания, и целевая клетка входит в этот сет
     const isAllowed: boolean =
       !!allowed && this.dragFrom() === move.from && allowed.has(move.to);

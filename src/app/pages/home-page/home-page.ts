@@ -127,6 +127,7 @@ export class HomePage {
         map((user) => user?.elo),
       ),
   });
+
   protected playedGamesCount = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>

@@ -11,7 +11,6 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { Chess } from 'chess.js';
 import { createReducer, on } from '@ngrx/store';
 import type { GameStateType } from '@/app/store/states/game.state';
 import { initialGameState } from '@/app/store/states/game.state';
@@ -29,31 +28,11 @@ const apiErrorFailed = (
 export const gameReducers = createReducer(
   initialGameState,
 
-  on(newGame, (state, { initialFen, orientation }) => {
-    const chess = new Chess();
-    if (initialFen) {
-      chess.load(initialFen);
-    } else {
-      chess.load(DEFAULT_POSITION_FEN);
-    }
-    return {
-      ...state,
-      fen: chess.fen(),
-      pgnLast: null,
-      pgn: chess.pgn(),
-      id: '',
-      moves: [],
-      undoneMoves: [],
-      lastMove: null,
-      orientation: orientation ?? state.orientation,
-      clocks: null,
-      finished: false,
-      result: null,
-      finalFen: null,
-      loading: false,
-      error: null,
-    };
-  }),
+  on(newGame, (_state, { initialFen, orientation }) => ({
+    ...initialGameState,
+    fen: initialFen,
+    orientation,
+  })),
 
   on(setGameId, (state, { gameId }) => ({
     ...state,

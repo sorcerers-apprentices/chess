@@ -16,12 +16,11 @@ export type GameDomainType = {
   fen: string;
   moves: MoveRecordType[];
   undoneMoves: MoveRecordType[];
-  lastMove?: { from: string; to: string } | null;
+  lastMove: { from: string; to: string } | null;
   orientation: 'white' | 'black';
-  clocks?: { white: number; black: number } | null;
   finished: boolean;
   result: GameResultType | null;
-  finalFen?: string | null;
+  finalFen: string | null;
 };
 
 // Store-состояние = данные + UI
@@ -40,7 +39,6 @@ export const initialGameState: GameStateType = {
   undoneMoves: [],
   lastMove: null,
   orientation: 'black',
-  clocks: null,
   finished: false,
   result: null,
   finalFen: null,

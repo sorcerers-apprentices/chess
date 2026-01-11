@@ -10,12 +10,9 @@ import {
   selectIsGameOver,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
-import type { Chess, Move } from 'chess.js';
+import type { Chess } from 'chess.js';
 import { Store } from '@ngrx/store';
-
-import type { Square, Color } from 'chess.js';
 import { EloService } from '@/app/services/elo.service';
-
 import { computed, inject, Injectable, signal } from '@angular/core';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { clone, load } from '@/app/utilities/chess-piece';
@@ -23,6 +20,8 @@ import type { AppStateType } from '@/app/store/states/app.state';
 import { EngineService } from '@/app/services/stockfish/engine.service';
 import type { EngineMove } from '@/app/types/stockfish.type';
 import type {
+  NotationColor,
+  NotationSquare,
   PieceColorType,
   PromotionNotationLetter,
 } from '@/app/types/chess-type/chess-square.type';
@@ -57,8 +56,8 @@ export class GameService {
   }
 
   public playMove(
-    from: Square,
-    to: Square,
+    from: NotationSquare,
+    to: NotationSquare,
     promotion: PromotionNotationLetter = 'q',
   ): boolean {
     try {
@@ -92,22 +91,22 @@ export class GameService {
     this.store.dispatch(redoMove());
   }
 
-  public getTargets(square: Square): readonly Square[] {
+  public getTargets(square: NotationSquare): readonly NotationSquare[] {
     const moves = clone(this.game()).moves({ square, verbose: true });
     return moves.map((move) => move.to);
   }
 
-  public getTargetsSet(square: Square): ReadonlySet<Square> {
+  public getTargetsSet(square: NotationSquare): ReadonlySet<NotationSquare> {
     return new Set(this.getTargets(square));
   }
 
   // возвращает очередь хода
-  public turn(): Color {
+  public turn(): NotationColor {
     return this.game().turn();
   }
 
   // есть ли фигура на клетке и какого цвета
-  public pieceColorAt(square: Square): Color | null {
+  public pieceColorAt(square: NotationSquare): NotationColor | null {
     const piece = this.game().get(square);
     return piece ? piece.color : null;
   }
@@ -207,11 +206,14 @@ export class GameService {
     return this.game().isCheckmate();
   }
 
-  public kingSquare(color: 'w' | 'b' | 'turn' = 'turn'): Square | null {
+  public kingSquare(color: 'w' | 'b' | 'turn' = 'turn'): NotationSquare | null {
     const game: Chess = this.game();
     const targetColor: 'w' | 'b' = color === 'turn' ? game.turn() : color;
 
-    const squares: Square[] = game.findPiece({ type: 'k', color: targetColor });
+    const squares: NotationSquare[] = game.findPiece({
+      type: 'k',
+      color: targetColor,
+    });
     return squares.length > 0 ? squares[0] : null;
   }
 
@@ -289,54 +291,5 @@ export class GameService {
       console.error('[GameService] playEngineMove failed:', error);
       return null;
     }
-  }
-
-  public async getHintForPlayer(): Promise<MoveRecordType | null> {
-    // партия уже закончена — подсказка не нужна
-    if (this.isFinished()) return null;
-
-    // текущее состояние партии
-    const chess: Chess = this.game();
-    const fen: string = chess.fen();
-
-    const sideToMove: 'white' | 'black' =
-      chess.turn() === 'w' ? 'white' : 'black';
-
-    const me: 'white' | 'black' = this.orientation();
-
-    // если сейчас не ход игрока — подсказка не нужна
-    if (sideToMove !== me) {
-      return null;
-    }
-
-    // запрос у движка лучшего хода из текущей позиции
-    const best: EngineMove | null = await this.engine.getBestMove(fen);
-
-    if (!best) {
-      console.warn('[GameService] Hint: engine returned no move');
-      return null;
-    }
-
-    const tmp: Chess = clone(chess);
-
-    const moveResult: Move = tmp.move({
-      from: best.from,
-      to: best.to,
-      promotion: best.promotion ?? 'q',
-    });
-
-    if (moveResult === null) {
-      console.warn('[GameService] Hint move is invalid:', best);
-      return null;
-    }
-
-    const moveRecord: MoveRecordType = {
-      move: toStoredMove(moveResult),
-      fenAfter: tmp.fen(),
-      timestamp: Date.now(),
-    };
-
-    // dispatch здесь нет, подсказка
-    return moveRecord;
   }
 }
