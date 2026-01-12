@@ -7,9 +7,10 @@ import {
   input,
 } from '@angular/core';
 import type {
-  SquareType,
+  NotationPiece,
+  NotationSquare,
   SquareColorType,
-} from '@/app/types/chess-square.type';
+} from '@/app/types/chess-type/chess-square.type';
 
 import { PIECE_ICON_URL } from '@/app/constants/chess-piece.constans';
 import type { CdkDragDrop } from '@angular/cdk/drag-drop';
@@ -21,7 +22,6 @@ import type {
   DropDataType,
 } from '@/app/types/drag-drop-data.type';
 import { isDragData, isDropData } from '@/app/utilities/chess-piece';
-import type { Piece } from 'chess.js';
 
 @Component({
   selector: 'app-chess-square',
@@ -32,11 +32,11 @@ import type { Piece } from 'chess.js';
 })
 export class ChessSquare {
   // координата клетки (id)
-  public readonly square = input.required<SquareType>();
+  public readonly square = input.required<NotationSquare>();
   //фон клетки
   public readonly backgroundColor = input.required<SquareColorType>();
   // объект фигуры в клетке (id, цвет, что за фигура)
-  public readonly piece = input<Piece | null>(null);
+  public readonly piece = input<NotationPiece | null>(null);
   //event попытка хода drop: { from, to }
   public readonly chessMove = output<ChessMovePayloadType>();
 
@@ -52,19 +52,21 @@ export class ChessSquare {
   public readonly isKingCheck = input<boolean>(false);
   public readonly isKingMate = input<boolean>(false);
 
-  public readonly fromSquare = input<SquareType | null>(null);
-  public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);
+  public readonly fromSquare = input<NotationSquare | null>(null);
+  public readonly allowedTargets = input<ReadonlySet<NotationSquare> | null>(
+    null,
+  );
 
   // добавляем события для родителя
   // старт с этой клетки а4 h5
-  public readonly dragStartSquare = output<SquareType>();
+  public readonly dragStartSquare = output<NotationSquare>();
   // перешли на эту клетку
-  public readonly dragEnterSquare = output<SquareType>();
+  public readonly dragEnterSquare = output<NotationSquare>();
   // поставили (успешно или отменили)
   public readonly dragEndSquare = output<void>();
 
   // Список всех клеток доски (координат) чтобы сконфигурировать «с кем связана» текущая cdkDropList (клетка)
-  public readonly allSquares = input.required<readonly SquareType[]>();
+  public readonly allSquares = input.required<readonly NotationSquare[]>();
 
   // От фигуры → к URL иконки: PIECE_ICON_URL[kind][color] или пустая строка, если фигуры нет. Идёт в <img [src]>
   protected readonly icon: Signal<string> = computed(() => {

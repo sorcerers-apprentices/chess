@@ -8,11 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import type {
-  SquareType,
+  NotationSquare,
   SquareUiStateType,
-} from '@/app/types/chess-square.type';
-import { RANKS } from '@/app/types/chess-square.type';
-import { FILES } from '@/app/types/chess-square.type';
+} from '@/app/types/chess-type/chess-square.type';
+import { RANKS } from '@/app/types/chess-type/chess-square.type';
+import { FILES } from '@/app/types/chess-type/chess-square.type';
 import { RANKS_TOP_DOWN } from '@/app/constants/chess-square.constans';
 import { ChessSquare } from '@/app/components/chess-square/chess-square';
 import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
@@ -33,13 +33,15 @@ export class ChessBoard {
   public readonly move = output<ChessMovePayloadType>();
 
   // emit event наверх, user начал перетаскивание фигуры с клетки
-  public readonly dragStart = output<SquareType>();
+  public readonly dragStart = output<NotationSquare>();
   // emit event наверх, перетаскивание завершено (не важно, был drop или отмена)
   public readonly dragEnd = output<void>();
 
-  public readonly fromSquare = input<SquareType | null>(null);
-  public readonly allowedTargets = input<ReadonlySet<SquareType> | null>(null);
-  public readonly kingSquare = input<SquareType | null>(null);
+  public readonly fromSquare = input<NotationSquare | null>(null);
+  public readonly allowedTargets = input<ReadonlySet<NotationSquare> | null>(
+    null,
+  );
+  public readonly kingSquare = input<NotationSquare | null>(null);
   public readonly isCheck = input<boolean>(false);
   public readonly isMate = input<boolean>(false);
 
@@ -110,24 +112,24 @@ export class ChessBoard {
 
   // подсветка DnD
   //Какая клетка стала источником DnD (когда подняли фигуру). null — ничего не тянем
-  private readonly dragFrom = signal<SquareType | null>(null);
+  private readonly dragFrom = signal<NotationSquare | null>(null);
   // Какую клетку сейчас подсвечиваем по ходу DnD.
-  private readonly dragOver = signal<SquareType | null>(null);
+  private readonly dragOver = signal<NotationSquare | null>(null);
 
-  public onDragStart(square: SquareType): void {
+  public onDragStart(square: NotationSquare): void {
     this.dragFrom.set(square);
     this.dragOver.set(null);
     this.dragStart.emit(square);
   }
 
-  public onDragEnter(square: SquareType): void {
+  public onDragEnter(square: NotationSquare): void {
     this.dragOver.set(square);
   }
 
   public onDragEnd(): void {
     const from = this.dragFrom();
     const over = this.dragOver();
-    const allowed: ReadonlySet<SquareType> | null = this.allowedTargets();
+    const allowed: ReadonlySet<NotationSquare> | null = this.allowedTargets();
 
     const dropLooksValid: boolean =
       from !== null && over !== null && allowed !== null && allowed.has(over);

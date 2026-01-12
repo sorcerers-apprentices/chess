@@ -8,20 +8,20 @@
           <img alt="avatar" src="/assets/img/avatar.jpg" class="avatar_img" />
         </div>
         <div class="user_info">
-          @if (userName.value(); as value) {
+          @if (userName(); as value) {
             <h3 class="user_info__name">
               {{ value }}
             </h3>
           }
-          @if (userName.isLoading()) {
+          @if (profile.isLoading()) {
             <tui-loader size="s"></tui-loader>
           }
-          @if (userElo.value(); as count) {
+          @if (userElo(); as count) {
             <h4 class="user_info__game">
               {{ "home.elo" | translate }}{{ count }}
             </h4>
           }
-          @if (!userElo.value()) {
+          @if (userElo() !== null) {
             <h4 class="user_info__game">{{ "home.elo" | translate }}{{ 0 }}</h4>
           }
           @if (winedGamesCount.value(); as count) {
@@ -150,8 +150,8 @@
             @for (game of tableData(); track game.id) {
               <tr tuiTr>
                 <td tuiTd>
-                  {{ game.created_at | date }}
-                  {{ game.created_at | tuiFormatDate | async }}
+                  {{ game.created_at_ts | date }}
+                  {{ game.created_at_ts | tuiFormatDate | async }}
                 </td>
                 <td tuiTd>{{ `home.${game.result}` | translate }}</td>
                 <td tuiTd>

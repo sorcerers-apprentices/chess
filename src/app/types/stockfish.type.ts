@@ -1,4 +1,7 @@
-import type { Square } from 'chess.js';
+import type {
+  NotationSquare,
+  PromotionNotationLetter,
+} from '@/app/types/chess-type/chess-square.type';
 
 export type EngineStatus = 'not-ready' | 'ready' | 'error';
 
@@ -13,12 +16,10 @@ export type EngineEvaluation = {
   mate: number | null; //
 };
 
-export type PromotionPiece = 'q' | 'r' | 'b' | 'n';
-
 export type EngineMove = {
-  from: Square;
-  to: Square;
-  promotion?: PromotionPiece;
+  from: NotationSquare;
+  to: NotationSquare;
+  promotion?: PromotionNotationLetter;
   raw: string; // исходная строка от движка: 'e2e4', 'e7e8q'
 };
 

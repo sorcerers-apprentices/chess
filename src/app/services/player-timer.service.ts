@@ -20,7 +20,7 @@ import { load, parseActiveColor } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
 import type { Chess } from 'chess.js';
 import type { MoveRecordType } from '@/app/store/states/game.state';
-import type { PersistShape } from '@/app/types/chess-piece.type';
+import type { PersistShape } from '@/app/types/chess-type/chess-piece.type';
 import { TimerStorageService } from '@/app/services/timer-storage.service';
 
 @Injectable({
@@ -34,7 +34,7 @@ export class PlayerTimerService {
   });
   public pendingBase = signal<string | null>(null);
 
-  protected readonly store: Store<AppStateType> =
+  private readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
 
   private readonly destroyRef: DestroyRef = inject(DestroyRef);

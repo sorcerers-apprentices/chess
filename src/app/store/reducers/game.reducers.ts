@@ -1,5 +1,7 @@
 import {
+  gameApiErrorActions,
   gameOver,
+  loadGame,
   loadGameSuccess,
   newGame,
   playMove,
@@ -9,45 +11,46 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { Chess, DEFAULT_POSITION } from 'chess.js';
 import { createReducer, on } from '@ngrx/store';
+import type { GameStateType } from '@/app/store/states/game.state';
 import { initialGameState } from '@/app/store/states/game.state';
+import { DEFAULT_POSITION_FEN } from '@/app/constants/chess-game.constants';
+
+const apiErrorFailed = (
+  state: GameStateType,
+  { error }: { error: string },
+): GameStateType => ({
+  ...state,
+  loading: false,
+  error,
+});
 
 export const gameReducers = createReducer(
   initialGameState,
 
-  on(newGame, (state, { initialFen, orientation }) => {
-    const chess = new Chess();
-    if (initialFen) {
-      chess.load(initialFen);
-    } else {
-      chess.load(DEFAULT_POSITION);
-    }
-    return {
-      ...state,
-      fen: chess.fen(),
-      pgnLast: null,
-      pgn: chess.pgn(),
-      id: '',
-      moves: [],
-      undoneMoves: [],
-      lastMove: null,
-      orientation: orientation ?? state.orientation,
-      clocks: null,
-      finished: false,
-      result: null,
-      finalFen: null,
-    };
-  }),
+  on(newGame, (_state, { initialFen, orientation }) => ({
+    ...initialGameState,
+    fen: initialFen,
+    orientation,
+  })),
 
   on(setGameId, (state, { gameId }) => ({
     ...state,
     id: gameId,
   })),
 
-  on(loadGameSuccess, (_state, { game }) => ({
+  on(loadGame, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(loadGameSuccess, (state, { game }) => ({
+    ...state,
     ...game,
     pgnLast: game.pgnLast ?? null,
+    loading: false,
+    error: null,
   })),
 
   on(playMove, (state, { fen, moveRecord, pgn }) => {
@@ -70,7 +73,7 @@ export const gameReducers = createReducer(
     const undoneMove = state.moves[state.moves.length - 1];
     const newFen = newMoves.length
       ? newMoves[newMoves.length - 1].fenAfter
-      : DEFAULT_POSITION;
+      : DEFAULT_POSITION_FEN;
 
     return {
       ...state,
@@ -123,4 +126,11 @@ export const gameReducers = createReducer(
     result,
     finalFen,
   })),
+
+  on(gameApiErrorActions.createGameFailed, apiErrorFailed),
+  on(gameApiErrorActions.loadGameFailed, apiErrorFailed),
+  on(gameApiErrorActions.moveFailed, apiErrorFailed),
+  on(gameApiErrorActions.undoMoveFailed, apiErrorFailed),
+  on(gameApiErrorActions.redoMoveFailed, apiErrorFailed),
+  on(gameApiErrorActions.gameOverFailed, apiErrorFailed),
 );

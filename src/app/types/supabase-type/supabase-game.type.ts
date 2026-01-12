@@ -6,7 +6,7 @@ export type GameModel = {
   pgn_last: string;
   fen: string;
   player_id: string;
-  created_at: Date;
+  created_at: string;
   finished: boolean;
   player_color: 'white' | 'black';
   result: GameResult;

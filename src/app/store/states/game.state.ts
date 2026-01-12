@@ -1,42 +1,48 @@
-import { type Move } from 'chess.js';
-import { Chess } from 'chess.js';
-import { DEFAULT_POSITION } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
+import type { StoredMove } from '@/app/types/chess-type/chess-game.type';
+import { DEFAULT_POSITION_FEN } from '@/app/constants/chess-game.constants';
 
 export type MoveRecordType = {
-  uci: string;
-  san: string;
-  move: Move;
+  move: StoredMove;
   fenAfter: string;
   timestamp: number;
 };
 
-export type GameStateType = {
+// Данные игры (без UI)
+export type GameDomainType = {
   id: string;
   pgn: string;
   pgnLast: string | null;
   fen: string;
   moves: MoveRecordType[];
   undoneMoves: MoveRecordType[];
-  lastMove?: { from: string; to: string } | null;
+  lastMove: { from: string; to: string } | null;
   orientation: 'white' | 'black';
-  clocks?: { white: number; black: number } | null;
   finished: boolean;
   result: GameResultType | null;
-  finalFen?: string | null;
+  finalFen: string | null;
+};
+
+// Store-состояние = данные + UI
+export type GameStateType = GameDomainType & {
+  // UI-состояние загрузки
+  loading: boolean;
+  error: string | null;
 };
 
 export const initialGameState: GameStateType = {
-  pgn: new Chess(DEFAULT_POSITION).pgn(),
+  pgn: '',
   pgnLast: null,
-  fen: DEFAULT_POSITION,
+  fen: DEFAULT_POSITION_FEN,
   id: '',
   moves: [],
   undoneMoves: [],
   lastMove: null,
   orientation: 'black',
-  clocks: null,
   finished: false,
   result: null,
   finalFen: null,
+
+  loading: false,
+  error: null,
 };

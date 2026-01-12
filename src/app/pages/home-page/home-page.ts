@@ -23,10 +23,10 @@ import { UserSupabaseService } from '@/app/services/supabase/user-supabase.servi
 import { AuthService } from '@/app/services/supabase/auth.service';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { from, map } from 'rxjs';
+import { from } from 'rxjs';
 import {
   CHOSEN_COLOR_TOKEN,
-  START_FEN,
+  DEFAULT_POSITION_FEN,
 } from '@/app/constants/chess-game.constants';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from '@/app/services/game.service';
@@ -41,17 +41,21 @@ import {
   TuiTableTr,
 } from '@taiga-ui/addon-table';
 import { loadGame } from '@/app/store/actions/game.actions';
-import type { GameModel } from '@/app/types/supabase-game.type';
+import type { GameModel } from '@/app/types/supabase-type/supabase-game.type';
 import type { AppStateType } from '@/app/store/states/app.state';
 import type { GameDifficulty } from '@/app/types/stockfish.type';
 import { DIFFICULTY_VALUES } from '@/app/types/stockfish.type';
 import { DIFFICULTY_OPTIONS } from '@/app/types/stockfish.type';
 import { ENGINE_DEFAULT_DIFFICULTY } from '@/app/constants/stockfish.constans';
 import { EngineService } from '@/app/services/stockfish/engine.service';
-import type { PieceColorType } from '@/app/types/chess-square.type';
+import type { PieceColorType } from '@/app/types/chess-type/chess-square.type';
 
-type UsersGamesPage = {
-  games: GameModel[];
+type GameRow = GameModel & {
+  created_at_ts: number;
+};
+
+type UsersGamesPageVm = {
+  games: GameRow[];
   count: number;
 };
 
@@ -109,20 +113,20 @@ export class HomePage {
   });
 
   // 4. User resources (async data)
-  protected userName = rxResource({
+  protected readonly profile = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
-      from(this.userSupabaseService.fetchUserData(params)).pipe(
-        map((user) => user?.display_name),
-      ),
+      from(this.userSupabaseService.fetchUserData(params)),
   });
-  protected userElo = rxResource({
-    params: () => this.userId,
-    stream: ({ params }) =>
-      from(this.userSupabaseService.fetchUserData(params)).pipe(
-        map((user) => user?.elo),
-      ),
-  });
+
+  protected readonly userName = computed(
+    () => this.profile.value()?.display_name ?? null,
+  );
+
+  protected readonly userElo = computed(
+    () => this.profile.value()?.elo ?? null,
+  );
+
   protected playedGamesCount = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
@@ -147,7 +151,7 @@ export class HomePage {
     },
     stream: ({ params }) => from(this.userSupabaseService.fetchGames(params)),
   });
-  protected readonly usersGamesView = signal<UsersGamesPage>({
+  protected readonly usersGamesView = signal<UsersGamesPageVm>({
     games: [],
     count: 0,
   });
@@ -175,11 +179,19 @@ export class HomePage {
     this.size.set(Number.isNaN(sizeParam) ? 10 : sizeParam);
   });
   protected readonly updateUsersGamesViewEffect = effect(() => {
-    const value = this.usersGames.value(); // может быть undefined во время загрузки
-
-    if (value) {
-      this.usersGamesView.set(value);
+    const value = this.usersGames.value();
+    if (!value) {
+      return;
     }
+    const viewModel: UsersGamesPageVm = {
+      ...value,
+      games: value.games.map((game) => ({
+        ...game,
+        created_at_ts: Date.parse(game.created_at),
+      })),
+    };
+
+    this.usersGamesView.set(viewModel);
   });
 
   // 8. Methods
@@ -191,7 +203,7 @@ export class HomePage {
     this.engineService.engineForNewGame(difficulty);
 
     //запускаем новую игру в логике Chess / стора
-    this.gameService.newGame(START_FEN, color);
+    this.gameService.newGame(DEFAULT_POSITION_FEN, color);
   }
 
   protected onDifficultyChange(difficulty: GameDifficulty): void {

@@ -3,7 +3,7 @@ import type {
   PieceColorType,
   PieceKindType,
   PieceType,
-} from '@/app/types/chess-square.type';
+} from '@/app/types/chess-type/chess-square.type';
 
 @Injectable({
   providedIn: 'root',

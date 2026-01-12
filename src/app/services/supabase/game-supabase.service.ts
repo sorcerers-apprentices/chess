@@ -1,11 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { GAME_ID } from '@/app/constants/auth.constants';
-import type { GameModel, GameProjection } from '@/app/types/supabase-game.type';
+import type {
+  GameModel,
+  GameProjection,
+} from '@/app/types/supabase-type/supabase-game.type';
 import { Chess } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
 import { clone } from '@/app/utilities/chess-piece';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { SupabaseService } from '@/app/services/supabase/supabase.service';
+import type {
+  MoveDbInsert,
+  MoveDbRow,
+} from '@/app/types/supabase-type/supabase-move.type';
 
 @Injectable({
   providedIn: 'root',
@@ -37,12 +43,12 @@ export class GameSupabaseService {
       return null;
     }
 
-    this.setGameId(data.id);
+    //this.rememberGameIdLS(data.id);
     return data.id;
   }
 
   public async loadGame(gameId: string): Promise<GameModel | null> {
-    this.setGameId(gameId);
+    //this.rememberGameIdLS(gameId);
     return await this.fetchGame(gameId);
   }
 
@@ -59,10 +65,14 @@ export class GameSupabaseService {
     }
   }
 
-  public async move(chess: Chess, moveRecord: MoveRecordType): Promise<void> {
-    const gameId = this.getGameId();
+  public async move(
+    gameId: string,
+    chess: Chess,
+    moveRecord: MoveRecordType,
+  ): Promise<void> {
     const game = await this.fetchGame(gameId);
     const oldPgn = game?.pgn;
+
     const { error } = await this.supabase
       .from('game')
       .update({
@@ -78,8 +88,7 @@ export class GameSupabaseService {
     }
   }
 
-  public async undoMove(): Promise<GameProjection> {
-    const gameId = this.getGameId();
+  public async toggleMove(gameId: string): Promise<GameProjection> {
     const game = await this.fetchGame(gameId);
     if (!game) {
       throw new Error('Game not found');
@@ -113,10 +122,10 @@ export class GameSupabaseService {
   }
 
   public async gameOver(
+    gameId: string,
     storeResult: GameResultType,
     finalFen: string,
   ): Promise<void> {
-    const gameId = this.getGameId();
     const result = storeResult.draw
       ? 'DRAW'
       : storeResult.winner === 'white'
@@ -134,15 +143,23 @@ export class GameSupabaseService {
       .eq('id', gameId);
 
     if (error) {
-      console.error('Error undoing move:', error?.message);
+      throw new Error(error.message);
     }
   }
 
-  private setGameId(id: string | null): void {
-    if (id == null) {
-      return;
+  public async insertMove(row: MoveDbInsert): Promise<MoveDbRow | null> {
+    const { data, error } = await this.supabase
+      .from('move')
+      .insert(row)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error inserting move:', error.message);
+      return null;
     }
-    localStorage.setItem(GAME_ID, id);
+
+    return data;
   }
 
   private async fetchGame(id: string): Promise<GameModel | null> {
@@ -157,9 +174,5 @@ export class GameSupabaseService {
     }
 
     return data[0];
-  }
-
-  private getGameId(): string {
-    return localStorage.getItem(GAME_ID) ?? '';
   }
 }

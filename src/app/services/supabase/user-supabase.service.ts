@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import type { GameModel } from '@/app/types/supabase-game.type';
+import type { GameModel } from '@/app/types/supabase-type/supabase-game.type';
 import { SupabaseService } from '@/app/services/supabase/supabase.service';
 
 export type UserData = {
@@ -31,14 +31,15 @@ export class UserSupabaseService {
     const { data, error } = await this.supabase
       .from('profile')
       .select('*')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching data:', error.message);
       return null;
     }
 
-    return data[0];
+    return data;
   }
 
   public async fetchUsers(): Promise<UserData[]> {
@@ -80,25 +81,22 @@ export class UserSupabaseService {
     size: number;
     offset: number;
   }): Promise<{ games: GameModel[]; count: number }> {
-    const { data, error } = await this.supabase
-      .from('game')
-      .select('*')
-      .range(offset, offset + size - 1)
-      .eq('player_id', userId);
-    const { count, error: countError } = await this.supabase
-      .from('game')
-      .select('*', { count: 'exact', head: true })
-      .eq('player_id', userId);
+    const fromIndex = offset;
+    const toIndex = offset + size - 1;
 
-    if (error || countError) {
-      console.error(
-        'Error fetching data:',
-        error?.message,
-        countError?.message,
-      );
+    // Один запрос: data + count
+    const { data, count, error } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact' }) // <- важно: count в этом же запросе
+      .eq('player_id', userId)
+      .range(fromIndex, toIndex);
+
+    if (error) {
+      console.error('Error fetching games:', error.message);
+      return { games: [], count: 0 };
     }
 
-    return { games: data ?? [], count: +(count ?? 0) };
+    return { games: data ?? [], count: count ?? 0 };
   }
 
   public async fetchWinedGamesCount(userId: string): Promise<number> {

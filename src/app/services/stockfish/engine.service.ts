@@ -5,7 +5,6 @@ import type {
   EngineMove,
   EngineRequestOptions,
   GameDifficulty,
-  PromotionPiece,
   WaitForBestMoveOptions,
 } from '@/app/types/stockfish.type';
 import { ENGINE_DIFFICULTY_PRESETS } from '@/app/types/stockfish.type';
@@ -13,9 +12,12 @@ import {
   ENGINE_DEFAULT_DIFFICULTY,
   ENGINE_POLL_INTERVAL_MS,
 } from '@/app/constants/stockfish.constans';
-import type { Square } from 'chess.js';
+import type {
+  NotationSquare,
+  PromotionNotationLetter,
+} from '@/app/types/chess-type/chess-square.type';
 
-function isSquare(value: string): value is Square {
+function isSquare(value: string): value is NotationSquare {
   // файл от 'a' до 'h' и ранг от '1' до '8'
   return /^[a-h][1-8]$/.test(value);
 }
@@ -196,10 +198,10 @@ export class EngineService {
       return null;
     }
 
-    const from: Square = fromStr;
-    const to: Square = toStr;
+    const from: NotationSquare = fromStr;
+    const to: NotationSquare = toStr;
 
-    let promotion: PromotionPiece | undefined;
+    let promotion: PromotionNotationLetter | undefined;
 
     // e7e8q → q — фигура для промоции
     if (best.length >= 5) {

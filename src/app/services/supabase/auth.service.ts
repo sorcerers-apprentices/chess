@@ -44,6 +44,13 @@ export class AuthService {
     });
   }
 
+  public async getUserId(): Promise<string | null> {
+    const { data, error } = await this.supabase.auth.getSession();
+    if (error) return null;
+
+    return data.session?.user?.id ?? null;
+  }
+
   public getUserData(): SavedUserData {
     const userData = localStorage.getItem(LOCAL_STORAGE_KEY) ?? '{}';
     return JSON.parse(userData);

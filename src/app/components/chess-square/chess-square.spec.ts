@@ -7,10 +7,10 @@ import { ChessSquare } from '@/app/components/chess-square/chess-square';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import type {
+  NotationPiece,
+  NotationSquare,
   SquareColorType,
-  SquareType,
-} from '@/app/types/chess-square.type';
-import type { Piece } from 'chess.js';
+} from '@/app/types/chess-type/chess-square.type';
 import { PIECE_ICON_URL } from '@/app/constants/chess-piece.constans';
 import type {
   DragDataType,
@@ -22,20 +22,20 @@ describe('ChessSquare (standalone, Angular 20)', () => {
   let fixture: ComponentFixture<ChessSquare>;
   let component: ChessSquare;
 
-  const A1 = 'a1' as SquareType;
-  const A2 = 'a2' as SquareType;
-  const H8 = 'h8' as SquareType;
+  const A1 = 'a1' as NotationSquare;
+  const A2 = 'a2' as NotationSquare;
+  const H8 = 'h8' as NotationSquare;
 
-  const ALL_SQUARES = [A1, A2, H8] as readonly SquareType[];
+  const ALL_SQUARES = [A1, A2, H8] as readonly NotationSquare[];
 
-  const whiteQueen: Piece = {
+  const whiteQueen: NotationPiece = {
     type: 'q',
     color: 'w',
   };
 
-  const blackPawn: Piece = {
-    type: 'pawn' as Piece['type'],
-    color: 'black' as Piece['color'],
+  const blackPawn: NotationPiece = {
+    type: 'pawn' as NotationPiece['type'],
+    color: 'black' as NotationPiece['color'],
   };
 
   beforeEach(async () => {
@@ -172,7 +172,7 @@ describe('ChessSquare (standalone, Angular 20)', () => {
     it('true — если square ∈ allowedTargets И drag.from совпадает с fromSquare', () => {
       fixture.componentRef.setInput(
         'allowedTargets',
-        new Set<SquareType>([A2, H8]) as ReadonlySet<SquareType>,
+        new Set<NotationSquare>([A2, H8]) as ReadonlySet<NotationSquare>,
       );
       fixture.componentRef.setInput('fromSquare', A1);
 
@@ -185,7 +185,7 @@ describe('ChessSquare (standalone, Angular 20)', () => {
     it('false — если square ∉ allowedTargets даже при корректном from', () => {
       fixture.componentRef.setInput(
         'allowedTargets',
-        new Set<SquareType>([H8]) as ReadonlySet<SquareType>,
+        new Set<NotationSquare>([H8]) as ReadonlySet<NotationSquare>,
       );
       fixture.componentRef.setInput('fromSquare', A1);
 
@@ -198,7 +198,7 @@ describe('ChessSquare (standalone, Angular 20)', () => {
     it('false — если drag.from ≠ fromSquare (несогласованный источник)', () => {
       fixture.componentRef.setInput(
         'allowedTargets',
-        new Set<SquareType>([A2]) as ReadonlySet<SquareType>,
+        new Set<NotationSquare>([A2]) as ReadonlySet<NotationSquare>,
       );
       fixture.componentRef.setInput('fromSquare', H8);
 

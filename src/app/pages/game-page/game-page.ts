@@ -20,13 +20,16 @@ import { TuiNavigation } from '@taiga-ui/layout';
 import { Navigation } from '../../components/navigation/navigation';
 import { ChessBoard } from '@/app/components/chess-board/chess-board';
 import { PlayerPanel } from '@/app/components/player-panel/player-panel';
-import type { PieceColorType, SquareType } from '@/app/types/chess-square.type';
+import type {
+  NotationColor,
+  NotationSquare,
+  PieceColorType,
+} from '@/app/types/chess-type/chess-square.type';
 import type { ChessMovePayloadType } from '@/app/types/drag-drop-data.type';
 import { GameSettings } from '@/app/components/game-settings/game-settings';
 import { Store } from '@ngrx/store';
 import { GameService } from '@/app/services/game.service';
-import type { Chess, Color, Square } from 'chess.js';
-import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
+import type { Chess } from 'chess.js';
 import { loadGame } from '@/app/store/actions/game.actions';
 import { OpponentRunnerService } from '@/app/services/opponent-runner.service';
 import { load } from '@/app/utilities/chess-piece';
@@ -43,11 +46,10 @@ import { GameViewerService } from '@/app/services/game-viewer.service';
 import { Router } from '@angular/router';
 import {
   CHOSEN_COLOR_TOKEN,
-  START_FEN,
+  DEFAULT_POSITION_FEN,
 } from '@/app/constants/chess-game.constants';
 import { LeaveBypassService } from '@/app/services/leave-bypass.service';
-import type { ResultVariant } from '@/app/types/chess-piece.type';
-import { StockfishService } from '@/app/services/stockfish/stockfish.service';
+import type { ResultVariant } from '@/app/types/chess-type/chess-piece.type';
 
 @Component({
   selector: 'app-game-page',
@@ -71,14 +73,12 @@ export class GamePage {
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
   public readonly id: InputSignal<string> = input.required<string>();
+  private lastLoadedId: string | null = null;
 
   // 2. DI services
   private readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
-  private readonly gameSupabaseService: GameSupabaseService =
-    inject(GameSupabaseService);
   private readonly gameService: GameService = inject(GameService);
-  private readonly stockfishService = inject(StockfishService);
   private readonly opponent: OpponentRunnerService = inject(
     OpponentRunnerService,
   );
@@ -113,7 +113,7 @@ export class GamePage {
   protected readonly isMate: Signal<boolean> = computed(() =>
     this.gameService.isMate(),
   );
-  protected readonly kingSquare: Signal<Square | null> = computed(() =>
+  protected readonly kingSquare: Signal<NotationSquare | null> = computed(() =>
     this.gameService.kingSquare('turn'),
   );
   protected readonly topPlayerColor = computed(() =>
@@ -144,18 +144,26 @@ export class GamePage {
 
   // Local board / drag&drop state
   // куда можно поставить фигуру
-  protected readonly allowedTargets = signal<ReadonlySet<Square> | null>(null);
+  protected readonly allowedTargets =
+    signal<ReadonlySet<NotationSquare> | null>(null);
   // локально можем хранить, откуда началось перетаскивание (если нужно для UI страницы)
-  protected readonly dragFrom = signal<SquareType | null>(null);
+  protected readonly dragFrom = signal<NotationSquare | null>(null);
   // последний совершённый ход (для логов/истории/нотации)
   protected readonly lastMove = signal<ChessMovePayloadType | null>(null);
 
   // Effects
 
   // загрузка партии по id
-  private loadGameEffect: EffectRef = effect((): void =>
-    this.store.dispatch(loadGame({ gameId: this.id() })),
-  );
+  private readonly loadGameEffect: EffectRef = effect((): void => {
+    const gameId = this.id();
+    if (!gameId) return;
+
+    if (gameId === this.lastLoadedId) return;
+    this.lastLoadedId = gameId;
+
+    this.store.dispatch(loadGame({ gameId }));
+  });
+
   private readonly showGameOverEffect: EffectRef = effect((): void => {
     const over: boolean = this.isGameOver();
     const hasTpl: boolean = this.gameOverTpl != null;
@@ -172,10 +180,11 @@ export class GamePage {
   });
 
   // Drag & drop API доски
-  public onBoardDragStart(from: Square): void {
+  public onBoardDragStart(from: NotationSquare): void {
     // чей ход
-    const turnPiece: Color = this.gameService.turn();
-    const colorPieceSquare: Color | null = this.gameService.pieceColorAt(from);
+    const turnPiece: NotationColor = this.gameService.turn();
+    const colorPieceSquare: NotationColor | null =
+      this.gameService.pieceColorAt(from);
 
     if (!colorPieceSquare || colorPieceSquare !== turnPiece) {
       this.dragFrom.set(null);
@@ -183,7 +192,8 @@ export class GamePage {
       return;
     }
 
-    const targets: ReadonlySet<Square> = this.gameService.getTargetsSet(from);
+    const targets: ReadonlySet<NotationSquare> =
+      this.gameService.getTargetsSet(from);
 
     this.dragFrom.set(from);
     this.allowedTargets.set(this.gameService.getTargetsSet(from));
@@ -201,7 +211,7 @@ export class GamePage {
       return;
     }
 
-    const allowed: ReadonlySet<Square> | null = this.allowedTargets();
+    const allowed: ReadonlySet<NotationSquare> | null = this.allowedTargets();
     // true только если есть сет разрешённых ходов, источник совпадает с текущим началом перетаскивания, и целевая клетка входит в этот сет
     const isAllowed: boolean =
       !!allowed && this.dragFrom() === move.from && allowed.has(move.to);
@@ -226,7 +236,7 @@ export class GamePage {
   // Game control / navigation
   public newGame(): void {
     this.leaveBypass.bypassOnce();
-    this.gameService.newGame(START_FEN, this.chosenColor());
+    this.gameService.newGame(DEFAULT_POSITION_FEN, this.chosenColor());
   }
 
   public goHome(): void {

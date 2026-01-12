@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { GameSupabaseService } from '@/app/services/supabase/game-supabase.service';
 import {
+  gameApiErrorActions,
   gameOver,
   gameOverSuccess,
   loadGame,
@@ -15,39 +16,64 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { filter, from, map, switchMap, tap } from 'rxjs';
+import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
-import type { GameStateType } from '@/app/store/states/game.state';
+import type {
+  GameDomainType,
+  MoveRecordType,
+} from '@/app/store/states/game.state';
 import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
+import type { HistoryMoveVerbose } from '@/app/types/chess-type/chess-game.type';
+import { toStoredMoveFromHistory } from '@/app/utilities/transformation-chess-move-class';
+import { Store } from '@ngrx/store';
+import type { AppStateType } from '@/app/store/states/app.state';
+import { concatLatestFrom } from '@ngrx/operators';
+import { selectGameId } from '@/app/store/selectors/game.selectors';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameEffects {
-  private readonly api = inject(GameSupabaseService);
-  private readonly authService = inject(AuthService);
-  private readonly actions$ = inject(Actions);
-  private readonly router = inject(Router);
+  private readonly api: GameSupabaseService = inject(GameSupabaseService);
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly actions$: Actions = inject(Actions);
+  private readonly router: Router = inject(Router);
+  private readonly store: Store<AppStateType> =
+    inject<Store<AppStateType>>(Store);
 
   private startGame$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(newGame),
-      switchMap(({ initialFen, orientation }) => {
-        return from(
+      switchMap(({ initialFen, orientation }) =>
+        from(
           this.api.createGame(
             this.authService.getUserData().user.id,
             orientation,
             initialFen,
           ),
         ).pipe(
-          map((id) => setGameId({ gameId: id ?? '' })),
-          tap((game) => {
-            this.router.navigate([`/game/${game.gameId}`]).then();
+          map((id) => {
+            if (id === null) {
+              return gameApiErrorActions.createGameFailed({
+                error: 'Create game failed',
+              });
+            }
+            return setGameId({ gameId: id });
           }),
-        );
-      }),
+          tap((action) => {
+            if (action.type === setGameId.type) {
+              void this.router.navigate([`/game/${action.gameId}`]);
+            }
+          }),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Create game failed';
+            return of(gameApiErrorActions.createGameFailed({ error: message }));
+          }),
+        ),
+      ),
     );
   });
 
@@ -56,26 +82,33 @@ export class GameEffects {
       ofType(loadGame),
       switchMap(({ gameId }) => {
         return from(this.api.loadGame(gameId)).pipe(
-          filter((game) => game !== null),
           map((game) => {
+            if (game === null) {
+              return gameApiErrorActions.loadGameFailed({
+                error: 'Game not found',
+              });
+            }
             const chess = new Chess();
             const pgn = game.pgn;
             chess.loadPgn(pgn);
-            const moves = chess.history({ verbose: true });
-            const lastMove = chess.history({ verbose: true }).at(-1);
-            const gameModel: GameStateType = {
+            const moves: HistoryMoveVerbose[] = chess.history({
+              verbose: true,
+            });
+
+            const lastMove = moves.at(-1);
+            const gameModel: GameDomainType = {
               pgn: chess.pgn(),
               pgnLast: game.pgn_last,
               fen: game.fen,
               id: game.id,
               moves: moves.map((move) => {
-                return {
-                  uci: `${move.from}${move.to}${move.promotion ?? ''}`,
-                  san: move.san,
-                  move: move,
-                  fenAfter: move.after,
+                const stored = toStoredMoveFromHistory(move);
+                const record: MoveRecordType = {
+                  move: stored,
+                  fenAfter: stored.after,
                   timestamp: game.timestamp,
                 };
+                return record;
               }),
               undoneMoves: [],
               lastMove: lastMove
@@ -95,6 +128,11 @@ export class GameEffects {
             };
             return loadGameSuccess({ game: gameModel });
           }),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Load game failed';
+            return of(gameApiErrorActions.loadGameFailed({ error: message }));
+          }),
         );
       }),
     );
@@ -103,9 +141,24 @@ export class GameEffects {
   private move$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(playMove),
-      switchMap(async ({ moveRecord, pgn }) => {
-        await this.api.move(load(pgn), moveRecord);
-        return moveSuccess();
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(([{ moveRecord, pgn }, gameId]) => {
+        if (gameId == null || gameId === '') {
+          return of(
+            gameApiErrorActions.moveFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
+        }
+
+        return from(this.api.move(gameId, load(pgn), moveRecord)).pipe(
+          map(() => moveSuccess()),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Move failed';
+            return of(gameApiErrorActions.moveFailed({ error: message }));
+          }),
+        );
       }),
     );
   });
@@ -113,9 +166,23 @@ export class GameEffects {
   private undoMove$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(undoMove),
-      switchMap(async () => {
-        const result = await this.api.undoMove();
-        return undoMoveSuccess(result);
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(([, gameId]) => {
+        if (gameId === null || gameId === '') {
+          return of(
+            gameApiErrorActions.undoMoveFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
+        }
+        return from(this.api.toggleMove(gameId)).pipe(
+          map((result) => undoMoveSuccess(result)),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Undo move failed';
+            return of(gameApiErrorActions.undoMoveFailed({ error: message }));
+          }),
+        );
       }),
     );
   });
@@ -123,9 +190,24 @@ export class GameEffects {
   private redoMove$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(redoMove),
-      switchMap(async () => {
-        const result = await this.api.undoMove();
-        return redoMoveSuccess(result);
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(([, gameId]) => {
+        if (gameId === null || gameId === '') {
+          return of(
+            gameApiErrorActions.redoMoveFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
+        }
+
+        return from(this.api.toggleMove(gameId)).pipe(
+          map((result) => redoMoveSuccess(result)),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Redo move failed';
+            return of(gameApiErrorActions.redoMoveFailed({ error: message }));
+          }),
+        );
       }),
     );
   });
@@ -133,9 +215,24 @@ export class GameEffects {
   private GameOver$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(gameOver),
-      switchMap(async ({ result, finalFen }) => {
-        await this.api.gameOver(result, finalFen);
-        return gameOverSuccess();
+      concatLatestFrom(() => this.store.select(selectGameId)),
+      switchMap(([{ result, finalFen }, gameId]) => {
+        if (gameId === null || gameId === '') {
+          return of(
+            gameApiErrorActions.gameOverFailed({
+              error: 'Game id is missing in store',
+            }),
+          );
+        }
+
+        return from(this.api.gameOver(gameId, result, finalFen)).pipe(
+          map(() => gameOverSuccess()),
+          catchError((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : 'Move failed';
+            return of(gameApiErrorActions.gameOverFailed({ error: message }));
+          }),
+        );
       }),
     );
   });

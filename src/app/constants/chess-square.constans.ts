@@ -1,8 +1,8 @@
 import type {
   ColorWhiteType,
   ColorBlackType,
-} from '@/app/types/chess-square.type';
-import { RANKS } from '@/app/types/chess-square.type';
+} from '@/app/types/chess-type/chess-square.type';
+import { RANKS } from '@/app/types/chess-type/chess-square.type';
 
 export const RANKS_TOP_DOWN = [...RANKS].reverse();
 

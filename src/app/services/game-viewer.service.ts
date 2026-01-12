@@ -8,7 +8,7 @@ import type { AppStateType } from '@/app/store/states/app.state';
 import { Store } from '@ngrx/store';
 import type { MoveRecordType } from '@/app/store/states/game.state';
 import { selectFen, selectMoves } from '@/app/store/selectors/game.selectors';
-import { DEFAULT_POSITION } from 'chess.js';
+import { DEFAULT_POSITION_FEN } from '@/app/constants/chess-game.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +30,7 @@ export class GameViewerService {
     const list: readonly MoveRecordType[] = this.moves();
     const total: number = list.length;
 
-    if (ply <= 0) return DEFAULT_POSITION;
+    if (ply <= 0) return DEFAULT_POSITION_FEN;
     if (ply < total) return list[ply - 1].fenAfter;
     return this.liveFen();
   });

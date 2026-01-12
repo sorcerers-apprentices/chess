@@ -1,40 +1,41 @@
 import { computed, inject, Injectable, type Signal } from '@angular/core';
 import type {
+  BoardMatrix,
+  NotationSquare,
   SquareColorType,
   SquareStateType,
-  SquareType,
-} from '@/app/types/chess-square.type';
-import { RANK_8 } from '@/app/types/chess-square.type';
-import { FILES, RANKS } from '@/app/types/chess-square.type';
+} from '@/app/types/chess-type/chess-square.type';
+import { RANK_8 } from '@/app/types/chess-type/chess-square.type';
+import { FILES, RANKS } from '@/app/types/chess-type/chess-square.type';
 import {
   DARK,
   LIGHT,
   RANKS_TOP_DOWN,
 } from '@/app/constants/chess-square.constans';
-import type { BoardMatrix } from '@/app/services/game.service';
-import { Chess, type Piece, type Square } from 'chess.js';
+import { Chess } from 'chess.js';
 import { Store } from '@ngrx/store';
 import { load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { GameViewerService } from '@/app/services/game-viewer.service';
+import { chessBoardToBoardMatrix } from '@/app/utilities/transformation-chess-move-class';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoardSetupService {
   public readonly squaresBoard = computed<readonly SquareStateType[]>(() => {
-    const matrix = this.game().board();
+    const matrix = chessBoardToBoardMatrix(this.game().board());
     return this.createInitialSquaresPieces(matrix);
   });
 
-  protected readonly store: Store<AppStateType> =
+  private readonly store: Store<AppStateType> =
     inject<Store<AppStateType>>(Store);
-  protected readonly viewer: GameViewerService = inject(GameViewerService);
+  private readonly viewer: GameViewerService = inject(GameViewerService);
 
-  protected readonly pgn: Signal<string> = this.store.selectSignal(
+  private readonly pgn: Signal<string> = this.store.selectSignal(
     (state: AppStateType): string => state.game.pgn,
   );
-  protected readonly game: Signal<Chess> = computed((): Chess => {
+  private readonly game: Signal<Chess> = computed((): Chess => {
     const value: string = this.pgn();
     if (this.viewer.isViewing()) {
       return new Chess(this.viewer.viewFen());
@@ -63,7 +64,7 @@ export class BoardSetupService {
         const colIndex: number = FILES.indexOf(file);
         const enginePiece = row[colIndex];
 
-        const square: SquareType = `${file}${rank}`;
+        const square: NotationSquare = `${file}${rank}`;
 
         const even: boolean = (Number(rank) - 1 + colIndex) % 2 === 0;
         const squareColor: SquareColorType = even ? LIGHT : DARK;
@@ -76,10 +77,5 @@ export class BoardSetupService {
       }
     }
     return acc;
-  }
-
-  /** Узнать фигуру на клетке для подсветки допустимых ходов, правила шахматной логики */
-  public pieceAt(square: Square): Piece | undefined {
-    return this.game().get(square);
   }
 }
