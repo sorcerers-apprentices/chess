@@ -16,6 +16,7 @@ import {
   canDeactivatePopup,
 } from '@/app/guards/auth.guard';
 import { LOCAL_STORAGE_KEY } from '@/app/constants/auth.constants';
+import type { Observable } from 'rxjs';
 import { firstValueFrom, of } from 'rxjs';
 import type { TuiConfirmData } from '@taiga-ui/kit';
 import { TUI_CONFIRM } from '@taiga-ui/kit';
@@ -32,6 +33,18 @@ function makeRoute(): ActivatedRouteSnapshot {
 
 function makeState(url = '/'): RouterStateSnapshot {
   return { url } as RouterStateSnapshot;
+}
+
+function callCanDeactivate(nextUrl = '/'): Observable<boolean> {
+  return TestBed.runInInjectionContext(
+    () =>
+      canDeactivatePopup(
+        {} as unknown,
+        makeRoute(),
+        makeState('/current'),
+        makeState(nextUrl),
+      ) as Observable<boolean>,
+  );
 }
 
 describe('auth guards (functional)', () => {
@@ -148,22 +161,20 @@ describe('auth guards (functional)', () => {
 
   describe('canDeactivatePopup', () => {
     it('открывает TUI_CONFIRM c переведёнными кнопками и возвращает boolean(true)', async () => {
-      // mock переводы
       (translate.instant as Mock<(k: string) => string>).mockImplementation(
         (k) => `__${k}__`,
       );
-      // mock диалога
+
       (dialogs.open as jest.Mock).mockReturnValue(of(true));
       (timer.consumePendingBase as jest.Mock).mockReturnValue(
         'pending_base_key',
       );
 
-      const obs = TestBed.runInInjectionContext(() => canDeactivatePopup());
-      const result = await firstValueFrom(obs);
+      const result = await firstValueFrom(callCanDeactivate('/somewhere'));
       expect(result).toBe(true);
 
-      // проверяем, как вызвали dialogs.open
       expect(dialogs.open).toHaveBeenCalledTimes(1);
+
       const [token, options] = (dialogs.open as jest.Mock).mock.calls[0] as [
         unknown,
         { size: string; data: TuiConfirmData },
@@ -174,6 +185,7 @@ describe('auth guards (functional)', () => {
       expect(options.data.content).toBe('__game.notification__');
       expect(options.data.yes).toBe('__game.yes__');
       expect(options.data.no).toBe('__game.no__');
+
       expect(timer.consumePendingBase).toHaveBeenCalledTimes(1);
       expect(timer.reset).toHaveBeenCalledTimes(1);
       expect(timer.reset).toHaveBeenLastCalledWith('pending_base_key');
@@ -182,9 +194,7 @@ describe('auth guards (functional)', () => {
     it('прокидывает false, если пользователь отменил', async () => {
       (dialogs.open as jest.Mock).mockReturnValue(of(false));
 
-      const result = await firstValueFrom(
-        TestBed.runInInjectionContext(() => canDeactivatePopup()),
-      );
+      const result = await firstValueFrom(callCanDeactivate('/somewhere'));
 
       expect(result).toBe(false);
       expect(timer.consumePendingBase).not.toHaveBeenCalled();
@@ -199,9 +209,7 @@ describe('auth guards (functional)', () => {
         true,
       );
 
-      const result = await firstValueFrom(
-        TestBed.runInInjectionContext(() => canDeactivatePopup()),
-      );
+      const result = await firstValueFrom(callCanDeactivate('/somewhere'));
 
       expect(result).toBe(true);
       expect(dialogs.open as jest.Mock).not.toHaveBeenCalled();
@@ -211,14 +219,19 @@ describe('auth guards (functional)', () => {
     it('если игра окончена — вызывает timer.reset() и возвращает true БЕЗ диалога', async () => {
       (store.selectSignal as jest.Mock).mockReturnValue(() => true);
 
-      const result = await firstValueFrom(
-        TestBed.runInInjectionContext(() => canDeactivatePopup()),
-      );
+      const result = await firstValueFrom(callCanDeactivate('/somewhere'));
 
       expect(result).toBe(true);
       expect(dialogs.open as jest.Mock).not.toHaveBeenCalled();
       expect(timer.reset as jest.Mock).toHaveBeenCalledTimes(1);
       expect(timer.reset as jest.Mock).toHaveBeenLastCalledWith();
+    });
+
+    it('если переход на engine-log — возвращает true без диалога', async () => {
+      const result = await firstValueFrom(callCanDeactivate('/engine-log'));
+
+      expect(result).toBe(true);
+      expect(dialogs.open as jest.Mock).not.toHaveBeenCalled();
     });
   });
 });

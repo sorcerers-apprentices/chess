@@ -73,6 +73,7 @@ export class GamePage {
   protected gameOverTpl?: TemplateRef<TuiDialogContext<void, undefined>>;
 
   public readonly id: InputSignal<string> = input.required<string>();
+  private lastLoadedId: string | null = null;
 
   // 2. DI services
   private readonly store: Store<AppStateType> =
@@ -153,9 +154,16 @@ export class GamePage {
   // Effects
 
   // загрузка партии по id
-  private loadGameEffect: EffectRef = effect((): void =>
-    this.store.dispatch(loadGame({ gameId: this.id() })),
-  );
+  private readonly loadGameEffect: EffectRef = effect((): void => {
+    const gameId = this.id();
+    if (!gameId) return;
+
+    if (gameId === this.lastLoadedId) return;
+    this.lastLoadedId = gameId;
+
+    this.store.dispatch(loadGame({ gameId }));
+  });
+
   private readonly showGameOverEffect: EffectRef = effect((): void => {
     const over: boolean = this.isGameOver();
     const hasTpl: boolean = this.gameOverTpl != null;

@@ -31,14 +31,15 @@ export class UserSupabaseService {
     const { data, error } = await this.supabase
       .from('profile')
       .select('*')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching data:', error.message);
       return null;
     }
 
-    return data[0];
+    return data;
   }
 
   public async fetchUsers(): Promise<UserData[]> {

@@ -16,7 +16,7 @@ import {
   undoMove,
   undoMoveSuccess,
 } from '@/app/store/actions/game.actions';
-import { catchError, from, map, of, switchMap } from 'rxjs';
+import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
 import type {
   GameDomainType,
@@ -54,16 +54,18 @@ export class GameEffects {
             initialFen,
           ),
         ).pipe(
-          switchMap((id) => {
+          map((id) => {
             if (id === null) {
-              return of(
-                gameApiErrorActions.createGameFailed({
-                  error: 'Create game failed',
-                }),
-              );
+              return gameApiErrorActions.createGameFailed({
+                error: 'Create game failed',
+              });
             }
-            this.router.navigate([`/game/${id}`]).then();
-            return of(setGameId({ gameId: id }));
+            return setGameId({ gameId: id });
+          }),
+          tap((action) => {
+            if (action.type === setGameId.type) {
+              void this.router.navigate([`/game/${action.gameId}`]);
+            }
           }),
           catchError((error: unknown) => {
             const message =

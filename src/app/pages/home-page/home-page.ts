@@ -23,7 +23,7 @@ import { UserSupabaseService } from '@/app/services/supabase/user-supabase.servi
 import { AuthService } from '@/app/services/supabase/auth.service';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { from, map } from 'rxjs';
+import { from } from 'rxjs';
 import {
   CHOSEN_COLOR_TOKEN,
   DEFAULT_POSITION_FEN,
@@ -113,20 +113,19 @@ export class HomePage {
   });
 
   // 4. User resources (async data)
-  protected userName = rxResource({
+  protected readonly profile = rxResource({
     params: () => this.userId,
     stream: ({ params }) =>
-      from(this.userSupabaseService.fetchUserData(params)).pipe(
-        map((user) => user?.display_name),
-      ),
+      from(this.userSupabaseService.fetchUserData(params)),
   });
-  protected userElo = rxResource({
-    params: () => this.userId,
-    stream: ({ params }) =>
-      from(this.userSupabaseService.fetchUserData(params)).pipe(
-        map((user) => user?.elo),
-      ),
-  });
+
+  protected readonly userName = computed(
+    () => this.profile.value()?.display_name ?? null,
+  );
+
+  protected readonly userElo = computed(
+    () => this.profile.value()?.elo ?? null,
+  );
 
   protected playedGamesCount = rxResource({
     params: () => this.userId,
