@@ -147,16 +147,15 @@ export class GameSupabaseService {
     }
   }
 
-  public async insertMove(row: MoveDbInsert): Promise<MoveDbRow | null> {
+  public async insertMove(row: MoveDbInsert): Promise<MoveDbRow> {
     const { data, error } = await this.supabase
       .from('move')
       .insert(row)
       .select('*')
       .single();
 
-    if (error) {
-      console.error('Error inserting move:', error.message);
-      return null;
+    if (error || data === null) {
+      throw new Error(error?.message ?? 'Failed to insert move');
     }
 
     return data;

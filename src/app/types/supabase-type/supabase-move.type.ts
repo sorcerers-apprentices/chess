@@ -3,6 +3,7 @@ import type {
   NotationLetter,
   PromotionNotationLetter,
 } from '@/app/types/chess-type/chess-square.type';
+import type { MoveRecordType } from '@/app/store/states/game.state';
 
 export type MoveDbRow = {
   id: string;
@@ -46,3 +47,28 @@ export type MoveDbInsert = {
   fen_before: string;
   fen_after: string;
 };
+
+export function toMoveDbInsert(
+  gameId: string,
+  record: MoveRecordType,
+): MoveDbInsert {
+  return {
+    game_id: gameId,
+    ply: record.ply,
+    color: record.move.color,
+    player_id: record.player_id,
+
+    uci: record.move.uci,
+    san: record.move.san,
+
+    piece: record.move.piece,
+    captured: record.move.captured ?? null,
+    promotion: record.move.promotion ?? null,
+
+    is_check: record.is_check,
+    is_checkmate: record.is_checkmate,
+
+    fen_before: record.move.before,
+    fen_after: record.move.after,
+  };
+}

@@ -6,6 +6,11 @@ export type MoveRecordType = {
   move: StoredMove;
   fenAfter: string;
   timestamp: number;
+
+  ply: number;
+  player_id: string | null;
+  is_check: boolean;
+  is_checkmate: boolean;
 };
 
 // Данные игры (без UI)
