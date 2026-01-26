@@ -162,7 +162,7 @@ export class GameEffects {
 
         const insert: MoveDbInsert = toMoveDbInsert(gameId, moveRecord);
 
-        return from(this.api.move(gameId, chess, moveRecord)).pipe(
+        return from(this.api.move(gameId, chess)).pipe(
           switchMap(() => from(this.api.insertMove(insert))),
           map(() => moveSuccess()),
           catchError((error: unknown) => {
