@@ -33,7 +33,6 @@ import {
 import { TuiInputPhoneInternational } from '@taiga-ui/experimental';
 import { TuiInputPhoneModule } from '@taiga-ui/legacy';
 import metadata from 'libphonenumber-js/mobile/metadata';
-import { firstValueFrom, of } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import {
   maxPasswordLength,
@@ -53,6 +52,7 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '@/app/services/supabase/auth.service';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-game-page',
@@ -159,23 +159,34 @@ export class SignUpPage {
 
   protected async signup(): Promise<void> {
     this.signupForm.markAllAsTouched();
-    if (this.signupForm.invalid) {
-      return;
-    }
+    if (this.signupForm.invalid) return;
 
-    const result = await this.auth.signup(this.signupForm.getRawValue());
+    try {
+      const result = await this.auth.signup(this.signupForm.getRawValue());
 
-    if (result.error) {
-      return await firstValueFrom(
-        this.alert.open('<strong>ERROR</strong>', {
-          label: result.error.message
-            ? `${result.error.message}!`
-            : this.translate.instant('signup.errorFallback'),
+      if (result.error) {
+        this.alert
+          .open('<strong>ERROR</strong>', {
+            label: result.error.message
+              ? `${result.error.message}!`
+              : this.translate.instant('signup.errorFallback'),
+            appearance: 'negative',
+          })
+          .subscribe();
+
+        return;
+      }
+
+      // лучше явно true, а не toggle
+      this.successSignUp.set(true);
+    } catch {
+      this.alert
+        .open('<strong>ERROR</strong>', {
+          label: this.translate.instant('signup.errorFallback'),
           appearance: 'negative',
-        }),
-      );
+        })
+        .subscribe();
     }
-    this.successSignUp.update((prev) => !prev);
   }
 
   protected goToSignInPage(): void {

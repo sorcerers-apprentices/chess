@@ -6,7 +6,6 @@ import type {
 import { Chess } from 'chess.js';
 import type { GameResultType } from '@/app/services/game.service';
 import { clone } from '@/app/utilities/chess-piece';
-import type { MoveRecordType } from '@/app/store/states/game.state';
 import { SupabaseService } from '@/app/services/supabase/supabase.service';
 import type {
   MoveDbInsert,
@@ -33,7 +32,6 @@ export class GameSupabaseService {
         player_color: playerColor,
         finished: false,
         fen_final: '',
-        timestamp: 0,
       })
       .select('id')
       .single();
@@ -65,11 +63,7 @@ export class GameSupabaseService {
     }
   }
 
-  public async move(
-    gameId: string,
-    chess: Chess,
-    moveRecord: MoveRecordType,
-  ): Promise<void> {
+  public async move(gameId: string, chess: Chess): Promise<void> {
     const game = await this.fetchGame(gameId);
     const oldPgn = game?.pgn;
 
@@ -79,7 +73,6 @@ export class GameSupabaseService {
         fen: clone(chess).fen(),
         pgn: clone(chess).pgn(),
         pgn_last: oldPgn,
-        timestamp: moveRecord.timestamp,
       })
       .eq('id', gameId);
 

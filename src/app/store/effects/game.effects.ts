@@ -26,7 +26,7 @@ import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
 import type { HistoryMoveVerbose } from '@/app/types/chess-type/chess-game.type';
-import { toStoredMoveFromHistory } from '@/app/utilities/transformation-chess-move-class';
+import { toStoredMoveFromHistory } from '@/app/utilities/mapping-chess-move-class';
 import { Store } from '@ngrx/store';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { concatLatestFrom } from '@ngrx/operators';
@@ -108,7 +108,6 @@ export class GameEffects {
                 const record: MoveRecordType = {
                   move: stored,
                   fenAfter: stored.after,
-                  timestamp: game.timestamp,
 
                   // НОВОЕ — чтобы тип был валиден
                   ply: index + 1,

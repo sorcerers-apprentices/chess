@@ -25,7 +25,7 @@ import type {
   PieceColorType,
   PromotionNotationLetter,
 } from '@/app/types/chess-type/chess-square.type';
-import { toStoredMove } from '@/app/utilities/transformation-chess-move-class';
+import { toStoredMove } from '@/app/utilities/mapping-chess-move-class';
 import { AuthService } from '@/app/services/supabase/auth.service';
 
 export type GameResultType = {
@@ -76,12 +76,11 @@ export class GameService {
       const moveRecord: MoveRecordType = {
         move: toStoredMove(move),
         fenAfter: newFen,
-        timestamp: Date.now(),
 
         ply,
         player_id: playerId,
-        is_check: this.isCheck(),
-        is_checkmate: this.isMate(),
+        is_check: chess.isCheck(),
+        is_checkmate: chess.isCheckmate(),
       };
 
       this.store.dispatch(playMove({ fen: newFen, moveRecord, pgn: newPgn }));
@@ -243,13 +242,12 @@ export class GameService {
 
       const moveRecord: MoveRecordType = {
         move: toStoredMove(moveResult),
-        timestamp: Date.now(),
         fenAfter: newFen,
 
         ply,
         player_id: null,
-        is_check: this.isCheck(),
-        is_checkmate: this.isMate(),
+        is_check: chess.isCheck(),
+        is_checkmate: chess.isCheckmate(),
       };
 
       // ещё раз проверка перед диспатчем

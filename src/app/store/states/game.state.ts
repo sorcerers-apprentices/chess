@@ -5,7 +5,6 @@ import { DEFAULT_POSITION_FEN } from '@/app/constants/chess-game.constants';
 export type MoveRecordType = {
   move: StoredMove;
   fenAfter: string;
-  timestamp: number;
 
   ply: number;
   player_id: string | null;
