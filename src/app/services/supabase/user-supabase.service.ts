@@ -12,19 +12,43 @@ export type UserData = {
 })
 export class UserSupabaseService {
   private readonly supabase = inject(SupabaseService).client;
-
+  /*
   public async fetchUsernameExists(displayName: string): Promise<boolean> {
     const { data, error } = await this.supabase
       .from('profile')
-      .select('*')
-      .eq('display_name', displayName);
+      .select('user_id')
+      .eq('display_name', displayName)
+      .limit(1);
+
+    console.log('[fetchUsernameExists] data:', data);
+    console.log('[fetchUsernameExists] error:', error);
 
     if (error) {
       console.error('Error fetching data:', error.message);
-      return true;
+      return false;
     }
 
-    return data?.length !== 0;
+    const exists = (data?.length ?? 0) > 0;
+    console.log('[fetchUsernameExists] exists:', exists);
+
+    return exists;
+  }
+*/
+
+  public async fetchUsernameExists(displayName: string): Promise<boolean> {
+    const { data, error } = await this.supabase.rpc('username_exists', {
+      p_display_name: displayName,
+    });
+
+    console.log('[username_exists] data:', data);
+    console.log('[username_exists] error:', error);
+
+    if (error) {
+      console.error('[username_exists] error:', error.message);
+      return false;
+    }
+
+    return Boolean(data);
   }
 
   public async fetchUserData(userId: string): Promise<UserData | null> {

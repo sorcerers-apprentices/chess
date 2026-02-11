@@ -30,8 +30,8 @@
     "emailLabel": "Email",
     "emailPlaceholder": "Enter your email",
     "phoneLabel": "Phone number",
-    "displayNameLabel": "Name",
-    "displayNamePlaceholder": "Enter your name",
+    "displayNameLabel": "Username",
+    "displayNamePlaceholder": "Enter your username",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
     "confirmPasswordLabel": "Confirm password",
@@ -52,6 +52,7 @@
     "required": "This field is required",
     "minlength": "Minimum length — ",
     "maxlength": "Maximum length — ",
+    "patternUsername": "Use 3–12 characters: A–Z, a–z, 0–9 or _",
     "noUniqueUserName": "The user with this name already exists"
   },
   "home": {

@@ -39,6 +39,7 @@ import {
   maxUserNameLength,
   minPasswordLength,
   minUserNameLength,
+  USERNAME_RE,
 } from '../../constants/validation.constants';
 import {
   createSamePasswordValidator,
@@ -53,6 +54,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '@/app/services/supabase/auth.service';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
+import { UserSupabaseService } from '@/app/services/supabase/user-supabase.service';
 
 @Component({
   selector: 'app-game-page',
@@ -91,6 +93,8 @@ import { of } from 'rxjs';
           maxlength: ({ requiredLength }: { requiredLength: string }) =>
             translate.instant('validationErrors.maxlength') +
             `${requiredLength}`,
+          pattern: () => translate.get('validationErrors.patternUsername'),
+          noUniqueUserName: translate.get('validationErrors.noUniqueUserName'),
         };
       },
       deps: [TranslateService],
@@ -105,6 +109,7 @@ export class SignUpPage {
   protected readonly fb = inject(NonNullableFormBuilder);
   protected readonly auth = inject(AuthService);
   protected readonly alert = inject(TuiAlertService);
+  protected readonly api = inject(UserSupabaseService);
   protected successSignUp = signal<boolean>(false);
   protected readonly translate = inject(TranslateService);
 
@@ -134,10 +139,12 @@ export class SignUpPage {
       displayName: this.fb.control('', {
         validators: [
           Validators.required,
+          Validators.pattern(USERNAME_RE),
           Validators.minLength(minUserNameLength),
           Validators.maxLength(maxUserNameLength),
         ],
         asyncValidators: [uniqueUsernameValidator()],
+        updateOn: 'blur',
       }),
       password: this.fb.control('', {
         validators: [
@@ -159,33 +166,53 @@ export class SignUpPage {
 
   protected async signup(): Promise<void> {
     this.signupForm.markAllAsTouched();
-    if (this.signupForm.invalid) return;
+    this.signupForm.updateValueAndValidity();
+
+    if (this.signupForm.pending || this.signupForm.invalid) {
+      return;
+    }
+
+    const displayNameControl = this.signupForm.controls.displayName;
+    const displayName = (displayNameControl.value ?? '').trim();
+
+    // Финальная проверка username перед signUp (на случай: не было blur / гонка)
+    const exists = await this.api.fetchUsernameExists(displayName);
+    if (exists) {
+      displayNameControl.setErrors({
+        ...displayNameControl.errors,
+        noUniqueUserName: true,
+      });
+      displayNameControl.markAsTouched();
+      return;
+    }
 
     try {
-      const result = await this.auth.signup(this.signupForm.getRawValue());
+      const result = await this.auth.signup({
+        ...this.signupForm.getRawValue(),
+        displayName,
+      });
 
       if (result.error) {
-        this.alert
-          .open('<strong>ERROR</strong>', {
-            label: result.error.message
-              ? `${result.error.message}!`
-              : this.translate.instant('signup.errorFallback'),
-            appearance: 'negative',
-          })
-          .subscribe();
+        if (
+          result.error.code === 'unexpected_failure' ||
+          result.error.message?.includes('Database error saving new user')
+        ) {
+          displayNameControl.setErrors({
+            ...displayNameControl.errors,
+            noUniqueUserName: true,
+          });
+          displayNameControl.markAsTouched();
+          return;
+        }
 
+        this.signupForm.setErrors({ signupFailed: true });
         return;
       }
 
       // лучше явно true, а не toggle
       this.successSignUp.set(true);
     } catch {
-      this.alert
-        .open('<strong>ERROR</strong>', {
-          label: this.translate.instant('signup.errorFallback'),
-          appearance: 'negative',
-        })
-        .subscribe();
+      this.signupForm.setErrors({ signupFailed: true });
     }
   }
 

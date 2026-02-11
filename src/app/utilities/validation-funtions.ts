@@ -7,6 +7,7 @@ import type {
 import { TranslateService } from '@ngx-translate/core';
 import { inject } from '@angular/core';
 import { UserSupabaseService } from '@/app/services/supabase/user-supabase.service';
+import { USERNAME_RE } from '@/app/constants/validation.constants';
 
 export function noWhitespace(): ValidatorFn {
   const translateService = inject(TranslateService);
@@ -119,20 +120,14 @@ export function createSamePasswordValidator(): ValidatorFn {
 }
 
 export function uniqueUsernameValidator(): AsyncValidatorFn {
-  const translateService = inject(TranslateService);
   const api = inject(UserSupabaseService);
   return async (control: AbstractControl): Promise<ValidationErrors | null> => {
-    const value: string | null = control.value;
-    if (value === null) {
-      return null;
-    }
-    const response = await api.fetchUsernameExists(control.value);
-    return response
-      ? {
-          noUniqueUserName: translateService.instant(
-            'validationErrors.noUniqueUserName',
-          ),
-        }
-      : null;
+    const value = (control.value ?? '').trim();
+    if (value.length === 0) return null;
+
+    if (!USERNAME_RE.test(value)) return null;
+
+    const response = await api.fetchUsernameExists(value);
+    return response ? { noUniqueUserName: true } : null;
   };
 }
