@@ -17,7 +17,7 @@ import { Store } from '@ngrx/store';
 import { load } from '@/app/utilities/chess-piece';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { GameViewerService } from '@/app/services/game-viewer.service';
-import { chessBoardToBoardMatrix } from '@/app/utilities/transformation-chess-move-class';
+import { chessBoardToBoardMatrix } from '@/app/utilities/mapping-chess-move-class';
 
 @Injectable({
   providedIn: 'root',

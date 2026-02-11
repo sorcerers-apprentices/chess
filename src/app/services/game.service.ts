@@ -25,7 +25,8 @@ import type {
   PieceColorType,
   PromotionNotationLetter,
 } from '@/app/types/chess-type/chess-square.type';
-import { toStoredMove } from '@/app/utilities/transformation-chess-move-class';
+import { toStoredMove } from '@/app/utilities/mapping-chess-move-class';
+import { AuthService } from '@/app/services/supabase/auth.service';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
@@ -41,6 +42,7 @@ export class GameService {
   private readonly store = inject<Store<AppStateType>>(Store);
   private readonly elo = inject(EloService);
   private readonly engine = inject(EngineService);
+  private readonly auth = inject(AuthService);
 
   private readonly pgn = this.store.selectSignal(selectChess);
   private readonly game = computed(() => load(this.pgn()));
@@ -68,10 +70,17 @@ export class GameService {
       const newFen = chess.fen();
       const newPgn = chess.pgn();
 
+      const ply = chess.history().length; // после move() история уже включает этот полуход
+      const playerId = this.auth.getUserData().user.id;
+
       const moveRecord: MoveRecordType = {
         move: toStoredMove(move),
         fenAfter: newFen,
-        timestamp: Date.now(),
+
+        ply,
+        player_id: playerId,
+        is_check: chess.isCheck(),
+        is_checkmate: chess.isCheckmate(),
       };
 
       this.store.dispatch(playMove({ fen: newFen, moveRecord, pgn: newPgn }));
@@ -113,47 +122,6 @@ export class GameService {
 
   public getGameResult(): GameResultType {
     return this.evaluateResultFromInstance(this.game());
-  }
-
-  public playOpponentMove(): MoveRecordType | null {
-    if (this.isFinished()) return null;
-
-    const chess = load(this.pgn());
-
-    const possibleMoves = chess.moves({ verbose: true }) ?? [];
-
-    if (possibleMoves.length === 0) {
-      return null;
-    }
-
-    const idx = Math.floor(Math.random() * possibleMoves.length);
-    const chosen = possibleMoves[idx];
-
-    const moveResult = chess.move({
-      from: chosen.from,
-      to: chosen.to,
-      promotion: chosen.promotion ?? undefined,
-    });
-
-    if (moveResult === null) {
-      return null;
-    }
-
-    const fenAfter = chess.fen();
-    const pgn = chess.pgn();
-
-    const moveRecord: MoveRecordType = {
-      move: toStoredMove(moveResult),
-      fenAfter,
-      timestamp: Date.now(),
-    };
-
-    // ещё раз проверим прямо перед диспатчем
-    if (this.isFinished()) return null;
-
-    this.store.dispatch(playMove({ fen: chess.fen(), moveRecord, pgn }));
-    this.handleGameEnd(chess);
-    return moveRecord;
   }
 
   public handleGameEnd(chess: Chess, manual?: GameResultType): void {
@@ -270,11 +238,16 @@ export class GameService {
 
       const newFen = chess.fen();
       const newPgn = chess.pgn();
+      const ply = chess.history().length;
 
       const moveRecord: MoveRecordType = {
         move: toStoredMove(moveResult),
-        timestamp: Date.now(),
         fenAfter: newFen,
+
+        ply,
+        player_id: null,
+        is_check: chess.isCheck(),
+        is_checkmate: chess.isCheckmate(),
       };
 
       // ещё раз проверка перед диспатчем

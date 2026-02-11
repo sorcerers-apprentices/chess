@@ -29,7 +29,7 @@
     "emailLabel": "Эл. почта",
     "emailPlaceholder": "Введите вашу почту",
     "phoneLabel": "Номер телефона",
-    "displayNameLabel": "Имя",
+    "displayNameLabel": "Имя пользователя",
     "displayNamePlaceholder": "Введите ваше имя",
     "passwordLabel": "Пароль",
     "passwordPlaceholder": "Введите пароль",
@@ -51,6 +51,7 @@
     "required": "Это поле обязательно к заполнению",
     "minlength": "Минимальная длина — ",
     "maxlength": "Максимальная длина — ",
+    "patternUsername": "Используйте латинские буквы, цифры и _ (3–12 символов)",
     "noUniqueUserName": "Пользователь с таким именем уже существует"
   },
   "home": {
