@@ -26,11 +26,13 @@ import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
 import type { HistoryMoveVerbose } from '@/app/types/chess-type/chess-game.type';
-import { toStoredMoveFromHistory } from '@/app/utilities/transformation-chess-move-class';
+import { toStoredMoveFromHistory } from '@/app/utilities/mapping-chess-move-class';
 import { Store } from '@ngrx/store';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { concatLatestFrom } from '@ngrx/operators';
 import { selectGameId } from '@/app/store/selectors/game.selectors';
+import type { MoveDbInsert } from '@/app/types/supabase-type/supabase-move.type';
+import { toMoveDbInsert } from '@/app/types/supabase-type/supabase-move.type';
 
 @Injectable({
   providedIn: 'root',
@@ -101,12 +103,17 @@ export class GameEffects {
               pgnLast: game.pgn_last,
               fen: game.fen,
               id: game.id,
-              moves: moves.map((move) => {
+              moves: moves.map((move, index) => {
                 const stored = toStoredMoveFromHistory(move);
                 const record: MoveRecordType = {
                   move: stored,
                   fenAfter: stored.after,
-                  timestamp: game.timestamp,
+
+                  // НОВОЕ — чтобы тип был валиден
+                  ply: index + 1,
+                  player_id: null,
+                  is_check: false,
+                  is_checkmate: false,
                 };
                 return record;
               }),
@@ -151,7 +158,12 @@ export class GameEffects {
           );
         }
 
-        return from(this.api.move(gameId, load(pgn), moveRecord)).pipe(
+        const chess = load(pgn);
+
+        const insert: MoveDbInsert = toMoveDbInsert(gameId, moveRecord);
+
+        return from(this.api.move(gameId, chess)).pipe(
+          switchMap(() => from(this.api.insertMove(insert))),
           map(() => moveSuccess()),
           catchError((error: unknown) => {
             const message =
