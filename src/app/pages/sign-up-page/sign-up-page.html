@@ -109,5 +109,16 @@
   <tui-block-status class="sign-up-success">
     <img alt="survived" src="/assets/img/sign-up.svg" tuiSlot="top" />
     <h4>{{ "signup.successTitle" | translate }}</h4>
+    <div>
+      <button
+        size="m"
+        tuiButton
+        type="button"
+        (click)="goToSignInPage()"
+        appearance="textfield"
+      >
+        {{ "signup.signIn" | translate }}
+      </button>
+    </div>
   </tui-block-status>
 }

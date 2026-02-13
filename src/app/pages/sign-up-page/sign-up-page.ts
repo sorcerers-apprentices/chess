@@ -175,7 +175,6 @@ export class SignUpPage {
     const displayNameControl = this.signupForm.controls.displayName;
     const displayName = (displayNameControl.value ?? '').trim();
 
-    // Финальная проверка username перед signUp (на случай: не было blur / гонка)
     const exists = await this.api.fetchUsernameExists(displayName);
     if (exists) {
       displayNameControl.setErrors({
@@ -191,6 +190,7 @@ export class SignUpPage {
         ...this.signupForm.getRawValue(),
         displayName,
       });
+      console.log(result);
 
       if (result.error) {
         if (
@@ -209,7 +209,6 @@ export class SignUpPage {
         return;
       }
 
-      // лучше явно true, а не toggle
       this.successSignUp.set(true);
     } catch {
       this.signupForm.setErrors({ signupFailed: true });
