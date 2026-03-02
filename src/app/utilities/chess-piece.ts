@@ -48,9 +48,6 @@ export const clone = (prev: Chess): Chess => {
 
   curr.loadPgn(prev.pgn());
 
-  // const moves = prev.history({ verbose: true });
-  // moves.forEach((move) => curr.move(move));
-
   return curr;
 };
 

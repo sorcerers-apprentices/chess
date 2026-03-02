@@ -18,21 +18,16 @@ import {
 } from '@/app/store/actions/game.actions';
 import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@/app/services/supabase/auth.service';
-import type {
-  GameDomainType,
-  MoveRecordType,
-} from '@/app/store/states/game.state';
-import { Chess } from 'chess.js';
 import { load } from '@/app/utilities/chess-piece';
 import { Router } from '@angular/router';
-import type { HistoryMoveVerbose } from '@/app/types/chess-type/chess-game.type';
-import { toStoredMoveFromHistory } from '@/app/utilities/mapping-chess-move-class';
 import { Store } from '@ngrx/store';
 import type { AppStateType } from '@/app/store/states/app.state';
 import { concatLatestFrom } from '@ngrx/operators';
 import { selectGameId } from '@/app/store/selectors/game.selectors';
 import type { MoveDbInsert } from '@/app/types/supabase-type/supabase-move.type';
+import { toMoveDbRow } from '@/app/types/supabase-type/supabase-move.type';
 import { toMoveDbInsert } from '@/app/types/supabase-type/supabase-move.type';
+import { buildGameDomain } from '@/app/types/supabase-type/supebase-game-domain-builder';
 
 @Injectable({
   providedIn: 'root',
@@ -84,56 +79,18 @@ export class GameEffects {
       ofType(loadGame),
       switchMap(({ gameId }) => {
         return from(this.api.loadGame(gameId)).pipe(
-          map((game) => {
+          switchMap((game) => {
             if (game === null) {
-              return gameApiErrorActions.loadGameFailed({
-                error: 'Game not found',
-              });
+              return of(
+                gameApiErrorActions.loadGameFailed({ error: 'Game not found' }),
+              );
             }
-            const chess = new Chess();
-            const pgn = game.pgn;
-            chess.loadPgn(pgn);
-            const moves: HistoryMoveVerbose[] = chess.history({
-              verbose: true,
-            });
 
-            const lastMove = moves.at(-1);
-            const gameModel: GameDomainType = {
-              pgn: chess.pgn(),
-              pgnLast: game.pgn_last,
-              fen: game.fen,
-              id: game.id,
-              moves: moves.map((move, index) => {
-                const stored = toStoredMoveFromHistory(move);
-                const record: MoveRecordType = {
-                  move: stored,
-                  fenAfter: stored.after,
-
-                  // НОВОЕ — чтобы тип был валиден
-                  ply: index + 1,
-                  player_id: null,
-                  is_check: false,
-                  is_checkmate: false,
-                };
-                return record;
-              }),
-              undoneMoves: [],
-              lastMove: lastMove
-                ? { from: lastMove.from, to: lastMove.to }
-                : null,
-              orientation: game.player_color,
-              finished: game.finished,
-              result:
-                game.result === 'DRAW'
-                  ? { winner: null, draw: true }
-                  : game.result === 'WHITE_WINS'
-                    ? { winner: 'white', draw: false }
-                    : game.result === 'BLACK_WINS'
-                      ? { winner: 'black', draw: false }
-                      : { winner: null, draw: false },
-              finalFen: game.fen_final,
-            };
-            return loadGameSuccess({ game: gameModel });
+            return from(this.api.fetchMoves(gameId)).pipe(
+              map((rows) => rows.map(toMoveDbRow)),
+              map((moveRecords) => buildGameDomain(game, moveRecords)),
+              map((gameModel) => loadGameSuccess({ game: gameModel })),
+            );
           }),
           catchError((error: unknown) => {
             const message =
@@ -145,6 +102,7 @@ export class GameEffects {
     );
   });
 
+  //отправяет ход в таблицу move в БД
   private move$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(playMove),
@@ -162,7 +120,7 @@ export class GameEffects {
 
         const insert: MoveDbInsert = toMoveDbInsert(gameId, moveRecord);
 
-        return from(this.api.move(gameId, chess)).pipe(
+        return from(this.api.updateGameAfterMove(gameId, chess)).pipe(
           switchMap(() => from(this.api.insertMove(insert))),
           map(() => moveSuccess()),
           catchError((error: unknown) => {
@@ -187,7 +145,7 @@ export class GameEffects {
             }),
           );
         }
-        return from(this.api.toggleMove(gameId)).pipe(
+        return from(this.api.undoGamePgn(gameId)).pipe(
           map((result) => undoMoveSuccess(result)),
           catchError((error: unknown) => {
             const message =
@@ -212,7 +170,7 @@ export class GameEffects {
           );
         }
 
-        return from(this.api.toggleMove(gameId)).pipe(
+        return from(this.api.undoGamePgn(gameId)).pipe(
           map((result) => redoMoveSuccess(result)),
           catchError((error: unknown) => {
             const message =

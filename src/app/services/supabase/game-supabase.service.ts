@@ -18,6 +18,7 @@ import type {
 export class GameSupabaseService {
   private readonly supabase = inject(SupabaseService).client;
 
+  //Game
   public async createGame(
     playerId: string,
     playerColor: 'white' | 'black',
@@ -46,7 +47,6 @@ export class GameSupabaseService {
   }
 
   public async loadGame(gameId: string): Promise<GameModel | null> {
-    //this.rememberGameIdLS(gameId);
     return await this.fetchGame(gameId);
   }
 
@@ -63,7 +63,10 @@ export class GameSupabaseService {
     }
   }
 
-  public async move(gameId: string, chess: Chess): Promise<void> {
+  public async updateGameAfterMove(
+    gameId: string,
+    chess: Chess,
+  ): Promise<void> {
     const game = await this.fetchGame(gameId);
     const oldPgn = game?.pgn;
 
@@ -81,7 +84,7 @@ export class GameSupabaseService {
     }
   }
 
-  public async toggleMove(gameId: string): Promise<GameProjection> {
+  public async undoGamePgn(gameId: string): Promise<GameProjection> {
     const game = await this.fetchGame(gameId);
     if (!game) {
       throw new Error('Game not found');
@@ -140,6 +143,7 @@ export class GameSupabaseService {
     }
   }
 
+  // Move
   public async insertMove(row: MoveDbInsert): Promise<MoveDbRow> {
     const { data, error } = await this.supabase
       .from('move')
@@ -152,6 +156,21 @@ export class GameSupabaseService {
     }
 
     return data;
+  }
+
+  public async fetchMoves(gameId: string): Promise<MoveDbRow[]> {
+    const { data, error } = await this.supabase
+      .from('move')
+      .select('*')
+      .eq('game_id', gameId)
+      .order('ply', { ascending: true });
+
+    if (error) {
+      console.error('[fetchMoves] Supabase error:', error);
+      throw new Error(error.message);
+    }
+    // Supabase может вернуть null вместо массива
+    return data ?? [];
   }
 
   private async fetchGame(id: string): Promise<GameModel | null> {
