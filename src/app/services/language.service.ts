@@ -1,0 +1,37 @@
+import { TranslateService } from '@ngx-translate/core';
+import {
+  effect,
+  inject,
+  Injectable,
+  InjectionToken,
+  type WritableSignal,
+} from '@angular/core';
+
+type SupportedLanguageType = 'en' | 'ru';
+
+export const LANGUAGE_KEY = 'language';
+
+export const LANGUAGE_TOKEN = new InjectionToken<WritableSignal<'en' | 'ru'>>(
+  'LANGUAGE_TOKEN',
+);
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LanguageService {
+  public readonly translate = inject(TranslateService);
+  public readonly language = inject(LANGUAGE_TOKEN);
+  public readonly setLanguageEffect = effect(() => {
+    this.translate.use(this.language());
+    localStorage.setItem(LANGUAGE_KEY, this.language());
+  });
+
+  constructor() {
+    this.language.set(this.getInitialLanguage());
+  }
+
+  private getInitialLanguage(): SupportedLanguageType {
+    const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
+    return savedLanguage === 'ru' ? 'ru' : 'en';
+  }
+}

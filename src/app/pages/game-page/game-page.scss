@@ -1,0 +1,91 @@
+@use "variables" as vars;
+
+.game-wrapper {
+  display: grid;
+  grid-column: 1 / -1; /* занять все 12 колонок Taiga */
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(vars.$board-wrap-min, vars.$board-wrap-width)
+    minmax(vars.$panel-min, vars.$panel-width)
+    minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  inline-size: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.game-settings {
+  border: 2px solid var(--tui-background-accent-2);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .player-panel {
+    background-color: var(--tui-background-neutral-2-pressed);
+  }
+}
+
+.game-extra-left,
+.game-extra-right {
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+@media (width <= 768px) {
+  .game-extra-left,
+  .game-extra-right {
+    display: none;
+  }
+
+  .game-wrapper {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.5rem;
+    align-items: stretch;
+
+    // block-size: calc(100dvh - 48px);
+    min-block-size: 0;
+  }
+}
+
+@media (width <= 350px) {
+  main[tuinavigationmain] {
+    border: 0.2rem solid transparent;
+  }
+}
+
+.p-6.text-center {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  align-items: center;
+  justify-content: center;
+
+  .tui-text_body-m.mb-4 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .modal-controls {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+}
+
+.game-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}

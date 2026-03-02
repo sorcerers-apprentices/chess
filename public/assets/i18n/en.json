@@ -1,0 +1,127 @@
+{
+  "sidebar": {
+    "game": "Game",
+    "analysis": "Analysis",
+    "settings": "Settings",
+    "newGame": "New game",
+    "resume": "Resume",
+    "playVsEngine": "Play vs Engine",
+    "analysisBoard": "Analysis board",
+    "logout": "Logout",
+    "darkMode": "Dark mode",
+    "language": "English",
+    "homePage": "Home page",
+    "about": "About us",
+    "rating": "Rating"
+  },
+  "signin": {
+    "title": "Sign In to Our Game Service",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "errorFallback": "Something went wrong, try again, please"
+  },
+  "signup": {
+    "title": "Sign Up to Our Game Service",
+    "description": "Fill out the form to sign up to our game service",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "phoneLabel": "Phone number",
+    "displayNameLabel": "Username",
+    "displayNamePlaceholder": "Enter your username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "Enter your password",
+    "signUp": "Sign Up",
+    "successTitle": "Check your email to continue.\nIf you already have an account, try signing in.",
+    "errorFallback": "Something went wrong, try again, please",
+    "signIn": "Sign in"
+  },
+  "validationErrors": {
+    "samePasswordValidator": "Passwords are not matching",
+    "noSymbol": "Email should include @",
+    "noPropperFormat": "Invalid email format, proper format is 'user@example.com'",
+    "noNumbers": "Field should include numbers",
+    "noLowerCaseLetters": "Field should include lowercase letters",
+    "noUpperCaseLetters": "Field should include uppercase letters",
+    "whitespace": "No whitespace allowed",
+    "required": "This field is required",
+    "minlength": "Minimum length — ",
+    "maxlength": "Maximum length — ",
+    "patternUsername": "Use 3–12 characters: A–Z, a–z, 0–9 or _",
+    "noUniqueUserName": "The user with this name already exists"
+  },
+  "home": {
+    "play": "Play Game",
+    "winedGames": "Wined Games: ",
+    "playedGames": "Played Games: ",
+    "phone": "Phone: ",
+    "lastSignIn": "Last sign in: ",
+    "chooseColor": "Choose color",
+    "chooseDifficulty": "Choose difficulty",
+    "difficulty": {
+      "easy": {
+        "label": "Easy",
+        "description": "AI plays inconsistently and often makes mistakes. Good for beginners."
+      },
+      "medium": {
+        "label": "Medium",
+        "description": "AI plays confidently but can still make mistakes."
+      },
+      "hard": {
+        "label": "Hard",
+        "description": "AI plays strongly and almost never blunder."
+      }
+    },
+    "elo": "ELO: ",
+    "date": "Date",
+    "result": "Result",
+    "action": "Action",
+    "DRAW": "Draw",
+    "PENDING": "Pending",
+    "BLACK_WINS": "Black wins",
+    "WHITE_WINS": "White wins",
+    "replay": "Replay"
+  },
+  "game": {
+    "notification": "Are you sure you want to leave your game?",
+    "yes": "Yes",
+    "no": "No",
+    "Black": "Black",
+    "White": "White",
+    "player": "Player",
+    "opponent": "Opponent",
+    "gameOver": "GAME OVER",
+    "ok": "OK",
+    "Game Drawn": "Game Drawn",
+    "You won": "You won",
+    "You lost": "You lost",
+    "newGame": "New Game",
+    "goHome": "Go Home"
+  },
+  "rating": {
+    "title": "Player Ratings \uD83C\uDFC6",
+    "player": "Player",
+    "descriptionButton": "Description",
+    "ratingСalculationTitle": "Player Rating Calculation \uD83D\uDCC8",
+    "ratingСalculationDescription": "Player ratings are based on a modified ELO system and serve as an objective and transparent measure of skill. Every participant starts with a base value of 1200 points, which changes after each game: a win adds points, a loss subtracts points, and a draw leaves the rating unchanged. For the first 30 games, an increased coefficient (K = 40) is applied to more quickly establish the player's true level; thereafter, the standard coefficient (K = 20) is used. Upon reaching 2400 or higher, the coefficient is reduced to K = 10, ensuring more stable rating changes for experienced players. The value is always rounded and cannot be lower than 0.",
+    "playerRatingsDescription": "Players are ranked in the table according to their current rating. If several participants have the same number of points, they may share the same place, reflecting the equality of their skill levels. Thus, the rating not only shows individual progress but also determines a player's position among the other participants in the system."
+  },
+  "about": {
+    "title": "Team",
+    "titleDescription": "the team that worked on the project",
+    "anna": "Anna Golosova",
+    "darya": "Darya Kalenchanka",
+    "artem": "Artem Gassan",
+    "creatingProject": "Сreating a project",
+    "projectDeveloped": "The project was developed by a team of 3 people as part of the final project of the",
+    "angularCourse": "Angular course",
+    "from": "from",
+    "mentoringSupport": "with mentoring support. Learning to apply the values of courage, focus, commitment, respect, and openness, the team found solutions in non-standard situations while maintaining clarity of goals and mutual trust. Transparent task tracking and openness in communication ensured timely adjustment of priorities and high responsibility for everyone.",
+    "publicStand": "The project is deployed on a public stand and is accompanied by a backlog of improvements: expansion of functionality, performance optimization, implementation of analytics and monitoring. The experience gained has strengthened the skills of team development, architectural thinking and quality practices, and the created product is ready for further scaling and support."
+  }
+}

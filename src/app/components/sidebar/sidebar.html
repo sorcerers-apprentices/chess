@@ -1,0 +1,42 @@
+<tui-data-list>
+  @if (token) {
+    @for (group of sidebarGroups(); track group.key) {
+      <tui-opt-group [label]="group.key | translate">
+        @for (item of group.value; track item.nameKey) {
+          @if (item.nameKey === "sidebar.newGame") {
+            <button tuiOption type="button" (click)="playGame()">
+              <img alt="icon" src="/assets/img/sidebar-item.svg" />
+              {{ item.nameKey | translate }}
+            </button>
+          } @else if (item.nameKey === "sidebar.logout") {
+            <button tuiOption type="button" (click)="onLogout()">
+              <img alt="icon" src="/assets/img/sidebar-item.svg" />
+              {{ item.nameKey | translate }}
+            </button>
+          } @else {
+            <button tuiOption type="button" (click)="onClick(item)">
+              <img alt="icon" src="/assets/img/sidebar-item.svg" />
+              {{ item.nameKey | translate }}
+            </button>
+          }
+        }
+      </tui-opt-group>
+    }
+  }
+  <tui-opt-group>
+    <label tuiOption tabindex="0">
+      <input
+        size="s"
+        tuiSwitch
+        type="checkbox"
+        [(ngModel)]="darkMode"
+        readonly
+      />
+      {{ "sidebar.darkMode" | translate }}
+    </label>
+    <label tuiOption tabindex="0">
+      <input size="s" tuiSwitch type="checkbox" [(ngModel)]="langEn" readonly />
+      {{ "sidebar.language" | translate }}
+    </label>
+  </tui-opt-group>
+</tui-data-list>

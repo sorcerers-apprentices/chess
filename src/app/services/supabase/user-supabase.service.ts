@@ -1,0 +1,147 @@
+import { inject, Injectable } from '@angular/core';
+import type { GameModel } from '@/app/types/supabase-type/supabase-game.type';
+import { SupabaseService } from '@/app/services/supabase/supabase.service';
+
+export type UserData = {
+  display_name: string;
+  elo: number;
+};
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserSupabaseService {
+  private readonly supabase = inject(SupabaseService).client;
+  /*
+  public async fetchUsernameExists(displayName: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('profile')
+      .select('user_id')
+      .eq('display_name', displayName)
+      .limit(1);
+
+    console.log('[fetchUsernameExists] data:', data);
+    console.log('[fetchUsernameExists] error:', error);
+
+    if (error) {
+      console.error('Error fetching data:', error.message);
+      return false;
+    }
+
+    const exists = (data?.length ?? 0) > 0;
+    console.log('[fetchUsernameExists] exists:', exists);
+
+    return exists;
+  }
+*/
+
+  public async fetchUsernameExists(displayName: string): Promise<boolean> {
+    const { data, error } = await this.supabase.rpc('username_exists', {
+      p_display_name: displayName,
+    });
+
+    console.log('[username_exists] data:', data);
+    console.log('[username_exists] error:', error);
+
+    if (error) {
+      console.error('[username_exists] error:', error.message);
+      return false;
+    }
+
+    return Boolean(data);
+  }
+
+  public async fetchUserData(userId: string): Promise<UserData | null> {
+    const { data, error } = await this.supabase
+      .from('profile')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching data:', error.message);
+      return null;
+    }
+
+    return data;
+  }
+
+  public async fetchUsers(): Promise<UserData[]> {
+    try {
+      const { data, error } = await this.supabase.from('profile').select('*');
+
+      if (error) {
+        console.error('Error fetching data:', error.message);
+        return [];
+      }
+
+      return data ?? [];
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      return [];
+    }
+  }
+
+  public async fetchGamesCount(userId: string): Promise<number> {
+    const { count, error } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .or(`player_id.eq.${userId}`);
+
+    if (error || count === null) {
+      console.error('Error fetching data:', error?.message);
+      return 0;
+    }
+
+    return +count;
+  }
+
+  public async fetchGames({
+    userId,
+    size,
+    offset,
+  }: {
+    userId: string;
+    size: number;
+    offset: number;
+  }): Promise<{ games: GameModel[]; count: number }> {
+    const fromIndex = offset;
+    const toIndex = offset + size - 1;
+
+    // Один запрос: data + count
+    const { data, count, error } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact' }) // <- важно: count в этом же запросе
+      .eq('player_id', userId)
+      .range(fromIndex, toIndex);
+
+    if (error) {
+      console.error('Error fetching games:', error.message);
+      return { games: [], count: 0 };
+    }
+
+    return { games: data ?? [], count: count ?? 0 };
+  }
+
+  public async fetchWinedGamesCount(userId: string): Promise<number> {
+    const { count: countW, error: errorW } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .eq('player_id', userId)
+      .eq('player_color', 'white')
+      .eq('result', 'WHITE_WINS');
+    const { count: countB, error: errorB } = await this.supabase
+      .from('game')
+      .select('*', { count: 'exact', head: true })
+      .eq('player_id', userId)
+      .eq('player_color', 'black')
+      .eq('result', 'BLACK_WINS');
+
+    if (errorW || errorB || countW === null || countB === null) {
+      console.error('Error fetching data: ', errorW?.message, errorB?.message);
+      return 0;
+    }
+
+    return countW + countB;
+  }
+}

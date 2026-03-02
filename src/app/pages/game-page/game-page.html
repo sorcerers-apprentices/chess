@@ -1,0 +1,59 @@
+<app-header />
+<main tuiNavigationMain>
+  <app-navigation />
+  <section class="game-wrapper">
+    <section class="game-extra-left"><!-- слева --></section>
+    <article class="game-board">
+      <div class="player-panel top">
+        <app-player-panel [color]="topPlayerColor()" />
+      </div>
+      <app-chess-board
+        [fromSquare]="dragFrom()"
+        [allowedTargets]="allowedTargets()"
+        (move)="onBoardMove($event)"
+        (dragStart)="onBoardDragStart($event)"
+        (dragEnd)="onBoardDragEnd()"
+        [isCheck]="isCheck()"
+        [isMate]="isMate()"
+        [kingSquare]="kingSquare()"
+      />
+      <div class="player-panel bottom">
+        <app-player-panel [color]="bottomPlayerColor()" />
+      </div>
+    </article>
+    <aside class="game-settings">
+      <app-game-settings
+        [fen]="fen()"
+        [lastEngineMoveSignal]="lastEngineMoveSignal()"
+      />
+    </aside>
+    <section class="game-extra-right"></section>
+  </section>
+</main>
+
+<ng-template #gameOverTpl let-observer>
+  <section class="p-6 text-center">
+    <h2 class="text-2xl font-bold mb-2">
+      {{ `game.${resultText()}` | translate }}
+    </h2>
+    <div class="tui-text_body-m mb-4">{{ "game.gameOver" | translate }}</div>
+    <div class="modal-controls">
+      <button
+        tuiButton
+        appearance="primary"
+        (click)="newGame(); observer.complete()"
+        class="mr-2"
+      >
+        {{ "game.newGame" | translate }}
+      </button>
+      <button
+        tuiButton
+        appearance="primary"
+        (click)="goHome(); observer.complete()"
+        class="mr-2"
+      >
+        {{ "game.goHome" | translate }}
+      </button>
+    </div>
+  </section>
+</ng-template>

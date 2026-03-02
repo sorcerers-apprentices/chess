@@ -1,0 +1,72 @@
+@use "variables" as vars;
+
+/* только слева (ranks) и снизу (files) */
+.board-wrap {
+  display: grid;
+  grid-template-columns: vars.$axis 1fr;
+  grid-template-rows: 1fr vars.$axis;
+  width: vars.$board-wrap-width;
+  inline-size: 100%;
+  max-inline-size: vars.$board-wrap-width;
+  height: vars.$board-wrap-block;
+}
+
+/* левая ось: 8..1 сверху вниз */
+.ranks {
+  user-select: none;
+  display: grid;
+  grid-column: 1;
+  grid-row: 1;
+  grid-template-rows: repeat(8, 1fr);
+  place-items: center center;
+  border-top: 2px solid var(--tui-background-accent-2);
+  border-left: 2px solid var(--tui-background-accent-2);
+  color: var(--tui-text-primary);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
+
+/* нижняя ось: a..h слева направо */
+.files {
+  user-select: none;
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  grid-template-columns: repeat(8, 1fr);
+  place-items: center center;
+  border-right: 2px solid var(--tui-background-accent-2);
+  border-bottom: 2px solid var(--tui-background-accent-2);
+  color: var(--tui-text-primary);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  aspect-ratio: 1 / 1;
+
+  /* доска всегда квадратная */
+  inline-size: 100%;
+  max-inline-size: vars.$board-size;
+  border: 2px solid var(--tui-background-accent-2);
+}
+
+.corner {
+  grid-column: 1;
+  grid-row: 2;
+  border-bottom: 2px solid var(--tui-background-accent-2);
+  border-left: 2px solid var(--tui-background-accent-2);
+  background-color: var(--tui-background-neutral-2-pressed);
+}
+
+@media (width <= 768px) {
+  .board-wrap {
+    inline-size: 100%;
+    max-inline-size: vars.$board-wrap-width;
+  }
+
+  .board {
+    inline-size: 100%;
+    max-inline-size: vars.$board-size;
+  }
+}

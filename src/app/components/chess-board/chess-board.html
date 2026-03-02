@@ -1,0 +1,38 @@
+<div class="board-wrap">
+  <div class="ranks">
+    @for (rank of ranksUi(); track rank) {
+      <div class="rank">{{ rank }}</div>
+    }
+  </div>
+
+  <div cdkDropListGroup class="board">
+    @for (square of squares(); track square.square) {
+      <app-chess-square
+        [square]="square.square"
+        [backgroundColor]="square.squareColor"
+        [piece]="square.piece"
+        [isFrom]="square.isFrom"
+        [isOverAllowed]="square.isOverAllowed"
+        [isAllowed]="square.isAllowed"
+        [isOverDenied]="square.isOverDenied"
+        (chessMove)="onSquareMove($event)"
+        (dragStartSquare)="onDragStart($event)"
+        (dragEnterSquare)="onDragEnter($event)"
+        (dragEndSquare)="onDragEnd()"
+        [allSquares]="allSquareIds()"
+        [fromSquare]="fromSquare()"
+        [allowedTargets]="allowedTargets()"
+        [isKingCheck]="square.isKingCheck"
+        [isKingMate]="square.isKingMate"
+      />
+    }
+  </div>
+
+  <div class="files">
+    @for (file of filesUi(); track file) {
+      <div class="file">{{ file }}</div>
+    }
+  </div>
+
+  <div class="corner" aria-hidden="true"></div>
+</div>

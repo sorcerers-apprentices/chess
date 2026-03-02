@@ -1,0 +1,103 @@
+@use "variables" as vars;
+
+.square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
+
+  // состояние: откуда тащим
+  &.is-from {
+    outline: 3px solid var(--tui-status-warning);
+    outline-offset: -2px;
+  }
+}
+
+.piece {
+  cursor: pointer;
+  inline-size: 92%;
+  block-size: 92%;
+  line-height: 1;
+  object-fit: contain;
+}
+
+.is-empty .piece {
+  display: none; // фигура скрыта, если её нет
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.square.is-over-allowed .piece {
+  opacity: 0;
+}
+
+/* общий оверлей */
+.square::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  z-index: 1; /* над базовым фоном клетки */
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+// все доступные клетки
+.square.is-allowed::after {
+  opacity: 1;
+  background-color: color-mix(
+    in srgb,
+    var(--tui-status-warning) 62%,
+    transparent
+  );
+}
+
+// состояние: можно бросить
+.square.is-over-allowed::after {
+  opacity: 1;
+  box-shadow: inset 0 0 0 4px var(--tui-status-warning);
+}
+
+// состояние: бросить нельзя
+.square.is-over-denied::after {
+  opacity: 1;
+  background-color: color-mix(in srgb, vars.$color-red2 42%, transparent);
+}
+
+.square.is-king-check::after {
+  border: 3px solid color-mix(in srgb, vars.$color-red2 42%, transparent);
+  opacity: 1;
+  box-shadow: 0 0 0 6px color-mix(in srgb, vars.$color-red2 28%, transparent);
+  animation: king-pulse 1.15s ease-in-out infinite;
+}
+
+.square.is-king-mate::after {
+  opacity: 1;
+  background-color: color-mix(in srgb, vars.$color-red2 30%, transparent);
+  outline: 3px solid vars.$color-red2;
+  outline-offset: -2px;
+  animation: none;
+}
+
+@keyframes king-pulse {
+  0% {
+    box-shadow: 0 0 0 6px
+      color-mix(in srgb, var(--tui-status-negative) 28%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 0 14px
+      color-mix(in srgb, var(--tui-status-negative) 0%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 6px
+      color-mix(in srgb, var(--tui-status-negative) 0%, transparent);
+  }
+}

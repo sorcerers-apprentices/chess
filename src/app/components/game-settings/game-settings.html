@@ -1,0 +1,156 @@
+<div aria-label="Timer" class="game-timer">
+  <div class="tui-text_body-xl">{{ text() }}</div>
+</div>
+<nav class="game-nav">
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    aria-label="Go to start"
+    title="Go to start"
+    [disabled]="atStart()"
+    (click)="goStart()"
+  >
+    <tui-icon icon="@tui.chevrons-left" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="atStart()"
+    aria-label="Previous move"
+    title="Previous move"
+    (click)="goPrev()"
+  >
+    <tui-icon icon="@tui.chevron-left" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="atEnd()"
+    aria-label="Next move"
+    title="Next move"
+    (click)="goNext()"
+  >
+    <tui-icon icon="@tui.chevron-right" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    appearance="flat"
+    [disabled]="atEnd()"
+    aria-label="Go to end"
+    title="Go to end"
+    (click)="goEnd()"
+  >
+    <tui-icon icon="@tui.chevrons-right" />
+  </button>
+</nav>
+<div class="game-log-button">
+  <button
+    type="button"
+    tuiButton
+    size="s"
+    class="game-tabs-log"
+    appearance="outline"
+    aria-label="Engine Log"
+    title="Engine Log"
+    (click)="openEngineLog()"
+  >
+    Going to the logs page <tui-icon icon="@tui.play" />
+  </button>
+</div>
+<div class="game-analysis-moves">
+  <nav
+    tuiTabs
+    class="game-tabs"
+    [activeItemIndex]="activeTab()"
+    (activeItemIndexChange)="activeTab.set($event)"
+  >
+    <button tuiTab>Moves</button>
+    <button tuiTab>Stockfish engine</button>
+  </nav>
+  <div class="game-tabs-content">
+    @switch (activeTab()) {
+      @case (0) {
+        <div class="game-pairs-users">
+          <tui-scrollbar class="pairs-scroll">
+            <div class="moves-scroll">
+              <table role="table" aria-label="Moves">
+                <thead>
+                  <tr>
+                    <th>№</th>
+                    <th>{{ "game.player" | translate }}</th>
+                    <th>{{ "game.opponent" | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of movesRows(); track row.num) {
+                    <tr>
+                      <td>{{ row.num }}</td>
+                      <td class="player">{{ row.playerText }}</td>
+                      <td class="opponent">{{ row.opponentText }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </tui-scrollbar>
+        </div>
+      }
+      @case (1) {
+        <tui-scrollbar class="pairs-scroll">
+          <div class="moves-scroll">
+            <app-engine-panel
+              [fen]="fen()"
+              [lastEngineMoveSignal]="lastEngineMoveSignal()"
+            />
+          </div>
+        </tui-scrollbar>
+      }
+    }
+  </div>
+</div>
+<div class="game-controls">
+  <button
+    type="button"
+    tuiButton
+    size="m"
+    appearance="secondary"
+    [disabled]="undoDisabled()"
+    aria-label="Undo move"
+    title="Undo move"
+    (click)="onUndoClick()"
+  >
+    <tui-icon icon="@tui.undo" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="m"
+    appearance="secondary"
+    [disabled]="redoDisabled()"
+    aria-label="Redo move"
+    title="Redo move"
+    (click)="onRedoClick()"
+  >
+    <tui-icon icon="@tui.redo" />
+  </button>
+  <button
+    type="button"
+    tuiButton
+    size="m"
+    appearance="primary"
+    aria-label="Resign"
+    title="Resign"
+    [disabled]="resignDisabled()"
+    (click)="onResignClick()"
+  >
+    <tui-icon icon="@tui.flag" />
+  </button>
+</div>

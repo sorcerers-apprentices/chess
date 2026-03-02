@@ -1,0 +1,39 @@
+@use "mixins" as mix;
+@use "variables" as vars;
+
+html,
+body {
+  // overflow: auto;
+  overflow-x: clip;
+  height: 100%;
+  background-color: vars.$color-black;
+}
+
+* {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+tui-root[tuiTheme="dark"] .sign-up {
+  @include mix.background("/assets/img/signup-dark.jpg");
+
+  height: 100vh;
+
+  // margin: 0 -2rem;
+  background-position: center;
+}
+
+tui-root[tuiTheme="dark"] .sign-in {
+  @include mix.background("/assets/img/signin-dark.jpg");
+
+  height: 100vh;
+
+  // margin: 0 -2rem;
+  background-position: center;
+}
+
+main[tuinavigationmain] {
+  padding-top: 48px;
+  border: 0;
+}

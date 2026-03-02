@@ -1,0 +1,55 @@
+<app-header />
+<main tuiNavigationMain class="sign-in">
+  <app-navigation />
+  <div class="sign-in_container">
+    <h2 tuiText class="tui-text_h2 sign-in_title">
+      {{ "signin.title" | translate }}
+    </h2>
+    <form [formGroup]="signinForm" (submit)="signin()" class="sign-in_form">
+      <label tuiLabel>
+        {{ "signin.emailLabel" | translate }}
+        <tui-textfield tuiTextfieldSize="m">
+          <input
+            placeholder="{{ 'signin.emailPlaceholder' | translate }}"
+            tuiTextfield
+            formControlName="email"
+          />
+        </tui-textfield>
+        <tui-error
+          formControlName="email"
+          [error]="[] | tuiFieldError | async"
+        />
+      </label>
+      <label tuiLabel>
+        {{ "signin.passwordLabel" | translate }}
+        <tui-textfield tuiTextfieldSize="m">
+          <input
+            placeholder="{{ 'signin.passwordPlaceholder' | translate }}"
+            type="password"
+            tuiTextfield
+            formControlName="password"
+          />
+          <tui-icon tuiPassword />
+        </tui-textfield>
+        <tui-error
+          formControlName="password"
+          [error]="[] | tuiFieldError | async"
+        />
+      </label>
+      <div class="sign-in_form_buttons-container">
+        <button size="m" tuiButton type="submit">
+          {{ "signin.signIn" | translate }}
+        </button>
+        <button
+          size="m"
+          tuiButton
+          type="button"
+          (click)="goToSignUpPage()"
+          appearance="textfield"
+        >
+          {{ "signin.signUp" | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</main>

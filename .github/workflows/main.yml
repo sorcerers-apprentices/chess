@@ -1,0 +1,41 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: install modules
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: build production project
+        run: npm run build
+        if: always()
+      - name: lint typescript
+        run: npm run lint
+        if: always()
+      - name: lint scss
+        run: npm run lint:scss
+        if: always()
+      - name: check format with prettier
+        run: npm run format:check
+        if: always()
+      - name: check tests
+        run: npm run e2e
+        if: always()

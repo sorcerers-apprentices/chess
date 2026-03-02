@@ -1,0 +1,124 @@
+<app-header />
+@if (!successSignUp()) {
+  <main tuiNavigationMain class="sign-up">
+    <div class="sign-up_container">
+      <h2 tuiText class="tui-text_h2 sign-up_title">
+        {{ "signup.title" | translate }}
+      </h2>
+      <p class="sign-up_text">
+        {{ "signup.description" | translate }}
+      </p>
+      <form [formGroup]="signupForm" (submit)="signup()" class="sign-up_form">
+        <label tuiLabel>
+          {{ "signup.emailLabel" | translate }}
+          <tui-textfield tuiTextfieldSize="m">
+            <input
+              placeholder="{{ 'signup.emailPlaceholder' | translate }}"
+              tuiTextfield
+              formControlName="email"
+            />
+          </tui-textfield>
+          <tui-error
+            formControlName="email"
+            [error]="[] | tuiFieldError | async"
+          />
+        </label>
+        <label tuiLabel>
+          {{ "signup.phoneLabel" | translate }}
+          <tui-textfield tuiTextfieldSize="m">
+            <input
+              formControlName="phone"
+              tuiInputPhoneInternational
+              [countries]="countries"
+              [(countryIsoCode)]="countryIsoCode"
+              placeholder="+34 (55) 123-4567"
+            />
+          </tui-textfield>
+          <tui-error
+            formControlName="phone"
+            [error]="[] | tuiFieldError | async"
+          />
+        </label>
+        <label tuiLabel>
+          {{ "signup.displayNameLabel" | translate }}
+          <tui-textfield tuiTextfieldSize="m">
+            <input
+              placeholder="{{ 'signup.displayNamePlaceholder' | translate }}"
+              type="text"
+              tuiTextfield
+              formControlName="displayName"
+            />
+          </tui-textfield>
+          <tui-error
+            formControlName="displayName"
+            [error]="[] | tuiFieldError | async"
+          />
+        </label>
+        <label tuiLabel>
+          {{ "signup.passwordLabel" | translate }}
+          <tui-textfield tuiTextfieldSize="m">
+            <input
+              placeholder="{{ 'signup.passwordPlaceholder' | translate }}"
+              type="password"
+              tuiTextfield
+              formControlName="password"
+            />
+            <tui-icon tuiPassword />
+          </tui-textfield>
+          <tui-error
+            formControlName="password"
+            [error]="[] | tuiFieldError | async"
+          />
+        </label>
+        <label tuiLabel>
+          {{ "signup.confirmPasswordLabel" | translate }}
+          <tui-textfield tuiTextfieldSize="m">
+            <input
+              placeholder="{{
+                'signup.confirmPasswordPlaceholder' | translate
+              }}"
+              type="password"
+              tuiTextfield
+              formControlName="confirmPassword"
+            />
+            <tui-icon tuiPassword />
+          </tui-textfield>
+          <tui-error
+            formControlName="confirmPassword"
+            [error]="[] | tuiFieldError | async"
+          />
+        </label>
+        <div class="sign-up_form_buttons-container">
+          <button size="m" tuiButton type="submit" class="sign-up_button">
+            {{ "signup.signUp" | translate }}
+          </button>
+          <button
+            size="m"
+            tuiButton
+            type="button"
+            (click)="goToSignInPage()"
+            appearance="textfield"
+          >
+            {{ "signup.signIn" | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+} @else {
+  <tui-block-status class="sign-up-success">
+    <img alt="survived" src="/assets/img/sign-up.svg" tuiSlot="top" />
+    <h4>{{ "signup.successTitle" | translate }}</h4>
+    <div>
+      <button
+        size="m"
+        tuiButton
+        type="button"
+        (click)="goToSignInPage()"
+        appearance="textfield"
+      >
+        {{ "signup.signIn" | translate }}
+      </button>
+    </div>
+  </tui-block-status>
+}

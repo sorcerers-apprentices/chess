@@ -1,0 +1,7 @@
+{
+  "src/**/*.ts": ["prettier --check", "eslint --fix"],
+  "src/**/*.{test,spec}.ts": ["prettier --check", "eslint --fix"],
+  "*.{css,scss}": ["prettier --write", "stylelint --fix"],
+  "e2e/**/*.ts": ["prettier --check"],
+  "playwright.config.ts": ["prettier --check"]
+}

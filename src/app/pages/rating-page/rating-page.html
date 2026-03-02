@@ -1,0 +1,34 @@
+<app-header />
+<main tuiNavigationMain>
+  <div tuiAppearance="floating" tuiCardLarge>
+    <header tuiHeader>
+      <h2 tuiTitle>{{ "rating.title" | translate }}</h2>
+      <button
+        appearance="outline-grayscale"
+        tuiButton
+        (click)="showDescription()"
+      >
+        {{ "rating.descriptionButton" | translate }}
+      </button>
+    </header>
+    <app-rating-table />
+  </div>
+  @if (isShowDescription()) {
+    <div
+      tuiAppearance="floating"
+      tuiCardLarge
+      animate.enter="enter-animation"
+      animate.leave="leaving"
+    >
+      <header tuiHeader>
+        <h2 tuiTitle>{{ "rating.ratingСalculationTitle" | translate }}</h2>
+      </header>
+      <p class="description">
+        {{ "rating.ratingСalculationDescription" | translate }}
+      </p>
+      <p class="description">
+        {{ "rating.playerRatingsDescription" | translate }}
+      </p>
+    </div>
+  }
+</main>
