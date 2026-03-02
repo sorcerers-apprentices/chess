@@ -8,6 +8,7 @@ import {
 import {
   selectChess,
   selectIsGameOver,
+  selectMovesCount,
   selectOrientation,
 } from '@/app/store/selectors/game.selectors';
 import type { Chess } from 'chess.js';
@@ -27,13 +28,12 @@ import type {
 } from '@/app/types/chess-type/chess-square.type';
 import { toStoredMove } from '@/app/utilities/mapping-chess-move-class';
 import { AuthService } from '@/app/services/supabase/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export type GameResultType = {
   winner: 'white' | 'black' | null;
   draw: boolean;
 };
-
-//export type BoardMatrix = (Piece | null)[][];
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +50,10 @@ export class GameService {
   private readonly orientation = this.store.selectSignal(selectOrientation);
   private readonly isFinished = this.store.selectSignal(selectIsGameOver);
   private readonly lastEngineMove = signal<EngineMove | null>(null);
+
+  private readonly movesCount = toSignal(this.store.select(selectMovesCount), {
+    initialValue: 0,
+  });
 
   public readonly lastEngineMoveSignal = this.lastEngineMove.asReadonly();
 
@@ -70,7 +74,7 @@ export class GameService {
       const newFen = chess.fen();
       const newPgn = chess.pgn();
 
-      const ply = chess.history().length; // после move() история уже включает этот полуход
+      const ply = this.movesCount() + 1;
       const playerId = this.auth.getUserData().user.id;
 
       const moveRecord: MoveRecordType = {
@@ -191,7 +195,7 @@ export class GameService {
 
     try {
       // текущее состояние партии
-      const chess = this.game();
+      const chess = clone(this.game());
       const fen = chess.fen();
 
       // чей ход по мнению chess.js
@@ -238,7 +242,7 @@ export class GameService {
 
       const newFen = chess.fen();
       const newPgn = chess.pgn();
-      const ply = chess.history().length;
+      const ply = this.movesCount() + 1;
 
       const moveRecord: MoveRecordType = {
         move: toStoredMove(moveResult),
